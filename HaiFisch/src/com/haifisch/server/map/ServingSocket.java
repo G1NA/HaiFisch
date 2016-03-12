@@ -18,7 +18,6 @@ public class ServingSocket extends Thread {
 
     public void run() {
         try {
-            callback.onConnect(clientSocket.getRemoteSocketAddress());
             InputStream incoming = clientSocket.getInputStream();
             DataInputStream incoming_data = new DataInputStream(incoming);
             byte b = incoming_data.readByte();
@@ -27,7 +26,7 @@ public class ServingSocket extends Thread {
                 blist.add(b);
                 b = incoming_data.readByte();
             }
-            callback.dataReceived(blist.toArray());
+            callback.onConnect(blist.toArray());
         } catch (Exception e) {
             e.printStackTrace();
         }
