@@ -1,4 +1,4 @@
-package com.haifisch.server.map;
+package com.haifisch.server.master;
 
 import java.io.Serializable;
 import java.util.Date;

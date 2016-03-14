@@ -1,6 +1,6 @@
-package com.haifisch.server.reduce;
+package com.haifisch.server.NetworkTools;
 
-import com.haifisch.server.map.utils.Serialize;
+import com.haifisch.server.NetworkTools.utils.Serialize;
 
 import java.io.DataOutputStream;
 import java.net.Socket;

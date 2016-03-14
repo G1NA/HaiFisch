@@ -1,4 +1,4 @@
-package com.haifisch.server.map.utils;
+package com.haifisch.server.NetworkTools.utils;
 
 import java.io.*;
 

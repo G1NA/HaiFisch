@@ -1,6 +1,6 @@
-package com.haifisch.server.reduce;
+package com.haifisch.server.NetworkTools;
 
-import java.io.Serializable;
+import java.io.*;
 
 
 public class NetworkPayload implements Serializable {

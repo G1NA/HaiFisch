@@ -1,4 +1,4 @@
-package com.haifisch.server.reduce;
+package com.haifisch.server.NetworkTools;
 
 import java.io.IOException;
 import java.net.ServerSocket;

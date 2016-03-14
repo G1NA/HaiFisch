@@ -1,4 +1,4 @@
-package com.haifisch.server.map;
+package com.haifisch.server.NetworkTools;
 
 public interface onConnectionListener {
 
