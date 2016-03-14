@@ -1,20 +1,23 @@
-package com.haifisch.server.reduce;
+package com.haifisch.server.map;
 
 import java.io.Serializable;
 
-public class Request implements Serializable {
+
+public class CheckinRequest implements Serializable {
+
+
     private String area_name;
     private double[] left_corner;
     private double[] right_corner;
     private double[] from_time;
     private double[] to_time;
-    private String request_id;
+    private String request_id; //This will be generated from the master server to identify a client request
 
-    public Request() {
+    public CheckinRequest() {
 
     }
 
-    public Request(String id) {
+    public CheckinRequest(String id) {
         this.request_id = id;
     }
 

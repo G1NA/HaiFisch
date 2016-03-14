@@ -2,21 +2,20 @@ package com.haifisch.server.map;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 
-public class Communicator extends Thread {
+public class ListeningSocket extends Thread {
     ServerSocket socket;
     onConnectionListener callback;
 
     //Initiate the "listening" socket on any port available
-    public Communicator(onConnectionListener callback) {
+    public ListeningSocket(onConnectionListener callback) {
         socketInit(-1);
         this.callback = callback;
 
     }
 
     //Iniate the "listening" socket on a specific port
-    public Communicator(int port, onConnectionListener callback) throws IOException {
+    public ListeningSocket(int port, onConnectionListener callback) throws IOException {
         if (!socketInit(port))
             if (socketInit(-1))
                 throw new IOException();
@@ -43,8 +42,7 @@ public class Communicator extends Thread {
     public void run() {
         while (true)
             try {
-                Socket server = socket.accept();
-                new ServingSocket(server, callback);
+                new ServingSocket(socket.accept(), callback);
             } catch (Exception e) {
                 e.printStackTrace();
                 break;

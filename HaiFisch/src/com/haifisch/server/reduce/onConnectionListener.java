@@ -2,5 +2,9 @@ package com.haifisch.server.reduce;
 
 public interface onConnectionListener {
 
-    public void onConnect(Object[] stream);
+
+    void onConnect(NetworkPayload payload);
+
+    void onSent(boolean result);
+
 }
