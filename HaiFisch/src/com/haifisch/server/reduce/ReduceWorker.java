@@ -16,12 +16,12 @@ public interface ReduceWorker extends Worker {
 	 * @param value
 	 * @return
 	 */
-	public Map<Integer, Object> reduce(int key, Object value);
+	public CheckinMap<Integer, Object> reduce(int key, Object value);
 	
 	/**
 	 * Sends the results of the reducing process.
 	 * @param map
 	 */
-	public void sendResults(Map<Integer, Object> map);
+	public void sendResults(CheckinMap<Integer, Object> map);
 	
 }
