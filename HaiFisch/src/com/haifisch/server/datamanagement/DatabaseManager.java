@@ -22,10 +22,22 @@ public class DatabaseManager {
 	private String dbClass = "com.mysql.jdbc.Driver";
 	private Connection connection;
 	
+	/**
+	 * Modular constructor
+	 * @param host
+	 * @param port
+	 * @param dbName
+	 * @param username
+	 * @param password
+	 */
 	public DatabaseManager(String host, String port, String dbName, String username, String password){
 		setdbURL(host, port, dbName, username, password);
 	}
 	
+	/**
+	 * Full path constructor
+	 * @param dbURL
+	 */
 	public DatabaseManager(String dbURL){
 		setdbURLFull(dbURL);
 	}
@@ -58,6 +70,11 @@ public class DatabaseManager {
 		}
 	}
 	
+	/**
+	 * Executes a given query and returns the results.
+	 * @param query the sql query to execute
+	 * @return set of results
+	 */
 	public ResultSet executeQuery(String query){
 		Statement statement;
 		ResultSet results = null;
