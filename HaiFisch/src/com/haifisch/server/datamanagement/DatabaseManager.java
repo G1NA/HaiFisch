@@ -50,7 +50,7 @@ public class DatabaseManager {
 	 */
 	public void closeConnection(){
 		try {
-			if (connection != null)
+			if (connection != null && connection.isValid(0)) // may change to some seconds
 				connection.close();
 		} catch (SQLException sqle) {
 			closeConnection();
@@ -62,8 +62,10 @@ public class DatabaseManager {
 		Statement statement;
 		ResultSet results = null;
 		try {
-			statement = connection.createStatement();
-			results = statement.executeQuery(query);
+			if (connection.isValid(0)) { // may change to some seconds
+				statement = connection.createStatement();
+				results = statement.executeQuery(query);
+			}
 		} catch (SQLException sqle) {
 			closeConnection();
 			sqle.printStackTrace();
