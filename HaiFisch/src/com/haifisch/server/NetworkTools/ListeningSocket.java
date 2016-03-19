@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 public class ListeningSocket extends Thread {
-    ServerSocket socket;
-    onConnectionListener callback;
+    private ServerSocket socket;
+    private onConnectionListener callback;
 
     //Initiate the "listening" socket on any port available
     public ListeningSocket(onConnectionListener callback) {
@@ -23,7 +23,11 @@ public class ListeningSocket extends Thread {
 
     }
 
-    public boolean socketInit(int port) {
+    public int getPort(){
+        return socket.getLocalPort();
+    }
+
+    private boolean socketInit(int port) {
         int socket_port;
         if (port == -1)
             socket_port = 0;

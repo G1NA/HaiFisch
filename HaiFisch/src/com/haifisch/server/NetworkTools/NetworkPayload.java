@@ -6,9 +6,9 @@ import java.io.*;
 public class NetworkPayload implements Serializable {
 
 
-    protected Serializable payload;
-    protected final boolean REQUIRE_RESPONSE;
-    protected final int PAYLOAD_TYPE;
+    public Serializable payload;
+    public final boolean REQUIRE_RESPONSE;
+    public final int PAYLOAD_TYPE;
 
 
     /**
