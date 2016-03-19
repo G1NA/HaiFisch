@@ -76,7 +76,7 @@ public class DatabaseManager {
 	 * @return set of results
 	 */
 	public ResultSet executeQuery(String query){
-		Statement statement;
+		Statement statement = null;
 		ResultSet results = null;
 		try {
 			if (connection.isValid(0)) { // may change to some seconds
@@ -87,6 +87,14 @@ public class DatabaseManager {
 			closeConnection();
 			sqle.printStackTrace();
 			System.err.println("\n"+sqle.getMessage());
+		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				System.err.println("\n"+e.getMessage());
+			}
 		}
 		return results;
 	}
