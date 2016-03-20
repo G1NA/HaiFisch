@@ -1,4 +1,4 @@
-package com.haifisch.server.map;
+//package com.haifisch.server.map;
 
 /** Class that represents a point on a map. */
 public class Point {
@@ -51,5 +51,11 @@ public class Point {
 	public int getLatitude() {
 
 		return latitude;
+	}
+	
+	/** Prints the coordinates of the point. */
+	public void print() {
+	
+		System.out.println("Longtitude: "+this.getLongtitude()+" latitude: "+this.getLatitude());
 	}
 }
