@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 
-public class CheckinRequest implements Serializable {
+public class CheckInRequest implements Serializable {
 
 
     private String area_name;
@@ -16,11 +16,11 @@ public class CheckinRequest implements Serializable {
     private Timestamp to_time;
     private String request_id; //This will be generated from the master server to identify a client request
 
-    public CheckinRequest() {
+    public CheckInRequest() {
 
     }
     
-    public CheckinRequest(String area, double[] left, double[] right, Timestamp from, Timestamp to, String id){
+    public CheckInRequest(String area, double[] left, double[] right, Timestamp from, Timestamp to, String id){
     	area_name = area;
     	left_corner = left;
     	right_corner = right;
@@ -30,7 +30,7 @@ public class CheckinRequest implements Serializable {
     	
     }
 
-    public CheckinRequest(String id) {
+    public CheckInRequest(String id) {
         this.request_id = id;
     }
 

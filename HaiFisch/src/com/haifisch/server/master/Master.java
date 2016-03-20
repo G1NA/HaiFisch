@@ -17,6 +17,9 @@ public class Master implements onConnectionListener {
     public static ConAcknowledge reducer;
 
     public static void main(String[] args) {
+
+
+
         EventQueue.invokeLater(
                 Master::new
         );

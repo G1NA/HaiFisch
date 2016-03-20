@@ -2,14 +2,14 @@ package com.haifisch.server.NetworkTools;
 
 import java.io.Serializable;
 
-public class CheckinRes implements Serializable{
+public class CheckInRes implements Serializable{
 
 
     private String place;
     private int noOfPics;
     private String request_id;//This will be generated from the master server to identify a client request
 
-    public CheckinRes(String place, int noOfPics, String request_id) {
+    public CheckInRes(String place, int noOfPics, String request_id) {
         this.place = place;
         this.noOfPics = noOfPics;
         this.request_id = request_id;

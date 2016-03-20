@@ -1,4 +1,4 @@
-//package com.haifisch.server.map;
+package com.haifisch.server.map;
 
 /** Class that represents a point on a map. */
 public class Point {
