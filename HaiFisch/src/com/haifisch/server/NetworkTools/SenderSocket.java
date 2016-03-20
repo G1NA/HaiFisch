@@ -3,9 +3,10 @@ package com.haifisch.server.NetworkTools;
 import com.haifisch.server.NetworkTools.utils.Serialize;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 
-public class SenderSocket extends Thread {
+public class SenderSocket implements Runnable {
 
 
     private onConnectionListener callback;
@@ -26,7 +27,7 @@ public class SenderSocket extends Thread {
             new DataOutputStream(sender.getOutputStream()).write(Serialize.serialize(payload));
             sender.close();
             callback.onSent(true);
-        } catch (Exception e) {
+        } catch (IOException e) {
             callback.onSent(false);
         }
 

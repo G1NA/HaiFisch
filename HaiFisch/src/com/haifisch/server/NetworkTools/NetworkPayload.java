@@ -9,17 +9,30 @@ public class NetworkPayload implements Serializable {
     public Serializable payload;
     public final boolean REQUIRE_RESPONSE;
     public final int PAYLOAD_TYPE;
+    public final String SENDER_NAME;
+    public final int SENDER_PORT;
+    public final int STATUS;
+    public final String MESSAGE;
+
 
 
     /**
      * @param type    0 for chekin(s) request 1 chekin result 2 new chekin
      * @param reqResp require or not a response. Perhaps not needed
      * @param payload the actual object
+     * @param senderName
+     * @param senderPort
+     * @param status
+     * @param message
      */
-    public NetworkPayload(int type, boolean reqResp, Serializable payload) {
+    public NetworkPayload(int type, boolean reqResp, Serializable payload, String senderName, int senderPort, int status, String message) {
         this.payload = payload;
         REQUIRE_RESPONSE = reqResp;
         PAYLOAD_TYPE = type;
+        this.SENDER_NAME = senderName;
+        this.SENDER_PORT = senderPort;
+        STATUS = status;
+        MESSAGE = message;
     }
 
 }

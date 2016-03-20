@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServingSocket extends Thread {
+public class ServingSocket implements Runnable {
 
     private Socket clientSocket;
     private onConnectionListener callback;
@@ -41,6 +41,7 @@ public class ServingSocket extends Thread {
 
         } catch (Exception e) {
             e.printStackTrace();
+            //Shit happened something will be called here to restart the damn thing
         }
 
     }

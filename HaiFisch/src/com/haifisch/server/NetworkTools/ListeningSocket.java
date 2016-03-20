@@ -3,7 +3,7 @@ package com.haifisch.server.NetworkTools;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-public class ListeningSocket extends Thread {
+public class ListeningSocket implements Runnable {
     private ServerSocket socket;
     private onConnectionListener callback;
 
@@ -24,7 +24,17 @@ public class ListeningSocket extends Thread {
     }
 
     public int getPort(){
-        return socket.getLocalPort();
+        if(socket!=null)
+            return socket.getLocalPort();
+        else
+            return -1;
+    }
+
+    public String getName(){
+        if(socket!=null)
+            return socket.getInetAddress().toString();
+        else
+            return null;
     }
 
     private boolean socketInit(int port) {
@@ -47,8 +57,9 @@ public class ListeningSocket extends Thread {
         while (true)
             try {
                 new ServingSocket(socket.accept(), callback);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
+                //Shit happened something will be called here to restart the damn thing
                 break;
             }
     }
