@@ -1,12 +1,8 @@
 package com.haifisch.server;
 
-import java.util.Scanner;
-
 import com.haifisch.server.map.Point;
-import com.haifisch.server.master //For the master server.
-import com.haifisch.server.map //For the mappers.
-import com.haifisch.server.reduce //For the reducer.
-import com.haifisch.server.datamanagement //For the database manager.
+
+import java.util.Scanner;
 
 
 /** This class is the main program class that is responsible for the flow of the program. */

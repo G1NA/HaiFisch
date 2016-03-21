@@ -17,7 +17,7 @@ public class NetworkPayload implements Serializable {
 
 
     /**
-     * @param type    0 for chekin(s) request 1 chekin result 2 new chekin
+     * @param type    0 for checkIn(s) request, 1 checkIn result, 2 new checkIn, 3 Connection Acknowledge, 4 status check
      * @param reqResp require or not a response. Perhaps not needed
      * @param payload the actual object
      * @param senderName

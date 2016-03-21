@@ -9,13 +9,13 @@ import java.net.Socket;
 public class SenderSocket implements Runnable {
 
 
-    private onConnectionListener callback;
     private String serverName;
     private int port;
     private NetworkPayload payload;
+    private boolean sent = false;
+    private String error;
 
-    public SenderSocket(String serverName, int port, NetworkPayload payload, onConnectionListener callback) {
-        this.callback = callback;
+    public SenderSocket(String serverName, int port, NetworkPayload payload) {
         this.payload = payload;
         this.serverName = serverName;
         this.port = port;
@@ -26,10 +26,18 @@ public class SenderSocket implements Runnable {
             Socket sender = new Socket(serverName, port);
             new DataOutputStream(sender.getOutputStream()).write(Serialize.serialize(payload));
             sender.close();
-            callback.onSent(true);
+            sent = true;
         } catch (IOException e) {
-            callback.onSent(false);
+            error = e.getMessage();
         }
 
+    }
+
+    public boolean isSent() {
+        return sent;
+    }
+
+    public String getError() {
+        return error;
     }
 }

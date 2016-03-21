@@ -1,6 +1,9 @@
 package com.haifisch.server.master;
 
-import com.haifisch.server.NetworkTools.*;
+import com.haifisch.server.NetworkTools.ConAcknowledge;
+import com.haifisch.server.NetworkTools.ListeningSocket;
+import com.haifisch.server.NetworkTools.NetworkPayload;
+import com.haifisch.server.NetworkTools.onConnectionListener;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -11,15 +14,16 @@ public class Master implements onConnectionListener {
 
     private static String server;
     private static int serverPort;
-    public static ArrayList<ConAcknowledge> mappers = new ArrayList();
-    public static ConAcknowledge reducer;
-    public static HashMap<String, String> servingClients = new HashMap<>();
+    private static volatile int threadCounter;
+    static volatile ArrayList<ConAcknowledge> mappers = new ArrayList<>();
+    static volatile ConAcknowledge reducer;
+    static volatile HashMap<String, Client> servingClients = new HashMap<>();
+    static volatile Master masterThread;
 
     public static void main(String[] args) {
 
-
         EventQueue.invokeLater(
-                Master::new
+                () -> masterThread = new Master()
         );
     }
 
@@ -27,45 +31,34 @@ public class Master implements onConnectionListener {
         mainSequence();
     }
 
-    public void mainSequence() {
+    private void mainSequence() {
         ListeningSocket server = new ListeningSocket(this);
         new Thread(server, "listener").start();
         System.out.println("Server running on:" + server.getPort());
+        Master.server = server.getName();
+        Master.serverPort = server.getPort();
     }
 
     @Override
-    public void onConnect(NetworkPayload payload) {
-        //Get the connections coming from mappers and reducers that add themselves to the mapper pool
-        if (payload.payload == null) {
-            //handle empty payload
-        } else if (payload.payload instanceof ConAcknowledge) {
-            ConAcknowledge connected = (ConAcknowledge) payload.payload;
-            if (connected.TYPE == 1)
-                mappers.add(connected);
-            else
-                reducer = connected;
-        } else if (payload.payload instanceof CheckInRequest) {
-            //If there are no mappers or reducer the request should return an error
-            if (mappers.size() == 0 || reducer == null) {
-                SenderSocket send = new SenderSocket(payload.SENDER_NAME, payload.SENDER_PORT,
-                        new NetworkPayload(3, false, null,
-                                server, serverPort, 400, "No mappers or reducer present in the network")
-                        , this);
-                new Thread(send, "sender").start();
-            } else {
-                new Thread("serving") {
-                    // break down the request to send it to the mappers
-                }.start();
-
-            }
-        } else if (payload.payload instanceof CheckInRes) {
-            //Return the result to the client that requested it
-
-        }
+    synchronized public void onConnect(NetworkPayload payload) {
+        new Thread(new RequestHandler(payload), "serving thread no" + threadCounter++).start();
     }
 
     @Override
-    public void onSent(boolean result) {
+    synchronized public void onSent(boolean result) {
 
+    }
+
+    synchronized public static void actionLog(String output) {
+
+        System.out.println(output);
+    }
+
+    synchronized static String getServerName() {
+        return server;
+    }
+
+    synchronized public static int getPort() {
+        return serverPort;
     }
 }
