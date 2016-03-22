@@ -134,7 +134,10 @@ public class DatabaseManager {
 	 * @param dbURL
 	 */
 	protected void setdbURLFull(String dbURL){
-		this.dbURL += dbURL;
+		if (dbURL.startsWith("jdbc:mysql://"))
+			this.dbURL = dbURL;
+		else
+			this.dbURL += dbURL;
 	}
 	
 }

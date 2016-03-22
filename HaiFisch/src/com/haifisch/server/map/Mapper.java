@@ -1,6 +1,6 @@
 package com.haifisch.server.map;
 
-import com.haifisch.server.CheckinMap;
+import com.haifisch.server.CheckInMap;
 import com.haifisch.server.NetworkTools.*;
 import com.haifisch.server.datamanagement.*;
 
@@ -10,13 +10,12 @@ import java.util.ArrayList;
 public class Mapper implements Runnable {
 
     private CheckInRequest request;
-    private CheckinMap<String, Integer> counters;
+    private CheckInMap<String, Integer> counters;
     public boolean shitHappened = false;
 
     public Mapper(CheckInRequest request) {
         this.request = request;
     }
-
 
     @Override
     public void run() {
@@ -61,19 +60,19 @@ public class Mapper implements Runnable {
 
     }
 
-    public CheckinMap<String, Integer> map(Object key, Object value) {
+    public CheckInMap<String, Integer> map(Object key, Object value) {
 
         ArrayList<ArrayList<String>> entries = (ArrayList<ArrayList<String>>) value;
 
-        CheckinMap<String, Integer> counters = new CheckinMap<String, Integer>();
+        CheckInMap<String, Integer> counters = new CheckInMap<String, Integer>();
 
-        entries.parallelStream().forEach(e -> count_area(counters, e));
+        entries.parallelStream().forEach(e -> countArea(counters, e));
 
         return counters;
 
     }
 
-    private void count_area(CheckinMap<String, Integer> counters, ArrayList<String> entry) {
+    private void countArea(CheckInMap<String, Integer> counters, ArrayList<String> entry) {
 
         if (counters.containsKey(entry.get(0))) {
             counters.replace(entry.get(0), counters.get(entry.get(0)) + 1);
@@ -83,7 +82,7 @@ public class Mapper implements Runnable {
         }
     }
 
-    private CheckinMap<String, Integer> getResults() {
+    private CheckInMap<String, Integer> getResults() {
         return counters;
     }
 

@@ -5,15 +5,15 @@ import java.io.*;
 
 public class NetworkPayload implements Serializable {
 
-
-    public Serializable payload;
+	private static final long serialVersionUID = 2212722724046031297L;
+	
+	public Serializable payload;
     public final boolean REQUIRE_RESPONSE;
     public final int PAYLOAD_TYPE;
     public final String SENDER_NAME;
     public final int SENDER_PORT;
     public final int STATUS;
     public final String MESSAGE;
-
 
 
     /**

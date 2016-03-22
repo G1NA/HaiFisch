@@ -1,6 +1,6 @@
 package com.haifisch.server.reduce;
 
-import com.haifisch.server.CheckinMap;
+import com.haifisch.server.CheckInMap;
 
 public class Reducer implements ReduceWorker {
 
@@ -23,14 +23,14 @@ public class Reducer implements ReduceWorker {
 	}
 
 	@Override
-	public CheckinMap<Integer, Object> reduce(int key, Object value) {
-		CheckinMap<Integer, Object> map = new CheckinMap<>();
+	public CheckInMap<Integer, Object> reduce(int key, Object value) {
+		CheckInMap<Integer, Object> map = new CheckInMap<>();
 		
 		return null;
 	}
 
 	@Override
-	public void sendResults(CheckinMap<Integer, Object> map) {
+	public void sendResults(CheckInMap<Integer, Object> map) {
 		// TODO Auto-generated method stub
 		
 	}

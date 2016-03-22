@@ -1,6 +1,6 @@
 package com.haifisch.server.master;
 
-import com.haifisch.server.NetworkTools.ConAcknowledge;
+import com.haifisch.server.NetworkTools.ConnectionAcknowledge;
 import com.haifisch.server.NetworkTools.ListeningSocket;
 import com.haifisch.server.NetworkTools.NetworkPayload;
 import com.haifisch.server.NetworkTools.onConnectionListener;
@@ -15,8 +15,8 @@ public class Master implements onConnectionListener {
     private static String server;
     private static int serverPort;
     private static volatile int threadCounter;
-    static volatile ArrayList<ConAcknowledge> mappers = new ArrayList<>();
-    static volatile ConAcknowledge reducer;
+    static volatile ArrayList<ConnectionAcknowledge> mappers = new ArrayList<>();
+    static volatile ConnectionAcknowledge reducer;
     static volatile HashMap<String, Client> servingClients = new HashMap<>();
     static volatile Master masterThread;
 

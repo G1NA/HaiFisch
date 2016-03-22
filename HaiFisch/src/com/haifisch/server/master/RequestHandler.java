@@ -16,8 +16,8 @@ public class RequestHandler implements Runnable {
     @Override
     public void run() {
         //Get the connections coming from mappers and reducers that add themselves to the mapper pool
-        if (request.payload instanceof ConAcknowledge) {
-            ConAcknowledge connected = (ConAcknowledge) request.payload;
+        if (request.payload instanceof ConnectionAcknowledge) {
+            ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
             if (connected.TYPE == 1) {
                 mappers.add(connected);
                 if (reducer != null)
@@ -57,14 +57,14 @@ public class RequestHandler implements Runnable {
     //Inform the mappers about the reducer
     private void informBulk() {
         mappers.stream().forEach(s -> new SenderSocket(s.serverName, s.port,
-                new NetworkPayload(1, false, new ConAcknowledge(3, reducer.serverName, reducer.port),
+                new NetworkPayload(1, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
                         Master.getServerName(), Master.getPort(), 200, "Done")).run());
     }
 
     //Get the last one added
-    private void inform(ConAcknowledge added) {
+    private void inform(ConnectionAcknowledge added) {
         new SenderSocket(added.serverName, added.port,
-                new NetworkPayload(1, false, new ConAcknowledge(3, reducer.serverName, reducer.port),
+                new NetworkPayload(1, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
                         Master.getServerName(), Master.getPort(), 200, "Done")).run();
     }
 
