@@ -1,6 +1,7 @@
 package com.haifisch.server.map;
 
 import com.haifisch.server.CheckInMap;
+import com.haifisch.server.PointOfInterest;
 import com.haifisch.server.NetworkTools.*;
 import com.haifisch.server.datamanagement.*;
 
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 public class Mapper implements Runnable {
 
     private CheckInRequest request;
-    private CheckInMap<String, Integer> counters;
+    private CheckInMap<String, PointOfInterest> counters;
     public boolean shitHappened = false;
 
     public Mapper(CheckInRequest request) {
@@ -28,7 +29,7 @@ public class Mapper implements Runnable {
         db.connectToDatabase();
 
         //----> mporei na alla3ei an dn einai swsto i veltistopoiimeno
-        String query = "SELECT POI, photos FROM checkins "
+        String query = "SELECT POI, POI_name, photos, latitude FROM checkins " //TODO
                 + "WHERE longitude BETWEEN " + request.getLeftCorner().getLongtitude()
                 + " AND " + request.getRightCorner().getLongtitude()
                 + " AND latitude BETWEEN " + request.getRightCorner().getLatitude()
@@ -39,18 +40,23 @@ public class Mapper implements Runnable {
         ResultSet result = db.executeQuery(query);
 
         db.closeConnection();
-
-        ArrayList<ArrayList<String>> entries = new ArrayList<ArrayList<String>>();
+        
+        int cores = Runtime.getRuntime().availableProcessors();
+        
+        double interval =  
+        		Math.abs((request.getLeftCorner().getLatitude() - request.getRightCorner().getLatitude())/cores);
+        
+        ArrayList<ArrayList<CheckIn>> entries = new ArrayList<ArrayList<CheckIn>>();
+        
+        for(int c=0; c<cores; c++)
+        	entries.add(new ArrayList<CheckIn>());
 
         try {
             while (result.next()) {
-                ArrayList<String> e = new ArrayList<String>();
-                //adding POI
-                e.add(result.getString(0));
-                //adding photo
-                e.add(result.getString(1));
-
-                entries.add(e);
+                CheckIn e = new CheckIn(result.getString(0), result.getString(1), result.getString(2));
+                double lat = result.getDouble(3);
+                int list = (int)Math.floor((lat - request.getRightCorner().getLatitude())/interval);
+                entries.get(list).add(e);
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
@@ -59,22 +65,25 @@ public class Mapper implements Runnable {
             return;
         }
         
+        /*
         entries.stream().sorted((e1, e2) -> e1.get(0).compareTo(e2.get(0))); //---> einai swsto to compareTo edw?? (nmz nai)
         //TODO xwrise tn lista se kommatia analoga me tous epe3ergastes....an ginetai apeu8eias sto stream kalitera...meta efarmwse map.....
+        counters = map(request.getRequestId(), entries);*/
+        
         counters = map(request.getRequestId(), entries);
 
     }
 
-    public CheckInMap<String, Integer> map(Object key, Object value) {
+    public CheckInMap<String, PointOfInterest> map(Object key, Object value) {
 
-        ArrayList<ArrayList<String>> entries = (ArrayList<ArrayList<String>>) value;
+        ArrayList<ArrayList<CheckIn>> entries = (ArrayList<ArrayList<CheckIn>>) value;
 
-        CheckInMap<String, Integer> counters = new CheckInMap<String, Integer>();
+        //CheckInMap<String, Integer> counters = new CheckInMap<String, Integer>();
 
-        entries.parallelStream().forEach(e -> countArea(counters, e));
+        entries.parallelStream().map(e -> countArea(e));
         
         //--->kati pipes p dokimaza....to 8ema m einai oti o allos prepei na ta parei ta3inomimena...ara emeis giati na tou dinoume Map???
-        List<Entry<String,Integer>> list = counters.entrySet()
+        List<Entry<String, PointOfInterest>> list = counters.entrySet()
                 .stream()
                 .sorted((e1,e2)-> Integer.compare(e1.getValue(),e2.getValue()))
                 .collect(Collectors.toList()); //---> dn 3erw t kanei auto edw!!!
@@ -83,17 +92,37 @@ public class Mapper implements Runnable {
 
     }
 
-    private void countArea(CheckInMap<String, Integer> counters, ArrayList<String> entry) {
-
-        if (counters.containsKey(entry.get(0))) {
-            counters.replace(entry.get(0), counters.get(entry.get(0)) + 1);
-            //---> dn eimai sigouri an kanei pragmati auto p 8elw...
-        } else {
-            counters.put(entry.get(0), 1);
-        }
+    private CheckInMap<String, PointOfInterest> countArea(ArrayList<CheckIn> entries) {
+    	
+    	CheckInMap<String, PointOfInterest> counters = new CheckInMap<String, PointOfInterest>();
+    	
+    	/*-------> AN EXEI PERISSOTERO NOIMA ETSI AS TO ALLA3OUME
+    	entries.parallelStream().forEach( e -> 
+    	{ if(counters.containsKey(e.getPOI())){ //SIMEIWSI!!! edw epeidi i containsKey tsekarei ta hashCodes autos einai valid elegxos
+            counters.get(e.getPOI()).addCheckIn(e.getLINK());
+          } else {
+        	PointOfInterest val = new PointOfInterest(e.getPOI(), e.getPOI_NAME()); 
+        	val.addCheckIn(e.getLINK());
+            counters.put(e.getPOI(), val );
+          }
+    	});
+    	*/
+    	
+    	for(CheckIn e : entries){
+    	if(counters.containsKey(e.getPOI())){ //SIMEIWSI!!! edw epeidi i containsKey tsekarei ta hashCodes autos einai valid elegxos
+            counters.get(e.getPOI()).addCheckIn(e.getLINK());
+          } else {
+        	PointOfInterest val = new PointOfInterest(e.getPOI(), e.getPOI_NAME()); 
+        	val.addCheckIn(e.getLINK());
+            counters.put(e.getPOI(), val );
+          }
+    	}
+    	
+    	
+    	return counters;
     }
 
-    private CheckInMap<String, Integer> getResults() {
+    private CheckInMap<String, PointOfInterest> getResults() {
         return counters;
     }
 
