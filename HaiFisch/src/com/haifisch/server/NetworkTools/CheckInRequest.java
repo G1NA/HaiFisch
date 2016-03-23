@@ -1,5 +1,7 @@
 package com.haifisch.server.NetworkTools;
 
+import com.haifisch.server.map.*;   //---->Mallon prepei na 3anadoume se poio package 8a vriksetai to Point...
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -11,8 +13,8 @@ public class CheckInRequest implements Serializable {
 	private String areaName;
     //---> 8ewrw oti to 0 einai to longitude kai to 1 einai to latitude
     //---> parola auta isws einai kali kapou mia klassi Coordinates...
-    private double[] leftCorner;
-    private double[] rightCorner;
+    private Point leftCorner;
+    private Point rightCorner;
     private Timestamp fromTime;
     private Timestamp toTime;
     private String requestId; //This will be generated from the master server to identify a client request
@@ -21,7 +23,7 @@ public class CheckInRequest implements Serializable {
 
     }
     
-    public CheckInRequest(String area, double[] left, double[] right, Timestamp from, Timestamp to, String id){
+    public CheckInRequest(String area, Point left, Point right, Timestamp from, Timestamp to, String id){
     	areaName = area;
     	leftCorner = left;
     	rightCorner = right;
@@ -43,11 +45,11 @@ public class CheckInRequest implements Serializable {
         this.areaName = area_name;
     }
 
-    public double[] getLeftCorner() {
+    public Point getLeftCorner() {
         return leftCorner;
     }
 
-    public void setLeftCorner(double[] left_corner) {
+    public void setLeftCorner(Point left_corner) {
         this.leftCorner = left_corner;
     }
 
@@ -55,11 +57,11 @@ public class CheckInRequest implements Serializable {
         return requestId;
     }
 
-    public double[] getRightCorner() {
+    public Point getRightCorner() {
         return rightCorner;
     }
 
-    public void setRightCorner(double[] right_corner) {
+    public void setRightCorner(Point right_corner) {
         this.rightCorner = right_corner;
     }
 

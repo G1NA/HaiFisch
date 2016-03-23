@@ -6,6 +6,9 @@ import com.haifisch.server.datamanagement.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class Mapper implements Runnable {
 
@@ -26,10 +29,10 @@ public class Mapper implements Runnable {
 
         //----> mporei na alla3ei an dn einai swsto i veltistopoiimeno
         String query = "SELECT POI, photos FROM checkins "
-                + "WHERE longitude BETWEEN " + request.getLeftCorner()[0]
-                + " AND " + request.getRightCorner()[0]
-                + " AND latitude BETWEEN " + request.getRightCorner()[1]
-                + " AND " + request.getLeftCorner()[1]
+                + "WHERE longitude BETWEEN " + request.getLeftCorner().getLongtitude()
+                + " AND " + request.getRightCorner().getLongtitude()
+                + " AND latitude BETWEEN " + request.getRightCorner().getLatitude()
+                + " AND " + request.getLeftCorner().getLatitude()
                 + " AND time BETWEEN " + request.getFromTime()
                 + " AND " + request.getToTime();
 
@@ -55,7 +58,9 @@ public class Mapper implements Runnable {
             shitHappened = true;
             return;
         }
-
+        
+        entries.stream().sorted((e1, e2) -> e1.get(0).compareTo(e2.get(0))); //---> einai swsto to compareTo edw?? (nmz nai)
+        //TODO xwrise tn lista se kommatia analoga me tous epe3ergastes....an ginetai apeu8eias sto stream kalitera...meta efarmwse map.....
         counters = map(request.getRequestId(), entries);
 
     }
@@ -67,7 +72,13 @@ public class Mapper implements Runnable {
         CheckInMap<String, Integer> counters = new CheckInMap<String, Integer>();
 
         entries.parallelStream().forEach(e -> countArea(counters, e));
-
+        
+        //--->kati pipes p dokimaza....to 8ema m einai oti o allos prepei na ta parei ta3inomimena...ara emeis giati na tou dinoume Map???
+        List<Entry<String,Integer>> list = counters.entrySet()
+                .stream()
+                .sorted((e1,e2)-> Integer.compare(e1.getValue(),e2.getValue()))
+                .collect(Collectors.toList()); //---> dn 3erw t kanei auto edw!!!
+        
         return counters;
 
     }
