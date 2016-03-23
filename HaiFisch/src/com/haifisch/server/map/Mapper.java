@@ -78,15 +78,20 @@ public class Mapper implements Runnable {
 
         ArrayList<ArrayList<CheckIn>> entries = (ArrayList<ArrayList<CheckIn>>) value;
 
-        //CheckInMap<String, Integer> counters = new CheckInMap<String, Integer>();
-
-        entries.parallelStream().map(e -> countArea(e));
+        CheckInMap<String, PointOfInterest> intermediate = new CheckInMap<String, PointOfInterest>();
         
-        //--->kati pipes p dokimaza....to 8ema m einai oti o allos prepei na ta parei ta3inomimena...ara emeis giati na tou dinoume Map???
-        List<Entry<String, PointOfInterest>> list = counters.entrySet()
+        entries.parallelStream().map(e -> countArea(e)).forEach(r-> intermediate.putAll(r));
+        
+        CheckInMap<String, PointOfInterest> counters = 
+        		(CheckInMap<String, PointOfInterest>) intermediate.entrySet()
                 .stream()
-                .sorted((e1,e2)-> Integer.compare(e1.getValue(),e2.getValue()))
-                .collect(Collectors.toList()); //---> dn 3erw t kanei auto edw!!!
+                .sorted((e1,e2)-> e1.getValue().compareTo(e2.getValue()))
+                .limit(10)
+                .collect(Collectors.toMap(
+                        e -> e.getKey(),
+                        e -> e.getValue()));
+                //-------> apla euxomai na  kanei ontws auto pou 8elw
+        
         
         return counters;
 
@@ -122,7 +127,7 @@ public class Mapper implements Runnable {
     	return counters;
     }
 
-    private CheckInMap<String, PointOfInterest> getResults() {
+    public CheckInMap<String, PointOfInterest> getResults() {
         return counters;
     }
 
