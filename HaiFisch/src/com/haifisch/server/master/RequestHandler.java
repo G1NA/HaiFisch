@@ -2,6 +2,8 @@ package com.haifisch.server.master;
 
 import com.haifisch.server.NetworkTools.*;
 
+import java.util.HashMap;
+
 import static com.haifisch.server.master.Master.mappers;
 import static com.haifisch.server.master.Master.reducer;
 import static com.haifisch.server.master.Master.servingClients;
@@ -34,12 +36,15 @@ public class RequestHandler implements Runnable {
             else {
 
                 String client_id = new RandomString(10).nextString();
-                servingClients.put(client_id, new Client(request.SENDER_NAME, request.SENDER_PORT, client_id));
+                //Will be changed later on
+                servingClients.put(client_id, new Client(request.SENDER_NAME, request.SENDER_PORT, client_id,
+                        mappers.size(), new HashMap<>()));
                 //Do what the client asked
 
             }
         } else if (request.payload instanceof CheckInRes) {
             String client_id = ((CheckInRes) request.payload).getRequest_id();
+
             //Return the result to the client that requested it
             Client client = Master.servingClients.get(client_id);
             SenderSocket socket = new SenderSocket(client.getClientAddress(), client.getClientPort(),
@@ -49,7 +54,7 @@ public class RequestHandler implements Runnable {
                 Master.actionLog(socket.getError());
             servingClients.remove(client_id);
 
-        } else if (request.payload instanceof CheckinAdd) {
+        } else if (request.payload instanceof CheckInAdd) {
             //add the new checkin and return a positive response
         }
     }
