@@ -6,6 +6,7 @@ public class Request_Manager implements Runnable{
 	public void run() {
 		// TODO Auto-generated method stub
 		//---> starts a Mapper thread
+		
 		//---> waits for join
 		//---> getResults()
 		//---> Sending Sockets sends the results to reducer
