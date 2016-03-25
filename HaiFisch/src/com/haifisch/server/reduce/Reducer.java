@@ -3,6 +3,8 @@ package com.haifisch.server.reduce;
 import com.haifisch.server.CheckInMap;
 
 public class Reducer implements ReduceWorker {
+	
+	CheckInMap<Integer, Object> map = new CheckInMap<>();
 
 	@Override
 	public void initialize() {
@@ -24,7 +26,7 @@ public class Reducer implements ReduceWorker {
 
 	@Override
 	public CheckInMap<Integer, Object> reduce(int key, Object value) {
-		CheckInMap<Integer, Object> map = new CheckInMap<>();
+		//TODO when get home
 		
 		return null;
 	}
