@@ -42,9 +42,9 @@ public class Config {
                             new ConnectionAcknowledge(0, split[0].substring(split[0].indexOf(':')),
                                     Integer.getInteger(split[1].substring(split[1].indexOf(':'))));
                     Point[] points = new Point[2];
-                    String[] len = split[2].split(",");
+                    String[] len = split[2].substring(split[2].indexOf(":")).split(",");
                     points[0] = new Point(Double.parseDouble(len[0]), Double.parseDouble(len[1]));
-                    len = split[3].split(",");
+                    len = split[3].substring(split[3].indexOf(":")).split(",");
                     points[1] = new Point(Double.parseDouble(len[0]), Double.parseDouble(len[1]));
                     map.put(connectionAcknowledge, points);
                 }
