@@ -3,6 +3,7 @@ package com.haifisch.server.reduce;
 import com.haifisch.server.NetworkTools.CheckInRes;
 import com.haifisch.server.NetworkTools.ConnectionAcknowledge;
 import com.haifisch.server.NetworkTools.NetworkPayload;
+import com.haifisch.server.NetworkTools.NetworkPayloadType;
 import com.haifisch.server.NetworkTools.SenderSocket;
 import com.haifisch.server.master.Master;
 
@@ -25,7 +26,7 @@ public class RequestHandler implements Runnable {
 
     private void errorResponse() {
         SenderSocket send = new SenderSocket(request.SENDER_NAME, request.SENDER_PORT,
-                new NetworkPayload(3, false, null,
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
                         "Sup", 5, 400, "No mappers or reducer present in the network"));
         send.run();
         if (!send.isSent())

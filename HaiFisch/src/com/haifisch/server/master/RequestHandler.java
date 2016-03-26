@@ -49,7 +49,7 @@ public class RequestHandler implements Runnable {
             //Return the result to the client that requested it
             Client client = Master.servingClients.get(client_id);
             SenderSocket socket = new SenderSocket(client.getClientAddress(), client.getClientPort(),
-                    new NetworkPayload(1, false, request.payload, Master.getServerName(), Master.getPort(), 200, "Done"));
+                    new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, false, request.payload, Master.getServerName(), Master.getPort(), 200, "Done"));
             socket.run();
             if (!socket.isSent())
                 Master.actionLog(socket.getError());
@@ -63,20 +63,20 @@ public class RequestHandler implements Runnable {
     //Inform the mappers about the reducer
     private void informBulk() {
         mappers.stream().forEach(s -> new SenderSocket(s.serverName, s.port,
-                new NetworkPayload(3, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
                         Master.getServerName(), Master.getPort(), 200, "Done")).run());
     }
 
     //Get the last one added
     private void inform(ConnectionAcknowledge added) {
         new SenderSocket(added.serverName, added.port,
-                new NetworkPayload(3, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
                         Master.getServerName(), Master.getPort(), 200, "Done")).run();
     }
 
     private void errorResponse() {
         SenderSocket send = new SenderSocket(request.SENDER_NAME, request.SENDER_PORT,
-                new NetworkPayload(3, false, null,
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
                         Master.getServerName(), Master.getPort(), 400, "No mappers or reducer present in the network"));
         send.run();
         if (!send.isSent())

@@ -3,15 +3,15 @@ package com.haifisch.server.utils;
 /** Class that represents a point on a map. */
 public class Point {
 
-	public int longtitude;
-	public int latitude;
+	public Double longtitude;
+	public Double latitude;
 	
 	/**
 	 * Constructor.
 	 * @param longtitude
 	 * @param latitude
 	 */
-	public Point(int longtitude, int latitude) {
+	public Point(Double longtitude, Double latitude) {
 	
 		this.longtitude = longtitude;
 		this.latitude = latitude;
@@ -21,7 +21,7 @@ public class Point {
 	 * Sets the longtitude of a map coordinate.
 	 * @param longtitude
 	 */
-	public void setLongtitude(int longtitude) {
+	public void setLongtitude(Double longtitude) {
 
 		this.longtitude = longtitude;
 	}
@@ -30,7 +30,7 @@ public class Point {
 	 * Sets the latitude of a map coordinate.
 	 * @param latitude
 	 */
-	public void setLatitude(int latitude) {
+	public void setLatitude(Double latitude) {
 
 		this.latitude = latitude;
 	}
@@ -39,7 +39,7 @@ public class Point {
 	 * Gets the longtitude of a map coordinate.
 	 * @return longtitude
 	 */
-	public int getLongtitude() {
+	public Double getLongtitude() {
 
 		return longtitude;
 	}
@@ -48,7 +48,7 @@ public class Point {
 	 * Gets the latitude of a map coordinate.
 	 * @return latitude
 	 */
-	public int getLatitude() {
+	public Double getLatitude() {
 
 		return latitude;
 	}
