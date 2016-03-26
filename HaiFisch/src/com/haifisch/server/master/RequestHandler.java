@@ -1,6 +1,7 @@
 package com.haifisch.server.master;
 
 import com.haifisch.server.NetworkTools.*;
+import com.haifisch.server.utils.RandomString;
 
 import java.util.HashMap;
 

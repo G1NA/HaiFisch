@@ -1,6 +1,8 @@
 package com.haifisch.server.map;
 
 import com.haifisch.server.*;
+import com.haifisch.server.utils.CheckInMap;
+import com.haifisch.server.utils.PointOfInterest;
 
 /**
  * A Worker interface for the map process.

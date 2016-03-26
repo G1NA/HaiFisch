@@ -2,7 +2,7 @@ package com.haifisch.server.master;
 
 
 import com.haifisch.server.NetworkTools.CheckInRequest;
-import com.haifisch.server.map.Point;
+import com.haifisch.server.utils.Point;
 import com.sun.jmx.snmp.Timestamp;
 
 public class Assignment {

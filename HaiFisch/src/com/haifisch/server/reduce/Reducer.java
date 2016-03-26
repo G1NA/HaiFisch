@@ -2,9 +2,8 @@ package com.haifisch.server.reduce;
 
 import java.util.ArrayList;
 
-import com.haifisch.server.CheckInMap;
-import com.haifisch.server.PointOfInterest;
-import com.haifisch.server.map.CheckIn;
+import com.haifisch.server.utils.CheckInMap;
+import com.haifisch.server.utils.PointOfInterest;
 
 public class Reducer implements /*ReduceWorker, */ Runnable {
 	

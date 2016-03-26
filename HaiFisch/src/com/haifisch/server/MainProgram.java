@@ -1,9 +1,8 @@
 package com.haifisch.server;
 
-import java.awt.EventQueue;
-
 import com.haifisch.server.map.MapperConfiguration;
-import com.haifisch.server.map.Point;
+import com.haifisch.server.utils.Point;
+import com.haifisch.server.utils.Configuration;
 
 
 public class MainProgram {

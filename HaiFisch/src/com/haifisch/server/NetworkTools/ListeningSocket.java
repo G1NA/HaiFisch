@@ -1,6 +1,6 @@
 package com.haifisch.server.NetworkTools;
 
-import com.haifisch.server.master.RandomString;
+import com.haifisch.server.utils.RandomString;
 
 import java.io.IOException;
 import java.net.ServerSocket;

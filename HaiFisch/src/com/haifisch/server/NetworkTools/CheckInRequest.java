@@ -1,6 +1,6 @@
 package com.haifisch.server.NetworkTools;
 
-import com.haifisch.server.map.*;   //---->Mallon prepei na 3anadoume se poio package 8a vriksetai to Point...
+import com.haifisch.server.utils.Point;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

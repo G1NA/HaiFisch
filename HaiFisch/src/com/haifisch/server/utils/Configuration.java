@@ -1,4 +1,4 @@
-package com.haifisch.server;
+package com.haifisch.server.utils;
 
 public class Configuration {
     public final String masterServerName;

@@ -1,8 +1,8 @@
 package com.haifisch.server.map;
 
-import com.haifisch.server.CheckInMap;
+import com.haifisch.server.utils.CheckInMap;
 import com.haifisch.server.NetworkTools.CheckInRequest;
-import com.haifisch.server.PointOfInterest;
+import com.haifisch.server.utils.PointOfInterest;
 import com.haifisch.server.datamanagement.DatabaseManager;
 
 import java.sql.ResultSet;

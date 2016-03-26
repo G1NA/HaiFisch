@@ -1,4 +1,4 @@
-package com.haifisch.server;
+package com.haifisch.server.utils;
 
 import java.util.*;
 

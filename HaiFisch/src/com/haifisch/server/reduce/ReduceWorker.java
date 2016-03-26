@@ -1,6 +1,8 @@
 package com.haifisch.server.reduce;
 
 import com.haifisch.server.*;
+import com.haifisch.server.utils.CheckInMap;
+import com.haifisch.server.utils.PointOfInterest;
 
 /**
  * A Worker interface for the reduce process.

@@ -1,6 +1,7 @@
 package com.haifisch.server.map;
 
-import com.haifisch.server.Configuration;
+import com.haifisch.server.utils.Configuration;
+import com.haifisch.server.utils.Point;
 
 public class MapperConfiguration extends Configuration {
     public String reducerName;

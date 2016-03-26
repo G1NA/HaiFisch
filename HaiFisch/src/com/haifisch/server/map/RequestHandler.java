@@ -1,12 +1,12 @@
 package com.haifisch.server.map;
 
-import com.haifisch.server.CheckInMap;
+import com.haifisch.server.utils.CheckInMap;
 import com.haifisch.server.NetworkTools.CheckInRequest;
 import com.haifisch.server.NetworkTools.ConnectionAcknowledge;
 import com.haifisch.server.NetworkTools.NetworkPayload;
 import com.haifisch.server.NetworkTools.SenderSocket;
 import com.haifisch.server.master.Master;
-import com.haifisch.server.master.RandomString;
+import com.haifisch.server.utils.RandomString;
 
 public class RequestHandler implements Runnable {
     private final NetworkPayload request;
