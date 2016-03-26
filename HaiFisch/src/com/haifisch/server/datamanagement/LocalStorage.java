@@ -76,4 +76,14 @@ public class LocalStorage {
         return objects;
     }
 
+    public File readFile(String filename) {
+        try {
+            return new File(filename);
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+
 }

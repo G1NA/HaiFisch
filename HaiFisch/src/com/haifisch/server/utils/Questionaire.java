@@ -11,10 +11,10 @@ public class Questionaire {
 	final int masterServerPort;
 	final String reducerName;
 	final int reducerPort;
-	final int topLeftCoordinateLongitude;
-	final int topLeftCoordinateLatitude;
-	final int bottomRightCoordinateLongtitude;
-	final int bottomRightCoordinateLatitude;
+	final Double topLeftCoordinateLongitude;
+	final Double topLeftCoordinateLatitude;
+	final Double bottomRightCoordinateLongtitude;
+	final Double bottomRightCoordinateLatitude;
 	
 	/**  
 	*Set the master server 's name.
@@ -60,7 +60,7 @@ public class Questionaire {
 	*Set the top left point 's longtitude.
 	*@return value
 	*/
-	private int setTopLeftLongtitude() {
+	private Double setTopLeftLongtitude() {
 		
 		System.out.println("Enter top left point 's longtitude:\n");
 		return scanner.nextInt();
@@ -70,7 +70,7 @@ public class Questionaire {
 	*Set the top left point 's latitude.
 	*@return value
 	*/
-	private int setTopLeftLatitude() {
+	private Double setTopLeftLatitude() {
 		
 		System.out.println("Enter top left point 's latitude:\n");
 		return scanner.nextInt();
@@ -80,7 +80,7 @@ public class Questionaire {
 	*Set the bottom right point 's longtitude.
 	*@return value
 	*/
-	private int setBottomRightLongtitude() {
+	private Double setBottomRightLongtitude() {
 		
 		System.out.println("Enter bottom right point 's longtitude:\n");
 		return scanner.nextInt();
@@ -90,7 +90,7 @@ public class Questionaire {
 	*Set the bottom right point 's latitude.
 	*@return value
 	*/
-	private int setBottomRightLatitude() {
+	private Double setBottomRightLatitude() {
 		
 		System.out.println("Enter bottom right point 's latitude:\n");
 		return scanner.nextInt();
