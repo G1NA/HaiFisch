@@ -1,14 +1,13 @@
 package com.haifisch.server.map;
 
 import com.haifisch.server.CheckInMap;
+import com.haifisch.server.NetworkTools.CheckInRequest;
 import com.haifisch.server.PointOfInterest;
-import com.haifisch.server.NetworkTools.*;
-import com.haifisch.server.datamanagement.*;
+import com.haifisch.server.datamanagement.DatabaseManager;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class Mapper implements Runnable {
@@ -18,7 +17,7 @@ public class Mapper implements Runnable {
     private int topK;
     public boolean shitHappened = false;
 
-    public Mapper(CheckInRequest request, int topK) {
+    public Mapper(CheckInRequest request) {
         this.request = request;
         this.topK = topK;
     }

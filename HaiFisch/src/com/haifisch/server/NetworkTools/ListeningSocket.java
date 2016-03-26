@@ -1,5 +1,7 @@
 package com.haifisch.server.NetworkTools;
 
+import com.haifisch.server.master.RandomString;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -56,7 +58,7 @@ public class ListeningSocket implements Runnable {
     public void run() {
         while (true)
             try {
-                new ServingSocket(socket.accept(), callback);
+                new Thread(new ServingSocket(socket.accept(), callback), new RandomString(5).nextString()).start();
             } catch (IOException e) {
                 e.printStackTrace();
                 //Shit happened something will be called here to restart the damn thing
