@@ -63,14 +63,14 @@ public class RequestHandler implements Runnable {
     //Inform the mappers about the reducer
     private void informBulk() {
         mappers.stream().forEach(s -> new SenderSocket(s.serverName, s.port,
-                new NetworkPayload(1, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
+                new NetworkPayload(3, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
                         Master.getServerName(), Master.getPort(), 200, "Done")).run());
     }
 
     //Get the last one added
     private void inform(ConnectionAcknowledge added) {
         new SenderSocket(added.serverName, added.port,
-                new NetworkPayload(1, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
+                new NetworkPayload(3, false, new ConnectionAcknowledge(3, reducer.serverName, reducer.port),
                         Master.getServerName(), Master.getPort(), 200, "Done")).run();
     }
 

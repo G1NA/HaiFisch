@@ -20,6 +20,9 @@ public class RequestHandler implements Runnable {
         //Get the connections coming from mappers and reducers that add themselves to the mapper pool
         if (request.payload instanceof ConnectionAcknowledge) {
             ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
+            if(connected.TYPE == 3){
+                //Store reducer name and port
+            }
 
         } else if (request.payload instanceof CheckInRequest) {
             Mapper map = new Mapper((CheckInRequest) request.payload);
