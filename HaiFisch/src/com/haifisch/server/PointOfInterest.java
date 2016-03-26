@@ -8,12 +8,14 @@ public class PointOfInterest implements Comparable<PointOfInterest>{
 	private String name;
 	private ArrayList<String> photos;
 	private int numOfCheckIns;
+	private int numOfPhotos;
 	
 	public PointOfInterest(String id, String name){
 		this.id = id;
 		this.name = name;
 		this.photos = new ArrayList<String>();
 		this.numOfCheckIns = 0;
+		this.numOfPhotos = 0;
 	}
 	
 	public String getID(){ return this.id; }
@@ -23,6 +25,8 @@ public class PointOfInterest implements Comparable<PointOfInterest>{
 	public ArrayList<String> getPhotos(){ return this.photos; }
 	
 	public int getNumberOfCheckIns(){ return this.numOfCheckIns; }
+	
+	public int getNumberOfPhotos(){ return this.numOfPhotos; }
 	
 	public void addPhoto(String link){
 		
@@ -40,9 +44,8 @@ public class PointOfInterest implements Comparable<PointOfInterest>{
 	}
 
 	public int compareTo(PointOfInterest p) {
-		
-		return Integer.signum(this.getNumberOfCheckIns()- p.getNumberOfCheckIns());
-			
+		//return Integer.signum(this.getNumberOfCheckIns()- p.getNumberOfCheckIns());
+		return Integer.signum(this.getNumberOfPhotos() - p.getNumberOfPhotos());
 	}
 	
 }

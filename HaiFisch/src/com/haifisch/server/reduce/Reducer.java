@@ -1,38 +1,50 @@
 package com.haifisch.server.reduce;
 
+import java.util.ArrayList;
+
 import com.haifisch.server.CheckInMap;
+import com.haifisch.server.PointOfInterest;
+import com.haifisch.server.map.CheckIn;
 
-public class Reducer implements ReduceWorker {
+public class Reducer implements /*ReduceWorker, */ Runnable {
 	
-	CheckInMap<Integer, Object> map = new CheckInMap<>();
+	//CheckInMap<Integer, Object> map = new CheckInMap<>();
 
-	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void waitForTasksThread() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void waitForMasterAck() {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
-	public CheckInMap<Integer, Object> reduce(int key, Object value) {
-		//TODO when get home
+	public void run() {
+		//
+		
+	}
+
+	public CheckInMap<Integer, PointOfInterest> reduce(Integer key, Object value) {
+		// the reducer should get top-K places from each mapper
+		// calculate the final top-K ones
+		// and discard duplicate photos
+		 ArrayList<ArrayList<PointOfInterest>> places = (ArrayList<ArrayList<PointOfInterest>>) value;
+		 
+		 //places.parallelStream().reduce(); //TODO today
+		
+		
 		
 		return null;
 	}
 
-	@Override
-	public void sendResults(CheckInMap<Integer, Object> map) {
+	public void sendResults(CheckInMap<Integer, PointOfInterest> map) {
 		// TODO Auto-generated method stub
 		
 	}

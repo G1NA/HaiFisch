@@ -14,7 +14,7 @@ public interface MapWorker extends Worker {
 	 * @param value
 	 * @return
 	 */
-	public CheckInMap<Integer, Object> map(Object key, Object value);
+	public CheckInMap<Integer, PointOfInterest> map(Object key, Object value);
 	
 	/**
 	 * 
@@ -25,6 +25,6 @@ public interface MapWorker extends Worker {
 	 * Sends the map for reducing to the respective workers.
 	 * @param map to be reduced
 	 */
-	public void sendToReducers(CheckInMap<Integer, Object> map);
+	public void sendToReducers(CheckInMap<Integer, PointOfInterest> map);
 	
 }

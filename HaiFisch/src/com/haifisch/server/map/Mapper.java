@@ -15,10 +15,12 @@ public class Mapper implements Runnable {
 
     private CheckInRequest request;
     private CheckInMap<String, PointOfInterest> counters;
+    private int topK;
     public boolean shitHappened = false;
 
-    public Mapper(CheckInRequest request) {
+    public Mapper(CheckInRequest request, int topK) {
         this.request = request;
+        this.topK = topK;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class Mapper implements Runnable {
         
         ArrayList<ArrayList<CheckIn>> entries = new ArrayList<ArrayList<CheckIn>>();
         
-        for(int c=0; c<cores; c++)
+        for(int c = 0; c < cores; c++)
         	entries.add(new ArrayList<CheckIn>());
 
         try {
@@ -59,7 +61,6 @@ public class Mapper implements Runnable {
                 entries.get(list).add(e);
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             shitHappened = true;
             return;
@@ -86,7 +87,7 @@ public class Mapper implements Runnable {
         		(CheckInMap<String, PointOfInterest>) intermediate.entrySet()
                 .stream()
                 .sorted((e1,e2)-> e1.getValue().compareTo(e2.getValue()))
-                .limit(10)
+                .limit(this.topK)
                 .collect(Collectors.toMap(
                         e -> e.getKey(),
                         e -> e.getValue()));
