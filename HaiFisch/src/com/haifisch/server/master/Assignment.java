@@ -1,10 +1,10 @@
 package com.haifisch.server.master;
 
 
-import java.sql.Timestamp;
 import com.haifisch.server.NetworkTools.CheckInRequest;
 import com.haifisch.server.utils.Point;
-//import com.sun.jmx.snmp.Timestamp; //---> evgaze error gi auto evala to Timestamp ts sql ^
+
+import java.sql.Timestamp;
 
 public class Assignment {
     CheckInRequest request;

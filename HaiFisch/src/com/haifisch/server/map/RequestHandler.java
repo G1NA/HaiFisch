@@ -64,7 +64,7 @@ public class RequestHandler implements Runnable {
 
     private void errorResponse() {
         SenderSocket send = new SenderSocket(request.SENDER_NAME, request.SENDER_PORT,
-                new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, null,
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
                 		Map_Server.getMapperName(), Map_Server.getMapperPort(), 400, "Shit happened"));
         send.run();
         if (!send.isSent())

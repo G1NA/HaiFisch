@@ -49,7 +49,7 @@ public class RequestHandler implements Runnable {
             //Return the result to the client that requested it
             Client client = Master.servingClients.get(client_id);
             SenderSocket socket = new SenderSocket(client.getClientAddress(), client.getClientPort(),
-                    new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, false, request.payload, Master.getServerName(), Master.getPort(), 200, "Done"));
+                    new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, request.payload, Master.getServerName(), Master.getPort(), 200, "Done"));
             socket.run();
             if (!socket.isSent())
                 Master.actionLog(socket.getError());
