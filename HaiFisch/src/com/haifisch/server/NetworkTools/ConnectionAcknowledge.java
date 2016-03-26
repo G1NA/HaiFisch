@@ -6,7 +6,7 @@ public class ConnectionAcknowledge implements Serializable{
 
 	private static final long serialVersionUID = 7342155718917655917L;
 	
-	public final int TYPE;
+	public final int TYPE; //---> mporei  na ginei enum alla dn einai kai aparaitito apla isws itan pio omorfo
     public final String serverName;
     public final int port;
 

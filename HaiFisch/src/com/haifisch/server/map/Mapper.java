@@ -14,12 +14,10 @@ public class Mapper implements Runnable {
 
     private CheckInRequest request;
     private CheckInMap<String, PointOfInterest> counters;
-    private int topK;
     public boolean shitHappened = false;
 
     public Mapper(CheckInRequest request) {
         this.request = request;
-        this.topK = topK;
     }
 
     @Override
@@ -86,7 +84,7 @@ public class Mapper implements Runnable {
         		(CheckInMap<String, PointOfInterest>) intermediate.entrySet()
                 .stream()
                 .sorted((e1,e2)-> e1.getValue().compareTo(e2.getValue()))
-                .limit(this.topK)
+                .limit(this.request.getTopK())
                 .collect(Collectors.toMap(
                         e -> e.getKey(),
                         e -> e.getValue()));

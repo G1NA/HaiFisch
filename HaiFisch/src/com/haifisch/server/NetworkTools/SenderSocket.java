@@ -22,6 +22,7 @@ public class SenderSocket implements Runnable {
     }
 
     public void run() {
+    	sent = false; //---> gia epanaxrisimopoiisi tou idiou SenderSocket opws ston RequestHandler tou Mapper
         try {
             Socket sender = new Socket(serverName, port);
             new DataOutputStream(sender.getOutputStream()).write(Serialize.serialize(payload));

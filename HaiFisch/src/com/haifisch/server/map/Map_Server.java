@@ -6,6 +6,12 @@ import com.haifisch.server.utils.Point;
 
 
 public class Map_Server {
+	
+	//---> dn ta ekana final giati dn ginetai na ta arxikopoiisei i main an einai final
+	
+	//----> arxikopoiountai apo to Listening Socket
+	private static String name; 
+	private static int port;
 
 	public static void main(String args[]) {
 
@@ -23,25 +29,37 @@ public class Map_Server {
 		topRightPoint.print(); //DEBUG
 		bottomLeftPoint.print(); //DEBUG
 
+		//----> gia svisimo
 		//Create a new configuration object for the master server.
-		Configuration MasterConfig = new Configuration(q.masterServerName, q.masterServerPort);
+		//Configuration MasterConfig = new Configuration(q.masterServerName, q.masterServerPort);
 
 		//Create a new configuration object for all the mappers.
-		MapperConfiguration MapperConfig = new
-				MapperConfiguration(q.masterServerName, q.masterServerPort, q.reducerName, q.reducerPort,
+		MapperConfiguration MapperConfig = MapperConfiguration.getMapperConfiguration(q.masterServerName, q.masterServerPort, q.reducerName, q.reducerPort,
 				topLeftPoint, bottomRightPoint);
 
 
 		//WAITING IMPLEMENTATION....
 
-		//Create a new configuration object for the reducer.
-		//ReducerConfiguration ReducerConfig = new ReducerConfiguration();
+		//create a listening socket
+		
+		//serving socket results
+		
+		//manager (Request_Manager) thread activated 
 
 		//END WAITING IMPLEMENTATION.
 
+		//---> gia svisimo
+		//Create a new configuration object for the reducer.
+		//ReducerConfiguration ReducerConfig = new ReducerConfiguration();
 
 
 	}
+	
+	//---> gia na mn mporei na ta "peira3ei" kapoios, afou dn ginetai na einai final, ta ekana private kai eftia3a getters.
+	
+	public static String getMapperName(){ return name; }
+	
+	public static int getMapperPort(){ return port; }
 
 }
-}
+

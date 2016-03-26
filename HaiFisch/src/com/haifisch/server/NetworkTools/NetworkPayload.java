@@ -9,7 +9,7 @@ public class NetworkPayload implements Serializable {
 	
 	public Serializable payload;
     public final boolean REQUIRE_RESPONSE;
-    public final int PAYLOAD_TYPE;
+    public final NetworkPayloadType PAYLOAD_TYPE; //---> mporei  na ginei enum alla dn einai kai aparaitito apla isws itan pio omorfo
     public final String SENDER_NAME;
     public final int SENDER_PORT;
     public final int STATUS;
@@ -25,7 +25,7 @@ public class NetworkPayload implements Serializable {
      * @param status
      * @param message
      */
-    public NetworkPayload(int type, boolean reqResp, Serializable payload, String senderName, int senderPort, int status, String message) {
+    public NetworkPayload(NetworkPayloadType type, boolean reqResp, Serializable payload, String senderName, int senderPort, int status, String message) {
         this.payload = payload;
         REQUIRE_RESPONSE = reqResp;
         PAYLOAD_TYPE = type;

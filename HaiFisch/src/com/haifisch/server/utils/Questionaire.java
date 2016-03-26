@@ -7,14 +7,15 @@ public class Questionaire {
 	
 	static Scanner scanner;
 	
-	final String masterServerName;
-	final int masterServerPort;
-	final String reducerName;
-	final int reducerPort;
-	final int topLeftCoordinateLongitude;
-	final int topLeftCoordinateLatitude;
-	final int bottomRightCoordinateLongtitude;
-	final int bottomRightCoordinateLatitude;
+	//---> ta evala public alla mporoume na valoume kai getters
+	public final String masterServerName;
+	public final int masterServerPort;
+	public final String reducerName;
+	public final int reducerPort;
+	public final int topLeftCoordinateLongitude;
+	public final int topLeftCoordinateLatitude;
+	public final int bottomRightCoordinateLongtitude;
+	public final int bottomRightCoordinateLatitude;
 	
 	/**  
 	*Set the master server 's name.
