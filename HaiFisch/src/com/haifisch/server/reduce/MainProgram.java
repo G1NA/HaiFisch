@@ -1,9 +1,8 @@
 package com.haifisch.server.reduce;
 
-import com.haifisch.server.utils.Questionaire;
-import com.haifisch.server.map.MapperConfiguration;
-import com.haifisch.server.utils.Point;
 import com.haifisch.server.utils.Configuration;
+import com.haifisch.server.utils.Point;
+import com.haifisch.server.utils.Questionaire;
 
 
 public class MainProgram {
@@ -26,11 +25,7 @@ public class MainProgram {
 		
 		//Create a new configuration object for the master server.
 		Configuration MasterConfig = new Configuration(q.masterServerName, q.masterServerPort);
-		
-		//Create a new configuration object for all the mappers.
-		MapperConfiguration MapperConfig = new 
-		MapperConfiguration(q.masterServerName, q.masterServerPort, q.reducerName, q.reducerPort, 
-		topLeftPoint, bottomRightPoint);
+		;
 		
 		
 		//WAITING IMPLEMENTATION....

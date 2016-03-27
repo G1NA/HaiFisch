@@ -23,7 +23,7 @@ public class Mapper implements Runnable {
     @Override
     public void run() {
 
-        DatabaseManager db = new DatabaseManager("jdbc:mysql://localhost:3306/sys?user=p3130052&password=oyhya9lo");
+        DatabaseManager db = new DatabaseManager("jdbc:mysql://195.251.252.98/ds_systems_2016?user=omada26&password=omada26db");
 
         db.connectToDatabase();
 

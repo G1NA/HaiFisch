@@ -37,9 +37,9 @@ public class ServingSocket implements Runnable {
                 array[i] = blist.get(i);
 
             NetworkPayload payload = (NetworkPayload) Serialize.deserialize(array);
-            if (payload.PAYLOAD_TYPE == 4) {
+            if (payload.PAYLOAD_TYPE == NetworkPayloadType.STATUS_CHECK) {
                 SenderSocket reply = new SenderSocket(payload.SENDER_NAME, payload.SENDER_PORT,
-                        new NetworkPayload(4, false, null, clientSocket.getLocalSocketAddress().toString(),
+                        new NetworkPayload(NetworkPayloadType.STATUS_REPLY, false, null, clientSocket.getLocalSocketAddress().toString(),
                                 clientSocket.getLocalPort(), 200, "Alive and kicking"));
                 reply.run();
                 return;

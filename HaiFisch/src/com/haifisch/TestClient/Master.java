@@ -4,6 +4,7 @@ import com.haifisch.server.NetworkTools.*;
 import com.haifisch.server.utils.Point;
 import com.haifisch.server.utils.RandomString;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,8 +24,16 @@ public class Master {
 
     public static void main(String[] args) {
         //retrieve from config the data
-        mappers = Config.getInstance().getMapperData();
-        reducer = Config.getInstance().getReducerData();
+        try {
+            mappers = Config.getInstance().getMapperData();
+            reducer = Config.getInstance().getReducerData();
+        }
+        catch (IOException e){
+            System.out.println("Well....shit");
+            e.printStackTrace();
+            return;
+        }
+
         //TODO will be changed
         ListeningSocket server = new ListeningSocket(null);
         new Thread(server, "listener").start();
@@ -76,7 +85,7 @@ public class Master {
 
                         SenderSocket socket = new SenderSocket(connectionAcknowledge.serverName,
                                 connectionAcknowledge.port,
-                                new NetworkPayload(1, true,
+                                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, true,
                                         req, server.getName(), server.getPort(), 200, "show me the money"));
                         socket.run();
                         if (!socket.isSent())
