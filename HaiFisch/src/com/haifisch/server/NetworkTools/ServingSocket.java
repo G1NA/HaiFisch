@@ -1,6 +1,6 @@
 package com.haifisch.server.NetworkTools;
 
-import com.haifisch.server.NetworkTools.utils.Serialize;
+import com.haifisch.server.utils.Serialize;
 
 import java.io.DataInputStream;
 import java.net.Socket;

@@ -1,6 +1,6 @@
 package com.haifisch.server.datamanagement;
 
-import com.haifisch.server.NetworkTools.utils.Serialize;
+import com.haifisch.server.utils.Serialize;
 import com.haifisch.server.utils.RandomString;
 
 import java.io.File;

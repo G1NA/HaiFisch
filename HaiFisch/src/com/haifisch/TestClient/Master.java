@@ -13,13 +13,13 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 //Master server class, will be used for testing during the 1st phase
-public class Master {
+public class Master implements onConnectionListener {
 
     private static String server;
     private static int serverPort;
-    private static volatile int threadCounter;
-    static volatile HashMap<ConnectionAcknowledge, Point[]> mappers = new HashMap<>();
-    static volatile ConnectionAcknowledge reducer;
+    private static int threadCounter;
+    private static HashMap<ConnectionAcknowledge, Point[]> mappers = new HashMap<>();
+    private static ConnectionAcknowledge reducer;
     static volatile Master masterThread;
 
     public static void main(String[] args) {
@@ -27,8 +27,7 @@ public class Master {
         try {
             mappers = Config.getInstance().getMapperData();
             reducer = Config.getInstance().getReducerData();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Well....shit");
             e.printStackTrace();
             return;
@@ -107,5 +106,20 @@ public class Master {
 
     synchronized public static int getPort() {
         return serverPort;
+    }
+
+    @Override
+    public void onConnect(NetworkPayload payload) {
+        if (payload.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS && payload.payload == null)
+            System.out.println("Mapper at: "
+                    + payload.SENDER_NAME + ":" + payload.SENDER_PORT + " finished processing request");
+        else if (payload.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
+            System.out.println("Found " + ((CheckInRes) payload.payload).getNoOfPics() + " check ins at given area");
+        }
+    }
+
+    @Override
+    public void onSent(boolean result) {
+
     }
 }

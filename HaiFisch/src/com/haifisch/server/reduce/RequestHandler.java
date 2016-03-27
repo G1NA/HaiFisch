@@ -16,18 +16,20 @@ public class RequestHandler implements Runnable {
 
     @Override
     public void run() {
-        //Get the connections coming from mappers and reducers that add themselves to the mapper pool
+        //Will only be used if we want to know which mappers will communicate with us
         if (request.payload instanceof ConnectionAcknowledge) {
 
+            //Receive the mapper results and run the reduce function
         } else if (request.payload instanceof CheckInRes) {
 
         }
     }
 
     private void errorResponse() {
-        SenderSocket send = new SenderSocket(request.SENDER_NAME, request.SENDER_PORT,
+        //Demo data until the configuration dialog is operational
+        SenderSocket send = new SenderSocket("masterServerName", 10,
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
-                        "Sup", 5, 400, "No mappers or reducer present in the network"));
+                        "Sup", 5, 500, "Something went terribly wrong"));
         send.run();
         if (!send.isSent())
             Master.actionLog(send.getError());

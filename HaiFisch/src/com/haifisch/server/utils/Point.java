@@ -3,8 +3,8 @@ package com.haifisch.server.utils;
 /** Class that represents a point on a map. */
 public class Point {
 
-	public Double longtitude;
-	public Double latitude;
+	public Double longtitude; //X IMPORTANT
+	public Double latitude;// Y IMPORTANT
 	
 	/**
 	 * Constructor.
