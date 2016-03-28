@@ -82,5 +82,10 @@ public class MapperConfiguration extends Configuration {
         this.reducerName = reducerName;
         this.reducerPort = reducerPort;
     }
+    
+    public String getReducer() {
+    	
+    	return reducerName;
+    }
 
 }
