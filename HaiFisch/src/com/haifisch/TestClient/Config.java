@@ -46,6 +46,7 @@ public class Config {
                 map.put(connectionAcknowledge, points);
             }
         }
+        reader.close();
         return map;
     }
 
