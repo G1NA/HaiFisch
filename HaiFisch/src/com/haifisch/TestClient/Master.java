@@ -71,7 +71,8 @@ public class Master implements onConnectionListener {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
+                
+                scan.close();
                 Timestamp stampTo = new Timestamp(date.getTime());
 
                 CheckInRequest req = new CheckInRequest("None", left, right, stampFrom,
