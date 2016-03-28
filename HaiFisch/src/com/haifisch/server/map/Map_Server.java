@@ -1,8 +1,14 @@
 package com.haifisch.server.map;
 
 import com.haifisch.server.utils.Questionaire;
+
+import java.io.IOException;
+import java.awt.EventQueue;
+
 import com.haifisch.server.utils.Configuration;
 import com.haifisch.server.utils.Point;
+import com.haifisch.server.NetworkTools.ListeningSocket;
+import com.haifisch.server.NetworkTools.onConnectionListener;
 
 
 public class Map_Server {
@@ -12,11 +18,14 @@ public class Map_Server {
 	//----> arxikopoiountai apo to Listening Socket
 	private static String name; 
 	private static int port;
+	private static Questionaire q;
 
+	private static onConnectionListener callback;
+	
 	public static void main(String args[]) {
 
 		//Create the object that will get all the input information from the user.
-		Questionaire q = new Questionaire();
+		q = new Questionaire();
 
 		//Create the points on the map represented by the given coordinates.
 		Point topLeftPoint = new Point (q.topLeftCoordinateLongitude, q.topLeftCoordinateLatitude);
@@ -37,10 +46,12 @@ public class Map_Server {
 		MapperConfiguration MapperConfig = MapperConfiguration.getMapperConfiguration(q.masterServerName, q.masterServerPort, q.reducerName, q.reducerPort,
 				topLeftPoint, bottomRightPoint);
 
-
+		
+		CreateListeningSocket(); //Create the listening socket.
+		
 		//WAITING IMPLEMENTATION....
 
-		//create a listening socket
+		//create a listening socket --> Done.
 		
 		//serving socket results
 		
@@ -60,6 +71,25 @@ public class Map_Server {
 	public static String getMapperName(){ return name; }
 	
 	public static int getMapperPort(){ return port; }
+	
+	private static void CreateListeningSocket() {
+		
+		try{
+			
+			//Create the threads needed.
+			EventQueue.invokeLater(new ListeningSocket(q.masterServerPort, callback));
+			
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		
+	}
+	
+
+	
 
 }
 
