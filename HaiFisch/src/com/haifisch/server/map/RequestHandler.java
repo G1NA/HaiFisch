@@ -33,10 +33,10 @@ public class RequestHandler implements Runnable {
                 if (map.shitHappened) {
                     errorResponse();
                 } else {
-                    CheckInMap<String, PointOfInterest> pois = map.getResults();
-
+                	//Add the results to the packet
+                    CheckInRes results = new CheckInRes(((CheckInRequest)request.payload).getRequestId(),map.getResults()); 
                     SenderSocket send = new SenderSocket(MapperConfiguration.getMapperConfiguration().reducerName, MapperConfiguration.getMapperConfiguration().reducerPort,
-                            new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, pois,
+                            new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, results,
                                     Map_Server.getMapperName(), Map_Server.getMapperPort(), 200, "Results incoming"));
                     send.run();
                     if (send.isSent())

@@ -2,36 +2,27 @@ package com.haifisch.server.NetworkTools;
 
 import java.io.Serializable;
 
+import com.haifisch.server.utils.CheckInMap;
+import com.haifisch.server.utils.PointOfInterest;
+
+//TODO UPDATE THE FIELDS WITH RELEVANT ATTRIBUTES AS NEEDED
 public class CheckInRes implements Serializable{
 
 	private static final long serialVersionUID = 26787521582L;
-	
-	private String place;
-    private int noOfPics;
+
     private String requestId;//This will be generated from the master server to identify a client request
+    private CheckInMap<String, PointOfInterest>  map;
 
-    public CheckInRes(String place, int noOfPics, String request_id) {
-        this.place = place;
-        this.noOfPics = noOfPics;
-        this.requestId = request_id;
+    public CheckInRes(String requestId, CheckInMap map) {
+    	this.requestId = requestId;
+        this.map = map;
     }
-
-    public String getPlace() {
-        return place;
+    
+    public CheckInMap<String, PointOfInterest>  getMap(){
+    	
+    	return map;
     }
-
-    public void setPlace(String place) {
-        this.place = place;
-    }
-
-    public int getNoOfPics() {
-        return noOfPics;
-    }
-
-    public void setNoOfPics(int noOfPics) {
-        this.noOfPics = noOfPics;
-    }
-
+    
     public String getRequest_id() {
         return requestId;
     }
