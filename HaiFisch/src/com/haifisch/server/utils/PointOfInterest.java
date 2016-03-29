@@ -1,8 +1,9 @@
 package com.haifisch.server.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
-public class PointOfInterest implements Comparable<PointOfInterest>{
+public class PointOfInterest implements Comparable<PointOfInterest> {
 	
 	private String id;
 	private String name;
@@ -30,22 +31,37 @@ public class PointOfInterest implements Comparable<PointOfInterest>{
 	
 	public void addPhoto(String link){
 		
-		if(!link.equals("Not exists"))
+		if(!link.equalsIgnoreCase("Not exists"))
 			photos.add(link);
+		
+		++this.numOfPhotos;
 	}
 	
 	public void incrementCheckIns(){
-		this.numOfCheckIns++;
+		++this.numOfCheckIns;
+	}
+	
+	public void incrementCheckInsBy(int value){
+		this.numOfCheckIns += value;
+	}
+	
+	protected void addPhotos(Collection<? extends String> photos){
+		photos.stream().forEach(p -> addPhoto(p));
 	}
 	
 	public void addCheckIn(String link){
 		this.incrementCheckIns();
 		this.addPhoto(link);
 	}
+	
+	public void incrementObject(PointOfInterest poi){
+		// we've checked the equality of the poi's -> its about the same place
+		this.incrementCheckInsBy(poi.getNumberOfCheckIns());
+		this.addPhotos(poi.getPhotos());
+	}
 
 	public int compareTo(PointOfInterest p) {
-		//return Integer.signum(this.getNumberOfCheckIns()- p.getNumberOfCheckIns());
-		return Integer.signum(this.getNumberOfPhotos() - p.getNumberOfPhotos());
+		return Integer.signum(this.getNumberOfCheckIns()- p.getNumberOfCheckIns());
 	}
 	
 }

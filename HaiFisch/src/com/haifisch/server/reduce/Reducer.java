@@ -1,13 +1,15 @@
 package com.haifisch.server.reduce;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.haifisch.server.utils.CheckInMap;
 import com.haifisch.server.utils.PointOfInterest;
 
 public class Reducer implements /*ReduceWorker, */ Runnable {
 	
-	//CheckInMap<Integer, Object> map = new CheckInMap<>();
+	private CheckInMap<String, PointOfInterest> map = new CheckInMap<>();
+	private int topK;
 
 	public void initialize() {
 		// TODO Auto-generated method stub
@@ -29,18 +31,40 @@ public class Reducer implements /*ReduceWorker, */ Runnable {
 		//
 		
 	}
+	
+	public void addMap(CheckInMap<String, PointOfInterest> addition){
+		for (Map.Entry<String, PointOfInterest> e : addition.entrySet()){
+			if (map.containsKey(e)) // then just add the found checkins
+				map.get(e).incrementObject(e.getValue());
+			else
+				map.put(e.getKey(), e.getValue());
+		}
+	}
 
-	public CheckInMap<Integer, PointOfInterest> reduce(Integer key, Object value) {
+	public CheckInMap<String, PointOfInterest> reduce(/*Integer key, CheckInMap<String, PointOfInterest> value*/) {
 		// the reducer should get top-K places from each mapper
 		// calculate the final top-K ones
 		// and discard duplicate photos
-		 ArrayList<ArrayList<PointOfInterest>> places = (ArrayList<ArrayList<PointOfInterest>>) value;
-		 
-		 //places.parallelStream().reduce(); //TODO today
 		
-		
-		
-		return null;
+		CheckInMap<String, PointOfInterest> reducedMap = 
+		(CheckInMap<String, PointOfInterest>) 	
+									map.values().parallelStream()
+												.sorted()
+												.limit(this.topK)
+												
+												
+												.collect(Collectors.toMap(
+									                      v -> ((PointOfInterest) v).getID(),
+									                      v -> (PointOfInterest) v
+									                     ));
+												
+		return reducedMap;
+	}
+	
+	protected void cleanupDuplicatePhotos(){
+		this.map.entrySet().parallelStream().forEach(p -> {
+			
+		});
 	}
 
 	public void sendResults(CheckInMap<Integer, PointOfInterest> map) {

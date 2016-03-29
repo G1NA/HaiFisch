@@ -83,7 +83,7 @@ public class Mapper implements Runnable {
         CheckInMap<String, PointOfInterest> counters = 
         		(CheckInMap<String, PointOfInterest>) intermediate.entrySet()
                 .stream()
-                .sorted((e1,e2)-> e1.getValue().compareTo(e2.getValue()))
+                .sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue()))
                 .limit(this.request.getTopK())
                 .collect(Collectors.toMap(
                         e -> e.getKey(),
@@ -112,13 +112,13 @@ public class Mapper implements Runnable {
     	*/
     	
     	for(CheckIn e : entries){
-    	if(counters.containsKey(e.getPOI())){ //SIMEIWSI!!! edw epeidi i containsKey tsekarei ta hashCodes autos einai valid elegxos
-            counters.get(e.getPOI()).addCheckIn(e.getLINK());
-          } else {
-        	PointOfInterest val = new PointOfInterest(e.getPOI(), e.getPOI_NAME()); 
-        	val.addCheckIn(e.getLINK());
-            counters.put(e.getPOI(), val );
-          }
+	    	if(counters.containsKey(e.getPOI())){ //SIMEIWSI!!! edw epeidi i containsKey tsekarei ta hashCodes autos einai valid elegxos
+	    		counters.get(e.getPOI()).addCheckIn(e.getLINK());
+            } else {
+            	PointOfInterest val = new PointOfInterest(e.getPOI(), e.getPOI_NAME()); 
+            	val.addCheckIn(e.getLINK());
+            	counters.put(e.getPOI(), val );
+            }
     	}
     	
     	
