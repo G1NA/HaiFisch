@@ -3,7 +3,9 @@ package com.haifisch.server.NetworkTools;
 import com.haifisch.server.utils.RandomString;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
+import java.net.UnknownHostException;
 
 public class ListeningSocket implements Runnable {
     private ServerSocket socket;
@@ -34,7 +36,12 @@ public class ListeningSocket implements Runnable {
 
     public String getName(){
         if(socket!=null)
-            return socket.getInetAddress().toString();
+            try {
+                return Inet4Address.getLocalHost().toString();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+                return null;
+            }
         else
             return null;
     }

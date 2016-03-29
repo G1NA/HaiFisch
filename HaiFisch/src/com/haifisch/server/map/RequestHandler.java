@@ -2,8 +2,6 @@ package com.haifisch.server.map;
 
 import com.haifisch.server.NetworkTools.*;
 import com.haifisch.server.master.Master;
-import com.haifisch.server.utils.CheckInMap;
-import com.haifisch.server.utils.PointOfInterest;
 import com.haifisch.server.utils.RandomString;
 
 public class RequestHandler implements Runnable {
@@ -37,14 +35,14 @@ public class RequestHandler implements Runnable {
                     CheckInRes results = new CheckInRes(((CheckInRequest)request.payload).getRequestId(),map.getResults()); 
                     SenderSocket send = new SenderSocket(MapperConfiguration.getMapperConfiguration().reducerName, MapperConfiguration.getMapperConfiguration().reducerPort,
                             new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, results,
-                                    Map_Server.getMapperName(), Map_Server.getMapperPort(), 200, "Results incoming"));
+                                    Map_Server.server.getName(), Map_Server.server.getPort(), 200, "Results incoming"));
                     send.run();
                     if (send.isSent())
                         System.out.println("Done");
 
                     send = new SenderSocket(MapperConfiguration.getMapperConfiguration().masterServerName, MapperConfiguration.getMapperConfiguration().masterServerPort,
                             new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, null,
-                                    Map_Server.getMapperName(), Map_Server.getMapperPort(), 200, "Done with request"));
+                                    Map_Server.server.getName(), Map_Server.server.getPort(), 200, "Done with request"));
                     send.run();
                     if (send.isSent())
                         System.out.println("Done");
@@ -60,7 +58,7 @@ public class RequestHandler implements Runnable {
     private void errorResponse() {
         SenderSocket send = new SenderSocket(request.SENDER_NAME, request.SENDER_PORT,
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
-                        Map_Server.getMapperName(), Map_Server.getMapperPort(), 400, "Something went wrong!"));
+                        Map_Server.server.getName(), Map_Server.server.getPort(), 400, "Something went wrong!"));
         send.run();
         if (!send.isSent())
             Master.actionLog(send.getError());

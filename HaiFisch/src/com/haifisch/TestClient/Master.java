@@ -115,7 +115,7 @@ public class Master implements onConnectionListener {
             System.out.println("Mapper at: "
                     + payload.SENDER_NAME + ":" + payload.SENDER_PORT + " finished processing request");
         else if (payload.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
-            System.out.println("Found " + ((CheckInRes) payload.payload).getNoOfPics() + " check ins at given area");
+            System.out.println("Found " + ((CheckInRes) payload.payload).getRequest_id() + " check ins at given area");
         }
     }
 
