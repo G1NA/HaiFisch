@@ -10,8 +10,6 @@ public class MapperConfiguration extends Configuration {
 	private static final int LEFT = 1;
 	private static final int RIGHT = 2;
 	
-	public String name; //mapper's name
-	public int port; // mapper's port
     public String reducerName;
     public int reducerPort;
     public Point left;

@@ -7,13 +7,30 @@ public class PointOfInterest implements Comparable<PointOfInterest> {
 	
 	private String id;
 	private String name;
+	private String category;
+	private int category_id;
+	private Point coords;
 	private ArrayList<String> photos;
 	private int numOfCheckIns;
-	private int numOfPhotos;
+	private int numOfPhotos; //---> pou xreiazetai?
 	
-	public PointOfInterest(String id, String name){
+	public PointOfInterest(String id, String name, String category, int category_id, Point coords){
 		this.id = id;
 		this.name = name;
+		this.category = category;
+		this.category_id = category_id;
+		this.coords = coords;
+		this.photos = new ArrayList<String>();
+		this.numOfCheckIns = 0;
+		this.numOfPhotos = 0;
+	}
+	
+	public PointOfInterest(String id, String name, String category, int category_id, double longitude, double latitude){
+		this.id = id;
+		this.name = name;
+		this.category = category;
+		this.category_id = category_id;
+		this.coords = new Point(longitude, latitude);
 		this.photos = new ArrayList<String>();
 		this.numOfCheckIns = 0;
 		this.numOfPhotos = 0;
@@ -22,6 +39,12 @@ public class PointOfInterest implements Comparable<PointOfInterest> {
 	public String getID(){ return this.id; }
 	
 	public String getName(){ return this.name; }
+	
+	public String getCategory(){ return this.category; }
+	
+	public int getCategoryId(){ return this.category_id; }
+	
+	public Point getCoordinates(){ return this.coords; }
 	
 	public ArrayList<String> getPhotos(){ return this.photos; }
 	

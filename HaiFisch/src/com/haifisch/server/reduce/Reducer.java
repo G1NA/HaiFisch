@@ -72,4 +72,9 @@ public class Reducer implements /*ReduceWorker, */ Runnable {
 		
 	}
 
+	public CheckInMap getResults() { //---> genika apo8ikeuse kapou ta apotelesmata sou kai 8a ta pairnei o RequestHandler me tn me8odo auti
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -28,7 +28,7 @@ public class Mapper implements Runnable {
         db.connectToDatabase();
 
         //----> mporei na alla3ei an dn einai swsto i veltistopoiimeno
-        String query = "SELECT POI, POI_name, photos, latitude FROM checkins " //TODO
+        String query = "SELECT * FROM checkins " //TODO
                 + "WHERE longitude BETWEEN " + request.getLeftCorner().getLongtitude()
                 + " AND " + request.getRightCorner().getLongtitude()
                 + " AND latitude BETWEEN " + request.getRightCorner().getLatitude()
@@ -52,7 +52,11 @@ public class Mapper implements Runnable {
 
         try {
             while (result.next()) {
-                CheckIn e = new CheckIn(result.getString(0), result.getString(1), result.getString(2));
+            	/* results of the form:
+            	 * 0:id 1:user 2:POI 3:POI_name 4:POI_category 5:POI_category_id 6:longitude 7:latitude 8:time 9:photos 
+            	 * */
+                CheckIn e = new CheckIn(result.getString(2), result.getString(3), result.getString(4), 
+                		result.getInt(5),result.getDouble(6), result.getDouble(7), result.getString(9));
                 double lat = result.getDouble(3);
                 int list = (int)Math.floor((lat - request.getRightCorner().getLatitude())/interval);
                 entries.get(list).add(e);
@@ -115,7 +119,7 @@ public class Mapper implements Runnable {
 	    	if(counters.containsKey(e.getPOI())){ //SIMEIWSI!!! edw epeidi i containsKey tsekarei ta hashCodes autos einai valid elegxos
 	    		counters.get(e.getPOI()).addCheckIn(e.getLINK());
             } else {
-            	PointOfInterest val = new PointOfInterest(e.getPOI(), e.getPOI_NAME()); 
+            	PointOfInterest val = new PointOfInterest(e.getPOI(), e.getPOI_NAME(), e.getPOI_CATEGORY(), e.getPOI_CATEGORY_ID(), e.getCOORDINATES()); 
             	val.addCheckIn(e.getLINK());
             	counters.put(e.getPOI(), val );
             }
