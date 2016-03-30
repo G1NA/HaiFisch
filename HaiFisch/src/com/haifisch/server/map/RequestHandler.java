@@ -1,13 +1,12 @@
 package com.haifisch.server.map;
 
 import com.haifisch.server.NetworkTools.*;
-import com.haifisch.server.master.Master;
 import com.haifisch.server.utils.RandomString;
 
-public class RequestHandler implements Runnable {
+class RequestHandler implements Runnable {
     private final NetworkPayload request;
 
-    public RequestHandler(NetworkPayload payload) {
+    RequestHandler(NetworkPayload payload) {
         this.request = payload;
     }
 
@@ -31,8 +30,8 @@ public class RequestHandler implements Runnable {
                 if (map.shitHappened) {
                     errorResponse();
                 } else {
-                	//Add the results to the packet
-                    CheckInRes results = new CheckInRes(((CheckInRequest)request.payload).getRequestId(),map.getResults()); 
+                    //Add the results to the packet
+                    CheckInRes results = new CheckInRes(((CheckInRequest) request.payload).getRequestId(), map.getResults());
                     SenderSocket send = new SenderSocket(MapperConfiguration.getMapperConfiguration().reducerName, MapperConfiguration.getMapperConfiguration().reducerPort,
                             new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, results,
                                     Map_Server.server.getName(), Map_Server.server.getPort(), 200, "Results incoming"));
@@ -61,6 +60,6 @@ public class RequestHandler implements Runnable {
                         Map_Server.server.getName(), Map_Server.server.getPort(), 400, "Something went wrong!"));
         send.run();
         if (!send.isSent())
-            Master.actionLog(send.getError());
+            System.err.println("Failed to send error!");
     }
 }

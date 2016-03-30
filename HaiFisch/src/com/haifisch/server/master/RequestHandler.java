@@ -9,7 +9,7 @@ import static com.haifisch.server.master.Master.mappers;
 import static com.haifisch.server.master.Master.reducer;
 import static com.haifisch.server.master.Master.servingClients;
 
-public class RequestHandler implements Runnable {
+class RequestHandler implements Runnable {
     private final NetworkPayload request;
 
     public RequestHandler(NetworkPayload payload) {

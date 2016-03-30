@@ -10,12 +10,7 @@ import com.haifisch.server.utils.Questionaire;
 public class Map_Server extends MainProgram implements onConnectionListener {
 
     public static Map_Server server;
-    private static String name;
-    private static int port;
     private final MapperConfiguration configuration;
-    private volatile static Thread listening_thread;
-    private volatile static Thread butler;
-    private volatile static Thread console;
 
     public static void main(String args[]) {
 
@@ -35,9 +30,9 @@ public class Map_Server extends MainProgram implements onConnectionListener {
         bottomLeftPoint.print(); //DEBUG
 
         //Create a new configuration object for all the mappers.
-        MapperConfiguration MapperConfig = MapperConfiguration.getMapperConfiguration(q.masterServerName,
+        MapperConfiguration mapperConfig = MapperConfiguration.getMapperConfiguration(q.masterServerName,
                 q.masterServerPort, q.reducerName, q.reducerPort);
-        server = new Map_Server(null);
+        server = new Map_Server(mapperConfig);
         server.toolsInit();
 
     }
@@ -45,13 +40,7 @@ public class Map_Server extends MainProgram implements onConnectionListener {
     private Map_Server(MapperConfiguration configuration) {
         this.configuration = configuration;
         createListeningSocket(); //Create the listening socket.
-    }
-
-    public static void close() {
-        butler.interrupt();
-        listening_thread.interrupt();
-        console.interrupt();
-        System.exit(1);
+        connectToMaster(configuration.masterServerName,configuration.masterServerPort);
     }
 
     @Override
@@ -70,3 +59,4 @@ public class Map_Server extends MainProgram implements onConnectionListener {
     }
 }
 
+;

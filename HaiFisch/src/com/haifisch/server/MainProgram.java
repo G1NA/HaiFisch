@@ -1,8 +1,6 @@
 package com.haifisch.server;
 
-import com.haifisch.server.NetworkTools.ListeningSocket;
-import com.haifisch.server.NetworkTools.NetworkPayload;
-import com.haifisch.server.NetworkTools.onConnectionListener;
+import com.haifisch.server.NetworkTools.*;
 import com.haifisch.server.utils.Questionaire;
 
 import java.util.Scanner;
@@ -75,10 +73,23 @@ public class MainProgram implements onConnectionListener {
         System.out.println("The server is running on: " + name + ":" + port);
     }
 
+    protected void connectToMaster(String name, int port) {
+        SenderSocket socket_ack = new SenderSocket(name, port,
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null, getName(), getPort(), 200, "connected"));
+        socket_ack.run();
+        if (!socket_ack.isSent()) {
+            System.err.println("Failed to send Connection Acknowledge to master server!\nClosing mapper!");
+            close();
+        }
+    }
+
     public static void close() {
-        butler.interrupt();
-        listening_thread.interrupt();
-        console.interrupt();
+        if (butler != null)
+            butler.interrupt();
+        if (listening_thread != null)
+            listening_thread.interrupt();
+        if (console != null)
+            console.interrupt();
         System.exit(1);
     }
 

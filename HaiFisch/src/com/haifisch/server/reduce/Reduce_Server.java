@@ -14,6 +14,7 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
 
     private final Configuration configuration;
     public static Reduce_Server server;
+    private static volatile HashMap<String, ArrayList<CheckInMap<String, PointOfInterest>>> requests = new HashMap<>();
 
     public static void main(String args[]) {
 
@@ -21,35 +22,23 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
         //Create the object that will get all the input information from the user.
         Questionaire q = new Questionaire();
 
-        //Create the points on the map represented by the given coordinates.
-        Point topLeftPoint = new Point(q.topLeftCoordinateLongitude, q.topLeftCoordinateLatitude);
-        Point bottomRightPoint = new Point(q.bottomRightCoordinateLongtitude, q.bottomRightCoordinateLatitude);
-
-        //Calculate the other two points of the map.
-        Point bottomLeftPoint = new Point(topLeftPoint.longtitude, bottomRightPoint.latitude);
-        Point topRightPoint = new Point(bottomRightPoint.longtitude, topLeftPoint.latitude);
-
-        topRightPoint.print(); //DEBUG
-        bottomLeftPoint.print(); //DEBUG
-
         //Create a new configuration object for all the mappers.
         Configuration config = new Configuration(q.masterServerName, q.masterServerPort);
         server = new Reduce_Server(config);
         server.toolsInit();
-
-        HashMap<String, ArrayList<CheckInMap<String, PointOfInterest>>> requests = new HashMap<String, ArrayList<CheckInMap<String, PointOfInterest>>>();
     }
 
     private Reduce_Server(Configuration configuration) {
         this.configuration = configuration;
-        super.createListeningSocket(); //Create the listening socket.
+        createListeningSocket(); //Create the listening socket.
+        connectToMaster(configuration.masterServerName, configuration.masterServerPort);
     }
 
 
     @Override
     public void onConnect(NetworkPayload payload) {
         System.out.println("Serving new request from: " + payload.SENDER_NAME);
-        new Thread(new com.haifisch.server.map.RequestHandler(payload)).start();
+        new Thread(new RequestHandler(payload)).start();
     }
 
     @Override
@@ -59,6 +48,21 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
 
     public Configuration getConfiguration() {
         return configuration;
+    }
+
+    public static ArrayList<CheckInMap<String, PointOfInterest>> getData(String id) {
+        return requests.get(id);
+    }
+
+    public static void putData(String id, CheckInMap<String, PointOfInterest> map) {
+
+        if (!requests.containsKey(id))
+            requests.put(id, new ArrayList<>());
+        requests.get(id).add(map);
+    }
+
+    public static void removeDate(String id) {
+        requests.remove(id);
     }
 }
 

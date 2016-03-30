@@ -4,21 +4,15 @@ import com.haifisch.server.NetworkTools.CheckInRes;
 import com.haifisch.server.NetworkTools.NetworkPayload;
 import com.haifisch.server.NetworkTools.NetworkPayloadType;
 import com.haifisch.server.NetworkTools.SenderSocket;
-import com.haifisch.server.master.Master;
-import com.haifisch.server.utils.CheckInMap;
-import com.haifisch.server.utils.PointOfInterest;
+import com.haifisch.server.utils.Configuration;
 import com.haifisch.server.utils.RandomString;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+class RequestHandler implements Runnable {
 
-public class RequestHandler implements Runnable {
     private final NetworkPayload request;
-    private HashMap<String, ArrayList<CheckInMap<String, PointOfInterest>>> requests;
 
-    public RequestHandler(NetworkPayload payload, HashMap<String, ArrayList<CheckInMap<String, PointOfInterest>>> requests) {
+    RequestHandler(NetworkPayload payload) {
         this.request = payload;
-        this.requests = requests;
     }
 
     @Override
@@ -28,17 +22,12 @@ public class RequestHandler implements Runnable {
         //Will only be used if we want to know which mappers will communicate with us
         if (request.PAYLOAD_TYPE == NetworkPayloadType.CONNECTION_ACK) {
             // ---> edw dn 3erw t paizei akrivws
+
             //Receive the mapper results and run the reduce function
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
             CheckInRes res = (CheckInRes) request.payload;
 
-            if (requests.containsKey(res.getRequest_id())) {
-                requests.get(res.getRequest_id()).add(res.getMap());
-            } else {
-                ArrayList<CheckInMap<String, PointOfInterest>> list = new ArrayList<CheckInMap<String, PointOfInterest>>();
-                list.add(res.getMap());
-                requests.put(res.getRequest_id(), list);
-            }
+            Reduce_Server.putData(res.getRequest_id(), res.getMap());
 
 
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.START_REDUCE) {
@@ -48,7 +37,9 @@ public class RequestHandler implements Runnable {
             Reducer reduce = new Reducer();
             Thread r = new Thread(reduce, new RandomString(6).nextString());
             r.setPriority(Thread.MAX_PRIORITY);
-            ArrayList<CheckInMap<String, PointOfInterest>> res = requests.remove(request.payload);
+            Reduce_Server.getData(request.MESSAGE).forEach(reduce::addMap);
+            Reduce_Server.removeDate(request.MESSAGE);
+
             // ----> add res in the reducer thread 
             r.start();
             try {
@@ -60,8 +51,8 @@ public class RequestHandler implements Runnable {
                         new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, results,
                                 Reduce_Server.server.getName(), Reduce_Server.server.getPort(), 200, "Results incoming"));
                 send.run();
-                if (send.isSent())
-                    System.out.println("Done");
+                if (!send.isSent())
+                    errorResponse();
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -70,12 +61,13 @@ public class RequestHandler implements Runnable {
     }
 
     private void errorResponse() {
+        Configuration config = Reduce_Server.server.getConfiguration();
         //Demo data until the configuration dialog is operational
-        SenderSocket send = new SenderSocket("masterServerName", 10,
-                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
-                        "Sup", 5, 500, "Something went terribly wrong"));
+        SenderSocket send = new SenderSocket(config.masterServerName, config.masterServerPort,
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null, "Sup", 5, 500,
+                        "Something went terribly wrong"));
         send.run();
         if (!send.isSent())
-            Master.actionLog(send.getError());
+            System.err.println("Failed to send error");
     }
 }
