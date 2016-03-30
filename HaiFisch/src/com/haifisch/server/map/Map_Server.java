@@ -9,7 +9,7 @@ import com.haifisch.server.utils.Questionaire;
 
 public class Map_Server extends MainProgram implements onConnectionListener {
 
-    public static Map_Server server;
+    public volatile static Map_Server server;
     private final MapperConfiguration configuration;
 
     public static void main(String args[]) {
@@ -44,17 +44,17 @@ public class Map_Server extends MainProgram implements onConnectionListener {
     }
 
     @Override
-    public void onConnect(NetworkPayload payload) {
+    synchronized public void onConnect(NetworkPayload payload) {
         System.out.println("Serving new request from: " + payload.SENDER_NAME);
         new Thread(new RequestHandler(payload)).start();
     }
 
     @Override
-    public void onSent(boolean result) {
+    synchronized public void onSent(boolean result) {
 
     }
 
-    public MapperConfiguration getConfiguration() {
+    synchronized public MapperConfiguration getConfiguration() {
         return configuration;
     }
 }

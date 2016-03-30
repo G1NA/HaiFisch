@@ -49,11 +49,11 @@ public class MainProgram implements onConnectionListener {
         console.start();
     }
 
-    public String getName() {
+    synchronized public String getName() {
         return name;
     }
 
-    public int getPort() {
+    synchronized public int getPort() {
         return port;
     }
 
