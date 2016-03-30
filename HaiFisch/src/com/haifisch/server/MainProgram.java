@@ -98,9 +98,4 @@ public class MainProgram implements onConnectionListener {
     public void onConnect(NetworkPayload payload) {
 
     }
-
-    @Override
-    public void onSent(boolean result) {
-
-    }
 }

@@ -5,6 +5,4 @@ public interface onConnectionListener {
 
     void onConnect(NetworkPayload payload);
 
-    void onSent(boolean result);
-
 }

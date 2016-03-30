@@ -118,9 +118,4 @@ public class Master implements onConnectionListener {
             System.out.println("Found " + ((CheckInRes) payload.payload).getRequest_id() + " check ins at given area");
         }
     }
-
-    @Override
-    public void onSent(boolean result) {
-
-    }
 }

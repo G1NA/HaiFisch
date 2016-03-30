@@ -15,12 +15,8 @@ public class Config {
         return ourInstance;
     }
 
-    private Config() {
-        LocalStorage.getInstance();
-    }
-
     public HashMap<ConnectionAcknowledge, Point[]> getMapperData() throws IOException {
-        File file = LocalStorage.getInstance().readFile("config.cfg");
+        File file = LocalStorage.getInstance("").readFile("config.cfg");
         HashMap<ConnectionAcknowledge, Point[]> map = new HashMap<>();
         String text = "";
         BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -51,7 +47,7 @@ public class Config {
     }
 
     public ConnectionAcknowledge getReducerData() throws IOException {
-        File file = LocalStorage.getInstance().readFile("config.cfg");
+        File file = LocalStorage.getInstance("").readFile("config.cfg");
         String[] splitted = data.split("!-");
         for (String token : splitted) {
             String[] split = token.split(";");

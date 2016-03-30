@@ -44,10 +44,6 @@ public class Master implements onConnectionListener {
         new Thread(new RequestHandler(payload), "serving thread no" + threadCounter++).start();
     }
 
-    @Override
-    synchronized public void onSent(boolean result) {
-
-    }
 
     synchronized public static void actionLog(String output) {
 

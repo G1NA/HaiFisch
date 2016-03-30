@@ -38,7 +38,7 @@ class RequestHandler implements Runnable {
             Thread r = new Thread(reduce, new RandomString(6).nextString());
             r.setPriority(Thread.MAX_PRIORITY);
             Reduce_Server.getData(request.MESSAGE).forEach(reduce::addMap);
-            Reduce_Server.removeDate(request.MESSAGE);
+            Reduce_Server.removeData(request.MESSAGE);
 
             // ----> add res in the reducer thread 
             r.start();

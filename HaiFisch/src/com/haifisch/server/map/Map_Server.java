@@ -49,14 +49,7 @@ public class Map_Server extends MainProgram implements onConnectionListener {
         new Thread(new RequestHandler(payload)).start();
     }
 
-    @Override
-    synchronized public void onSent(boolean result) {
-
-    }
-
     synchronized public MapperConfiguration getConfiguration() {
         return configuration;
     }
 }
-
-;

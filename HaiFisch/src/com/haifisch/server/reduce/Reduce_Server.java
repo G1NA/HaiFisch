@@ -41,11 +41,6 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
         new Thread(new RequestHandler(payload)).start();
     }
 
-    @Override
-    synchronized public void onSent(boolean result) {
-
-    }
-
     synchronized public Configuration getConfiguration() {
         return configuration;
     }
@@ -61,7 +56,7 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
         requests.get(id).add(map);
     }
 
-    synchronized static void removeDate(String id) {
+    synchronized static void removeData(String id) {
         requests.remove(id);
     }
 }

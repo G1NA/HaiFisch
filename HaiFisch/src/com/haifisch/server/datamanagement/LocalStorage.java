@@ -10,43 +10,42 @@ import java.nio.file.Paths;
 import java.util.Collections;
 
 public class LocalStorage {
-    private static LocalStorage instance = new LocalStorage();
-    private boolean init = false;
+    private static LocalStorage instance;
     private String storageRoot;
 
-    public static LocalStorage getInstance() {
+    public static LocalStorage getInstance(String folder) {
+        if (instance == null)
+            instance = new LocalStorage(folder);
         return instance;
     }
 
-    private LocalStorage() {
-
+    private LocalStorage(String folder) {
+        initialize(folder);
     }
 
-    public boolean initialize(String folder) {
-        if (init)
-            return false;
-        else {
-            if (folder.length() != 0) {
-                try {
-                    Files.write(Paths.get(folder + "test.txt"), Collections.singletonList("testtest"));
-                    this.storageRoot = folder;
-                    return true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            } else {
-                try {
-                    //program root
-                    Files.write(Paths.get("test.txt"), Collections.singletonList("testtest"));
-                    this.storageRoot = "";
-                    return true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+    private boolean initialize(String folder) {
+
+        if (folder.length() != 0) {
+            try {
+                Files.write(Paths.get(folder + "test.txt"), Collections.singletonList("testtest"));
+                this.storageRoot = folder;
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            try {
+                //program root
+                Files.write(Paths.get("test.txt"), Collections.singletonList("testtest"));
+                this.storageRoot = "";
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
             }
         }
+
     }
 
     public boolean storeObject(Object obj) {
@@ -67,9 +66,7 @@ public class LocalStorage {
         for (int i = 0; i < files.length; i++) {
             try {
                 objects[i] = Serialize.deserialize(Files.readAllBytes(files[i].toPath()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }

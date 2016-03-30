@@ -31,15 +31,19 @@ class RequestHandler implements Runnable {
                     errorResponse();
                 } else {
                     //Add the results to the packet
-                    CheckInRes results = new CheckInRes(((CheckInRequest) request.payload).getRequestId(), map.getResults());
-                    SenderSocket send = new SenderSocket(MapperConfiguration.getMapperConfiguration().reducerName, MapperConfiguration.getMapperConfiguration().reducerPort,
+                    CheckInRes results = new CheckInRes(((CheckInRequest) request.payload).getRequestId(),
+                            map.getResults());
+
+                    SenderSocket send = new SenderSocket(MapperConfiguration.getMapperConfiguration().reducerName,
+                            MapperConfiguration.getMapperConfiguration().reducerPort,
                             new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, results,
                                     Map_Server.server.getName(), Map_Server.server.getPort(), 200, "Results incoming"));
                     send.run();
                     if (send.isSent())
                         System.out.println("Done");
 
-                    send = new SenderSocket(MapperConfiguration.getMapperConfiguration().masterServerName, MapperConfiguration.getMapperConfiguration().masterServerPort,
+                    send = new SenderSocket(MapperConfiguration.getMapperConfiguration().masterServerName,
+                            MapperConfiguration.getMapperConfiguration().masterServerPort,
                             new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, null,
                                     Map_Server.server.getName(), Map_Server.server.getPort(), 200, "Done with request"));
                     send.run();
