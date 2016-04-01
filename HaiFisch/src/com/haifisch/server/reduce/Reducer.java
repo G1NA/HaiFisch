@@ -3,28 +3,15 @@ package com.haifisch.server.reduce;
 import com.haifisch.server.utils.CheckInMap;
 import com.haifisch.server.utils.PointOfInterest;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Reducer implements /*ReduceWorker, */ Runnable {
+public class Reducer implements Runnable {
 
-    private CheckInMap<String, PointOfInterest> map = new CheckInMap<>();
+    private HashMap<String, ArrayList<PointOfInterest>> map = new HashMap<>();
     private int topK;
-
-    public void initialize() {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void waitForTasksThread() {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void waitForMasterAck() {
-        // TODO Auto-generated method stub
-
-    }
 
     @Override
     public void run() {
@@ -35,9 +22,11 @@ public class Reducer implements /*ReduceWorker, */ Runnable {
     public void addMap(CheckInMap<String, PointOfInterest> addition) {
         for (Map.Entry<String, PointOfInterest> e : addition.entrySet()) {
             if (map.containsKey(e)) // then just add the found checkins
-                map.get(e).incrementObject(e.getValue());
-            else
-                map.put(e.getKey(), e.getValue());
+                map.get(e).add(e.getValue());
+            else {
+                map.put(e.getKey(), new ArrayList<>());
+                map.get(e.getKey()).add(e.getValue());
+            }
         }
     }
 
@@ -45,6 +34,8 @@ public class Reducer implements /*ReduceWorker, */ Runnable {
         // the reducer should get top-K places from each mapper
         // calculate the final top-K ones
         // and discard duplicate photos
+    	
+    	map.values().parallelStream().forEach(v -> v.stream().reduce(new PointOfInterest(), (sum, p) -> p.getNumberOfCheckIns() + sum.getNumberOfCheckIns()));
 
         CheckInMap<String, PointOfInterest> reducedMap =
                 (CheckInMap<String, PointOfInterest>)
