@@ -62,7 +62,7 @@ public class DatabaseManager {
 	 */
 	public void closeConnection(){
 		try {
-			if (connection != null && connection.isValid(0)) // may change to some seconds
+			if (connection != null && !connection.isClosed()) // may change to some seconds
 				connection.close();
 		} catch (SQLException sqle) {
 			closeConnection();
@@ -79,7 +79,7 @@ public class DatabaseManager {
 		Statement statement = null;
 		ResultSet results = null;
 		try {
-			if (connection.isValid(0)) { // may change to some seconds
+			if (!connection.isClosed()) { // may change to some seconds
 				statement = connection.createStatement();
 				results = statement.executeQuery(query);
 			}
@@ -87,7 +87,12 @@ public class DatabaseManager {
 			closeConnection();
 			sqle.printStackTrace();
 			System.err.println("\n"+sqle.getMessage());
-		} finally {
+
+		}
+		/*
+		Closing the statement closes the whole damn thing
+		finally {
+
 			try {
 				if (statement != null)
 					statement.close();
@@ -95,7 +100,7 @@ public class DatabaseManager {
 				e.printStackTrace();
 				System.err.println("\n"+e.getMessage());
 			}
-		}
+		}*/
 		return results;
 	}
 	

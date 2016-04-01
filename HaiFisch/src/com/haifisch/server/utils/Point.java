@@ -1,7 +1,11 @@
 package com.haifisch.server.utils;
 
+import java.io.Serializable;
+
 /** Class that represents a point on a map. */
-public class Point {
+public class Point implements Serializable{
+
+	private static final long serialVersionUID = 7342155718917685177L;
 
 	public Double longtitude; //X IMPORTANT
 	public Double latitude;// Y IMPORTANT

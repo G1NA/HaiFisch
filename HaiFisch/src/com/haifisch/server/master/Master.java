@@ -2,7 +2,8 @@ package com.haifisch.server.master;
 
 import com.haifisch.server.MainProgram;
 import com.haifisch.server.NetworkTools.*;
-import com.haifisch.server.utils.RandomString;
+import com.haifisch.server.utils.*;
+import com.haifisch.server.utils.Point;
 
 import java.awt.*;
 import java.sql.Timestamp;
@@ -73,39 +74,44 @@ public class Master extends MainProgram implements onConnectionListener {
                             System.err.println("No mappers or reducer present in the network!");
                         } else {
                             System.out.println("Write the latitude of the top left corner of the area you want to search");
-                            Double cord = Double.parseDouble(scan.nextLine().trim());
+                            //Double cord = Double.parseDouble(scan.nextLine().trim());
+                            Double cord = Double.parseDouble("40");
                             if (cord == -1)
                                 break;
                             else {
                                 System.out.println("Type the longitude of the top left corner");
-                                Double cord2 = Double.parseDouble(scan.nextLine().trim());
-                                com.haifisch.server.utils.Point left = new com.haifisch.server.utils.Point(cord, cord2);
+                                //Double cord2 = Double.parseDouble(scan.nextLine().trim());
+                                Double cord2 = Double.parseDouble("-74");
+                                com.haifisch.server.utils.Point left = new Point(cord2,cord);
                                 System.out.println("Type the latitude of the bottom right corner");
-                                cord = Double.parseDouble(scan.nextLine().trim());
+                               // cord = Double.parseDouble(scan.nextLine().trim());
+                                cord = Double.parseDouble("41");
                                 System.out.println("Type the longitude of the bottom right corner");
-                                cord2 = Double.parseDouble(scan.nextLine().trim());
-                                com.haifisch.server.utils.Point right = new com.haifisch.server.utils.Point(cord, cord2);
+                               // cord2 = Double.parseDouble(scan.nextLine().trim());
+                                cord2 = Double.parseDouble("-72");
+                                com.haifisch.server.utils.Point right = new com.haifisch.server.utils.Point(cord2, cord);
                                 System.out.println("From when? Time format as dd/MM/yyyy HH:mm");
-                                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy hh:mm");
+                                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm");
                                 Date date = null;
                                 try {
-                                    date = format.parse(scan.nextLine().trim());
+                                   // date = format.parse(scan.nextLine().trim());
+                                    date = format.parse("01/04/2012 20:58");
 
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                 }
                                 Timestamp stampFrom = new Timestamp(date.getTime());
                                 System.out.println("To when? Time format as dd/MM/yyyy HH:mm");
-                                format = new SimpleDateFormat("dd-MM-yyyy hh:mm");
+                                format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                                 date = null;
                                 try {
-                                    date = format.parse(scan.nextLine().trim());
+                                    //date = format.parse(scan.nextLine().trim());
+                                    date = format.parse("01/05/2012 21:00");
 
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                 }
 
-                                scan.close();
                                 Timestamp stampTo = new Timestamp(date.getTime());
 
                                 CheckInRequest req;
