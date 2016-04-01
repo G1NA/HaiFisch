@@ -18,6 +18,7 @@ class RequestHandler implements Runnable {
             ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
             if (connected.TYPE == 3) {
                 MapperConfiguration.getMapperConfiguration().setReducer(connected.serverName, connected.port);
+                System.out.println("Discovered reducer on: "+connected.serverName+":"+connected.port);
             }
             //Get a check in request and process it then return the results
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_REQUEST) {

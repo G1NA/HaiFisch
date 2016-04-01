@@ -37,7 +37,7 @@ public class ListeningSocket implements Runnable {
     public String getName(){
         if(socket!=null)
             try {
-                return Inet4Address.getLocalHost().toString();
+                return Inet4Address.getLocalHost().getHostAddress();
             } catch (UnknownHostException e) {
                 e.printStackTrace();
                 return null;

@@ -24,7 +24,7 @@ class Mapper implements Runnable {
     @Override
     public void run() {
 
-        DatabaseManager db = new DatabaseManager("jdbc:mysql:// 83.212.117.76:3306/ds_systems_2016?user=omada26&password=omada26db");
+        DatabaseManager db = new DatabaseManager("jdbc:mysql://83.212.117.76:3306/ds_systems_2016?user=omada26&password=omada26db");
 
         db.connectToDatabase();
 
@@ -32,13 +32,12 @@ class Mapper implements Runnable {
         String query = "SELECT * FROM checkins " //TODO
                 + "WHERE longitude BETWEEN " + request.getLeftCorner().getLongtitude()
                 + " AND " + request.getRightCorner().getLongtitude()
-                + " AND latitude BETWEEN " + request.getRightCorner().getLatitude()
-                + " AND " + request.getLeftCorner().getLatitude()
-                + " AND time BETWEEN " + request.getFromTime()
-                + " AND " + request.getToTime();
+                + " AND latitude BETWEEN " +request.getLeftCorner().getLatitude()
+                + " AND " + request.getRightCorner().getLatitude()
+                + " AND time BETWEEN \'" + request.getFromTime()
+                + "\' AND \'" + request.getToTime() + "\'";
 
         ResultSet result = db.executeQuery(query);
-
         db.closeConnection();
 
         int cores = Runtime.getRuntime().availableProcessors();
@@ -62,6 +61,7 @@ class Mapper implements Runnable {
                 int list = (int) Math.floor((lat - request.getRightCorner().getLatitude()) / interval);
                 entries.get(list).add(e);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
             shitHappened = true;
