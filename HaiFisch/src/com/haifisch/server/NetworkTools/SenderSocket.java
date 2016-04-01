@@ -1,9 +1,7 @@
 package com.haifisch.server.NetworkTools;
 
-import com.haifisch.server.utils.Serialize;
-
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class SenderSocket implements Runnable {
@@ -24,7 +22,9 @@ public class SenderSocket implements Runnable {
     public void run() {
         try {
             Socket sender = new Socket(serverName, port);
-            new DataOutputStream(sender.getOutputStream()).write(Serialize.serialize(payload));
+            ObjectOutputStream stream = new ObjectOutputStream(sender.getOutputStream());
+            stream.writeObject(payload);
+            stream.close();
             sender.close();
             sent = true;
         } catch (IOException e) {

@@ -10,9 +10,9 @@ public class MainProgram implements onConnectionListener {
 
     private String name;
     private int port;
-    private volatile static Thread listening_thread;
-    private volatile static Thread butler;
-    private volatile static Thread console;
+    public volatile Thread listening_thread;
+    public volatile Thread butler;
+    public volatile Thread console;
 
     protected void toolsInit() {
         //Add a thread to watch over the listening socket
@@ -35,7 +35,7 @@ public class MainProgram implements onConnectionListener {
             public void run() {
                 Scanner scan = Questionaire.scanner;
                 while (true) {
-                    System.out.print("type \'exit\' to close the mapper:\n");
+                    System.out.print("type \'exit\' to close the server:\n");
                     String command = scan.nextLine();
                     command = command.trim();
                     if (command.equals("exit")) {
@@ -73,9 +73,10 @@ public class MainProgram implements onConnectionListener {
         System.out.println("The server is running on: " + name + ":" + port);
     }
 
-    protected void connectToMaster(String name, int port) {
+    protected void connectToMaster(String name, int port, int type) {
         SenderSocket socket_ack = new SenderSocket(name, port,
-                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null, getName(), getPort(), 200, "connected"));
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, new ConnectionAcknowledge(type, getName(),
+                        getPort()), getName(), getPort(), 200, "connected"));
         socket_ack.run();
         if (!socket_ack.isSent()) {
             System.err.println("Failed to send Connection Acknowledge to master server!\nClosing mapper!");
@@ -83,7 +84,7 @@ public class MainProgram implements onConnectionListener {
         }
     }
 
-    public static void close() {
+    public void close() {
         if (butler != null)
             butler.interrupt();
         if (listening_thread != null)

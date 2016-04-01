@@ -40,7 +40,7 @@ public class Map_Server extends MainProgram implements onConnectionListener {
     private Map_Server(MapperConfiguration configuration) {
         this.configuration = configuration;
         createListeningSocket(); //Create the listening socket.
-        connectToMaster(configuration.masterServerName,configuration.masterServerPort);
+        connectToMaster(configuration.masterServerName,configuration.masterServerPort, 1);
     }
 
     @Override

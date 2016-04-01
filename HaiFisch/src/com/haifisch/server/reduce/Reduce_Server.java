@@ -31,7 +31,7 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
     private Reduce_Server(Configuration configuration) {
         this.configuration = configuration;
         createListeningSocket(); //Create the listening socket.
-        connectToMaster(configuration.masterServerName, configuration.masterServerPort);
+        connectToMaster(configuration.masterServerName, configuration.masterServerPort, 2);
     }
 
 

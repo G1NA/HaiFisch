@@ -1,11 +1,7 @@
 package com.haifisch.server.NetworkTools;
 
-import com.haifisch.server.utils.Serialize;
-
-import java.io.DataInputStream;
+import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServingSocket implements Runnable {
 
@@ -22,21 +18,14 @@ public class ServingSocket implements Runnable {
         try {
 
             //Read incoming data
-            DataInputStream incoming_data = new DataInputStream(clientSocket.getInputStream());
-            byte b;
-            List<Byte> blist = new ArrayList<>();
-            while ((b = incoming_data.readByte()) > 0)
-                blist.add(b);
+            ObjectInputStream incoming_data = new ObjectInputStream(clientSocket.getInputStream());
+
+            NetworkPayload payload = (NetworkPayload) incoming_data.readObject();
 
             //close the connection
             clientSocket.close();
             System.out.println("Connection closed");
 
-            byte[] array = new byte[blist.size()];
-            for (int i = 0; i < blist.size(); i++)
-                array[i] = blist.get(i);
-
-            NetworkPayload payload = (NetworkPayload) Serialize.deserialize(array);
             if (payload.PAYLOAD_TYPE == NetworkPayloadType.STATUS_CHECK) {
                 SenderSocket reply = new SenderSocket(payload.SENDER_NAME, payload.SENDER_PORT,
                         new NetworkPayload(NetworkPayloadType.STATUS_REPLY, false, null, clientSocket.getLocalSocketAddress().toString(),

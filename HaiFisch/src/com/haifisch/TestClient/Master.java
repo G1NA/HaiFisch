@@ -71,28 +71,28 @@ public class Master implements onConnectionListener {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                
+
                 scan.close();
                 Timestamp stampTo = new Timestamp(date.getTime());
 
-                CheckInRequest req = new CheckInRequest("None", left, right, stampFrom,
-                        stampTo, new RandomString(5).nextString());
+                CheckInRequest req;
+                ConnectionAcknowledge[] mapper = (ConnectionAcknowledge[]) mappers.keySet().toArray();
+                int length = mapper.length;
+                double partSize = (right.longtitude - left.longtitude) / length;
+                for (int i = 0; i < length; i++) {
+                    Point trueLeft = new Point(left.longtitude + partSize * i, left.latitude);
+                    Point trueRight = new Point(left.longtitude + partSize * (i + 1), right.latitude);
+                    req = new CheckInRequest("None", trueLeft, trueRight, stampFrom,
+                            stampTo, new RandomString(5).nextString());
+                    SenderSocket socket = new SenderSocket(mapper[i].serverName,
+                            mapper[i].port,
+                            new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
+                                    req, server.getName(), server.getPort(), 200, "show me the money"));
+                    socket.run();
+                    if (!socket.isSent())
+                        System.out.println("Failed to send request to: " + mapper[i].serverName);
 
-                mappers.forEach((connectionAcknowledge, points) -> {
-                    //NOT OPTIMAL WILL BE CHANGED!
-                    if (points[0].latitude >= left.latitude && points[0].longtitude >= left.longtitude &&
-                            points[1].latitude <= right.latitude && points[1].longtitude <= right.longtitude) {
-
-                        SenderSocket socket = new SenderSocket(connectionAcknowledge.serverName,
-                                connectionAcknowledge.port,
-                                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, true,
-                                        req, server.getName(), server.getPort(), 200, "show me the money"));
-                        socket.run();
-                        if (!socket.isSent())
-                            System.out.println("Failed to send request to: " + connectionAcknowledge.serverName);
-
-                    }
-                });
+                }
 
             }
         }
