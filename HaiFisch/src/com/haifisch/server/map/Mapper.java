@@ -15,7 +15,6 @@ class Mapper implements Runnable {
 
     private CheckInRequest request;
     private CheckInMap<String, PointOfInterest> counters;
-    private CheckInMap<String, PointOfInterest> interm; //PART OF MULTICORE IMPLEMENTATION
     boolean shitHappened = false;
 
     Mapper(CheckInRequest request) {
@@ -102,31 +101,6 @@ class Mapper implements Runnable {
 
     }
 
-    //PART OF MULTICORE IMPLEMENTATION
-    public CheckInMap<String, PointOfInterest> mapMultiCore(Object key, ArrayList<ArrayList<CheckIn>> value) {
-
-
-        final int topK = this.request.getTopK();
-        value.parallelStream().forEach(e -> new Thread() {
-            public void run() {
-                CheckInMap<String, PointOfInterest> map = countArea(e);
-                populate((CheckInMap<String, PointOfInterest>) map.entrySet()
-                        .stream()
-                        .sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue()))
-                        .limit(topK)
-                        .collect(Collectors.toMap(
-                                Map.Entry::getKey,
-                                Map.Entry::getValue)));
-            }
-        });
-
-        return
-                (CheckInMap<String, PointOfInterest>) interm.entrySet()
-                        .stream()
-                        .sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue()))
-                        .limit(topK)
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
 
     private CheckInMap<String, PointOfInterest> countArea(ArrayList<CheckIn> entries) {
 
@@ -146,14 +120,6 @@ class Mapper implements Runnable {
 
 
         return counters;
-    }
-
-    //TODO CHECK FOR DUPLICATES
-    //PART OF MULTICORE IMPLEMENTATION
-    private synchronized void populate(CheckInMap<String, PointOfInterest> map) {
-        if (interm == null)
-            interm = new CheckInMap<>();
-        interm.putAll(map);
     }
 
     public CheckInMap<String, PointOfInterest> getResults() {
