@@ -45,7 +45,7 @@ class RequestHandler implements Runnable {
             try {
                 r.join();
 
-                CheckInRes results = new CheckInRes((String) request.payload, reduce.getResults());
+                CheckInRes results = new CheckInRes((String) request.payload, null);
                 SenderSocket send = new SenderSocket(Reduce_Server.server.getConfiguration().masterServerName,
                         Reduce_Server.server.getConfiguration().masterServerPort,
                         new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, results,
@@ -64,7 +64,7 @@ class RequestHandler implements Runnable {
         Configuration config = Reduce_Server.server.getConfiguration();
         //Demo data until the configuration dialog is operational
         SenderSocket send = new SenderSocket(config.masterServerName, config.masterServerPort,
-                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null, "Sup", 5, 500,
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null, "sup", 5, 500,
                         "Something went terribly wrong"));
         send.run();
         if (!send.isSent())

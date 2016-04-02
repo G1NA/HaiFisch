@@ -5,14 +5,12 @@ import com.haifisch.server.utils.RandomString;
 
 import java.util.HashMap;
 
-import static com.haifisch.server.master.Master.mappers;
-import static com.haifisch.server.master.Master.reducer;
-import static com.haifisch.server.master.Master.servingClients;
+import static com.haifisch.server.master.Master.*;
 
 class RequestHandler implements Runnable {
     private final NetworkPayload request;
 
-    public RequestHandler(NetworkPayload payload) {
+    RequestHandler(NetworkPayload payload) {
         this.request = payload;
     }
 
@@ -21,6 +19,11 @@ class RequestHandler implements Runnable {
         //Get the connections coming from mappers and reducers that add themselves to the mapper pool
         if (request.payload instanceof ConnectionAcknowledge) {
             ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
+            if (request.STATUS == 500) {
+                System.err.println("Request sent to: " + connected.serverName + ":" + connected.port + " failed with error: "
+                        + request.MESSAGE);
+                return;
+            }
             if (connected.TYPE == 1) {
                 mappers.add(connected);
                 if (reducer != null)
@@ -30,6 +33,11 @@ class RequestHandler implements Runnable {
                 if (mappers.size() != 0)
                     informBulk();
             }
+        } else if (request.PAYLOAD_TYPE == NetworkPayloadType.STATUS_REPLY) {
+            mappers.forEach(e -> {
+                if ((e.serverName).equals(request.SENDER_NAME) && e.port == request.SENDER_PORT)
+                    e.status = 1;
+            });
         } else if (request.payload instanceof CheckInRequest) {
             //If there are no mappers or reducer the request should return an error
             if (mappers.size() == 0 || reducer == null)

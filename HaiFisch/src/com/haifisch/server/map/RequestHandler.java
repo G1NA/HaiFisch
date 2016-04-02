@@ -18,7 +18,7 @@ class RequestHandler implements Runnable {
             ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
             if (connected.TYPE == 3) {
                 MapperConfiguration.getMapperConfiguration().setReducer(connected.serverName, connected.port);
-                System.out.println("Discovered reducer on: "+connected.serverName+":"+connected.port);
+                System.out.println("Discovered reducer on: " + connected.serverName + ":" + connected.port);
             }
             //Get a check in request and process it then return the results
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_REQUEST) {
@@ -29,7 +29,7 @@ class RequestHandler implements Runnable {
             try {
                 r.join();
                 if (map.shitHappened) {
-                    errorResponse();
+                    errorResponse(map.getError());
                 } else {
                     //Add the results to the packet
                     CheckInRes results = new CheckInRes(((CheckInRequest) request.payload).getRequestId(),
@@ -59,10 +59,10 @@ class RequestHandler implements Runnable {
     }
 
     //Respond with an error
-    private void errorResponse() {
+    private void errorResponse(String optional) {
         SenderSocket send = new SenderSocket(request.SENDER_NAME, request.SENDER_PORT,
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
-                        Map_Server.server.getName(), Map_Server.server.getPort(), 400, "Something went wrong!"));
+                        Map_Server.server.getName(), Map_Server.server.getPort(), 500, optional));
         send.run();
         if (!send.isSent())
             System.err.println("Failed to send error!");

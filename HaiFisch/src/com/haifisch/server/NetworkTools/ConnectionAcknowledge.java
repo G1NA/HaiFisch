@@ -9,6 +9,7 @@ public class ConnectionAcknowledge implements Serializable{
 	public final int TYPE; //---> mporei  na ginei enum alla dn einai kai aparaitito apla isws itan pio omorfo
     public final String serverName;
     public final int port;
+    public int status; //1 online 2 unknown
 
     /**
      * Will be used to inform the master node of its Existence

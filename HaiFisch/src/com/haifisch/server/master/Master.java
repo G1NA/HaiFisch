@@ -82,19 +82,19 @@ public class Master extends MainProgram implements onConnectionListener {
                                 System.out.println("Type the longitude of the top left corner");
                                 //Double cord2 = Double.parseDouble(scan.nextLine().trim());
                                 Double cord2 = Double.parseDouble("-74");
-                                com.haifisch.server.utils.Point left = new Point(cord2,cord);
+                                com.haifisch.server.utils.Point left = new Point(cord2, cord);
                                 System.out.println("Type the latitude of the bottom right corner");
-                               // cord = Double.parseDouble(scan.nextLine().trim());
+                                // cord = Double.parseDouble(scan.nextLine().trim());
                                 cord = Double.parseDouble("41");
                                 System.out.println("Type the longitude of the bottom right corner");
-                               // cord2 = Double.parseDouble(scan.nextLine().trim());
+                                // cord2 = Double.parseDouble(scan.nextLine().trim());
                                 cord2 = Double.parseDouble("-72");
                                 com.haifisch.server.utils.Point right = new com.haifisch.server.utils.Point(cord2, cord);
                                 System.out.println("From when? Time format as dd/MM/yyyy HH:mm");
                                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm");
                                 Date date = null;
                                 try {
-                                   // date = format.parse(scan.nextLine().trim());
+                                    // date = format.parse(scan.nextLine().trim());
                                     date = format.parse("01/04/2012 20:58");
 
                                 } catch (ParseException e) {
@@ -115,6 +115,17 @@ public class Master extends MainProgram implements onConnectionListener {
                                 Timestamp stampTo = new Timestamp(date.getTime());
 
                                 CheckInRequest req;
+                                for (ConnectionAcknowledge mapper : mappers) {
+                                    mapper.status = 2;
+                                    checkAlive(mapper);
+                                }
+
+                                try {
+                                    waitForAck();
+                                } catch (InterruptedException e) {
+
+                                }
+
                                 int length = mappers.size();
                                 double partSize = (right.longtitude - left.longtitude) / length;
                                 for (int i = 0; i < length; i++) {
@@ -125,7 +136,7 @@ public class Master extends MainProgram implements onConnectionListener {
                                     SenderSocket socket = new SenderSocket(mappers.get(i).serverName,
                                             mappers.get(i).port,
                                             new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
-                                                    req, getName(), getPort(), 200, "show me the money"));
+                                                    req, masterThread.getName(), getPort(), 200, "show me the money"));
                                     socket.run();
                                     if (!socket.isSent())
                                         System.out.println("Failed to send request to: " + mappers.get(i).serverName);
@@ -147,4 +158,23 @@ public class Master extends MainProgram implements onConnectionListener {
         new Thread(new RequestHandler(payload), "serving thread no" + threadCounter++).start();
     }
 
+    private void checkAlive(ConnectionAcknowledge ack) {
+        new Thread(
+                new SenderSocket(ack.serverName, ack.port,
+                        new NetworkPayload(NetworkPayloadType.STATUS_CHECK, false, null, getName(), getPort(), 200, "Dude u there?"))
+        ).start();
+
+    }
+
+    synchronized private void waitForAck() throws InterruptedException {
+        wait(1000);
+        ArrayList<ConnectionAcknowledge> new_mappers = new ArrayList<>();
+        mappers.forEach(e -> {
+            if (e.status == 1)
+                new_mappers.add(e);
+        });
+        mappers.clear();
+        mappers = null;
+        mappers = new_mappers;
+    }
 }

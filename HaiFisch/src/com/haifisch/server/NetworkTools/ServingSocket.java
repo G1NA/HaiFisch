@@ -1,6 +1,7 @@
 package com.haifisch.server.NetworkTools;
 
 import java.io.ObjectInputStream;
+import java.net.Inet4Address;
 import java.net.Socket;
 
 public class ServingSocket implements Runnable {
@@ -24,12 +25,11 @@ public class ServingSocket implements Runnable {
 
             //close the connection
             clientSocket.close();
-            System.out.println("Connection closed");
 
             if (payload.PAYLOAD_TYPE == NetworkPayloadType.STATUS_CHECK) {
                 SenderSocket reply = new SenderSocket(payload.SENDER_NAME, payload.SENDER_PORT,
-                        new NetworkPayload(NetworkPayloadType.STATUS_REPLY, false, null, clientSocket.getLocalSocketAddress().toString(),
-                                clientSocket.getLocalPort(), 200, "Alive and kicking"));
+                        new NetworkPayload(NetworkPayloadType.STATUS_REPLY, false, null,
+                                Inet4Address.getLocalHost().getHostAddress(), clientSocket.getLocalPort(), 200, "Alive and kicking"));
                 reply.run();
                 return;
             }

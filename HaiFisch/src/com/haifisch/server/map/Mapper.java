@@ -15,6 +15,7 @@ class Mapper implements Runnable {
 
     private CheckInRequest request;
     private CheckInMap<String, PointOfInterest> counters;
+    private String error;
     boolean shitHappened = false;
 
     Mapper(CheckInRequest request) {
@@ -32,13 +33,13 @@ class Mapper implements Runnable {
         String query = "SELECT * FROM checkins " //TODO
                 + "WHERE longitude BETWEEN " + request.getLeftCorner().getLongtitude()
                 + " AND " + request.getRightCorner().getLongtitude()
-                + " AND latitude BETWEEN " +request.getLeftCorner().getLatitude()
+                + " AND latitude BETWEEN " + request.getLeftCorner().getLatitude()
                 + " AND " + request.getRightCorner().getLatitude()
                 + " AND time BETWEEN \'" + request.getFromTime()
                 + "\' AND \'" + request.getToTime() + "\'";
 
         ResultSet result = db.executeQuery(query);
-        db.closeConnection();
+
 
         int cores = Runtime.getRuntime().availableProcessors();
 
@@ -61,9 +62,10 @@ class Mapper implements Runnable {
                 int list = (int) Math.floor((lat - request.getRightCorner().getLatitude()) / interval);
                 entries.get(list).add(e);
             }
-
+            db.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
+            error = e.getMessage();
             shitHappened = true;
             return;
         }
@@ -124,6 +126,10 @@ class Mapper implements Runnable {
 
     public CheckInMap<String, PointOfInterest> getResults() {
         return counters;
+    }
+
+    public String getError() {
+        return error;
     }
 
 }
