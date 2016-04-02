@@ -2,6 +2,8 @@ package com.haifisch.server.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PointOfInterest implements Comparable<PointOfInterest> {
 	
@@ -10,7 +12,7 @@ public class PointOfInterest implements Comparable<PointOfInterest> {
 	private String category;
 	private int category_id;
 	private Point coords;
-	private ArrayList<String> photos;
+	private List<String> photos;
 	private int numOfCheckIns;
 	private int numOfPhotos; //---> pou xreiazetai?
 	
@@ -36,6 +38,7 @@ public class PointOfInterest implements Comparable<PointOfInterest> {
 		this.numOfPhotos = 0;
 	}
 	
+	
 	public String getID(){ return this.id; }
 	
 	public String getName(){ return this.name; }
@@ -46,7 +49,7 @@ public class PointOfInterest implements Comparable<PointOfInterest> {
 	
 	public Point getCoordinates(){ return this.coords; }
 	
-	public ArrayList<String> getPhotos(){ return this.photos; }
+	public List<String> getPhotos(){ return this.photos; }
 	
 	public int getNumberOfCheckIns(){ return this.numOfCheckIns; }
 	
@@ -77,10 +80,15 @@ public class PointOfInterest implements Comparable<PointOfInterest> {
 		this.addPhoto(link);
 	}
 	
-	public void incrementObject(PointOfInterest poi){
+	public PointOfInterest incrementObject(PointOfInterest poi){
 		// we've checked the equality of the poi's -> its about the same place
 		this.incrementCheckInsBy(poi.getNumberOfCheckIns());
 		this.addPhotos(poi.getPhotos());
+		return this;
+	}
+	
+	public void cleanupDuplicatePhotos(){
+		this.photos = this.photos.stream().distinct().collect(Collectors.toList());
 	}
 
 	public int compareTo(PointOfInterest p) {

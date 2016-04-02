@@ -5,6 +5,7 @@ import com.haifisch.server.utils.PointOfInterest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,7 @@ public class Reducer implements Runnable {
 
     @Override
     public void run() {
-        //
+        //TODO
 
     }
 
@@ -30,38 +31,29 @@ public class Reducer implements Runnable {
         }
     }
 
-    public CheckInMap<String, PointOfInterest> reduce(/*Integer key, CheckInMap<String, PointOfInterest> value*/) {
+    public List<PointOfInterest> reduce() {
         // the reducer should get top-K places from each mapper
         // calculate the final top-K ones
         // and discard duplicate photos
     	
-    	map.values().parallelStream().forEach(v -> v.stream().reduce(new PointOfInterest(), (sum, p) -> p.getNumberOfCheckIns() + sum.getNumberOfCheckIns()));
-
-        CheckInMap<String, PointOfInterest> reducedMap =
-                (CheckInMap<String, PointOfInterest>)
-                        map.values().parallelStream()
-                                .sorted()
-                                .limit(this.topK)
-                                .collect(Collectors.toMap(
-                                        v -> ((PointOfInterest) v).getID(),
-                                        v -> (PointOfInterest) v
-                                ));
-
-        return reducedMap;
+    	final List<PointOfInterest> reduced = new ArrayList<>(); //--> me anagkazei na valw final epeidh kanw thn parakatw entolh lel
+    	
+    	map.values().parallelStream() //for each arraylist 
+	    	.forEach(l -> 
+	    		reduced.add(l.stream().reduce((sum, v) -> sum.incrementObject(v)).get())
+	    	);
+    	
+    	List<PointOfInterest> limited = reduced.parallelStream().sorted().limit(topK).collect(Collectors.toList());
+    	limited.stream().forEach(PointOfInterest::cleanupDuplicatePhotos);
+    	return limited;
+    			
     }
-
-    protected void cleanupDuplicatePhotos() {
-        this.map.entrySet().parallelStream().forEach(p -> {
-
-        });
-    }
-
     public void sendResults(CheckInMap<Integer, PointOfInterest> map) {
         // TODO Auto-generated method stub
 
     }
 
-    public CheckInMap getResults() { //---> genika apo8ikeuse kapou ta apotelesmata sou kai 8a ta pairnei o RequestHandler me tn me8odo auti
+    public List<PointOfInterest> getResults() { //---> genika apo8ikeuse kapou ta apotelesmata sou kai 8a ta pairnei o RequestHandler me tn me8odo auti
         // TODO Auto-generated method stub
         return null;
     }
