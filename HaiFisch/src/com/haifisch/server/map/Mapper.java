@@ -2,19 +2,19 @@ package com.haifisch.server.map;
 
 import com.haifisch.server.NetworkTools.CheckInRequest;
 import com.haifisch.server.datamanagement.DatabaseManager;
-import com.haifisch.server.utils.CheckInMap;
 import com.haifisch.server.utils.PointOfInterest;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 class Mapper implements Runnable {
 
     private CheckInRequest request;
-    private CheckInMap<String, PointOfInterest> counters;
+    private HashMap<String, PointOfInterest> counters;
     private String error;
     boolean shitHappened = false;
 
@@ -29,8 +29,7 @@ class Mapper implements Runnable {
 
         db.connectToDatabase();
 
-        //----> mporei na alla3ei an dn einai swsto i veltistopoiimeno
-        String query = "SELECT * FROM checkins " //TODO
+        String query = "SELECT * FROM checkins "
                 + "WHERE longitude BETWEEN " + request.getLeftCorner().getLongtitude()
                 + " AND " + request.getRightCorner().getLongtitude()
                 + " AND latitude BETWEEN " + request.getLeftCorner().getLatitude()
@@ -54,77 +53,68 @@ class Mapper implements Runnable {
         try {
             while (result.next()) {
                 /* results of the form:
-                 * 0:id 1:user 2:POI 3:POI_name 4:POI_category 5:POI_category_id 6:longitude 7:latitude 8:time 9:photos
+                 * 1:id 2:user 3:POI 4:POI_name 5:POI_category 6:POI_category_id 7:longitude 8:latitude 9:time 10:photos
             	 * */
-                CheckIn e = new CheckIn(result.getString(2), result.getString(3), result.getString(4),
-                        result.getInt(5), result.getDouble(6), result.getDouble(7), result.getString(9));
-                double lat = result.getDouble(3);
-                int list = (int) Math.floor((lat - request.getRightCorner().getLatitude()) / interval);
+                CheckIn e = new CheckIn(result.getString(3), result.getString(4), result.getString(5),
+                        result.getInt(6), result.getDouble(7), result.getDouble(8), result.getString(10));
+                double lat = result.getDouble(7);
+                int list = (int) Math.floor((request.getRightCorner().getLatitude() - lat) / interval);
                 entries.get(list).add(e);
             }
             db.closeConnection();
         } catch (SQLException e) {
-            e.printStackTrace();
             error = e.getMessage();
             shitHappened = true;
             return;
         }
-        
-        /*
-        entries.stream().sorted((e1, e2) -> e1.get(0).compareTo(e2.get(0))); //---> einai swsto to compareTo edw?? (nmz nai)
-        //TODO xwrise tn lista se kommatia analoga me tous epe3ergastes....an ginetai apeu8eias sto stream kalitera...meta efarmwse map.....
-        counters = map(request.getRequestId(), entries);*/
 
         counters = map(request.getRequestId(), entries);
 
     }
 
 
-    public CheckInMap<String, PointOfInterest> map(Object key, Object value) {
+    public HashMap<String, PointOfInterest> map(Object key, Object value) {
 
-        ArrayList<ArrayList<CheckIn>> entries = (ArrayList<ArrayList<CheckIn>>) value;
+        HashMap<String, PointOfInterest> intermediate = new HashMap<>();
 
-        CheckInMap<String, PointOfInterest> intermediate = new CheckInMap<>();
+        ((ArrayList<ArrayList<CheckIn>>) value)
+                .parallelStream()
+                .map(this::countArea)
+                .forEach(intermediate::putAll);
 
-        entries.parallelStream().map(this::countArea).forEach(intermediate::putAll);
-
-        CheckInMap<String, PointOfInterest> counters =
-                (CheckInMap<String, PointOfInterest>) intermediate.entrySet()
-                        .stream()
-                        .sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue()))
-                        .limit(this.request.getTopK())
-                        .collect(Collectors.toMap(
-                                Map.Entry::getKey,
-                                Map.Entry::getValue));
-        //-------> apla euxomai na  kanei ontws auto pou 8elw
-
-
-        return counters;
+        return (HashMap<String, PointOfInterest>) intermediate.entrySet()
+                .stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .limit(this.request.getTopK())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue));
 
     }
 
 
-    private CheckInMap<String, PointOfInterest> countArea(ArrayList<CheckIn> entries) {
+    synchronized private HashMap<String, PointOfInterest> countArea(ArrayList<CheckIn> entries) {
 
-        CheckInMap<String, PointOfInterest> counters = new CheckInMap<>();
+        HashMap<String, PointOfInterest> counters = new HashMap<>();
 
-        entries.parallelStream().forEach(e ->
-        {
-            if (counters.containsKey(e.getPOI())) { //SIMEIWSI!!! edw epeidi i containsKey tsekarei ta hashCodes autos einai valid elegxos
-                counters.get(e.getPOI()).addCheckIn(e.getLINK());
-            } else {
-                PointOfInterest val = new PointOfInterest(e.getPOI(), e.getPOI_NAME(),
-                        e.getPOI_CATEGORY(), e.getPOI_CATEGORY_ID(), e.getCOORDINATES());
-                val.addCheckIn(e.getLINK());
-                counters.put(e.getPOI(), val);
-            }
-        });
+        entries.stream()
+                .forEach(e -> {
+                    if (counters.containsKey(e.getPOI())) {
+                        counters.get(e.getPOI()).addCheckIn(e.getLINK());
+                    } else {
+                        PointOfInterest val = new PointOfInterest(e.getPOI(), e.getPOI_NAME(),
+                                e.getPOI_CATEGORY(), e.getPOI_CATEGORY_ID(), e.getCOORDINATES());
+                        val.addCheckIn(e.getLINK());
+                        counters.put(e.getPOI(), val);
+                    }
+
+                });
 
 
         return counters;
     }
 
-    public CheckInMap<String, PointOfInterest> getResults() {
+    public HashMap<String, PointOfInterest> getResults() {
         return counters;
     }
 

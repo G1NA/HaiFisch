@@ -1,6 +1,5 @@
 package com.haifisch.server.reduce;
 
-import com.haifisch.server.utils.CheckInMap;
 import com.haifisch.server.utils.PointOfInterest;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ public class Reducer implements Runnable {
 
     }
 
-    public void addMap(CheckInMap<String, PointOfInterest> addition) {
+    public void addMap(HashMap<String, PointOfInterest> addition) {
         for (Map.Entry<String, PointOfInterest> e : addition.entrySet()) {
             if (map.containsKey(e)) // then just add the found checkins
                 map.get(e).add(e.getValue());
@@ -48,7 +47,7 @@ public class Reducer implements Runnable {
     	return limited;
     			
     }
-    public void sendResults(CheckInMap<Integer, PointOfInterest> map) {
+    public void sendResults(HashMap<Integer, PointOfInterest> map) {
         // TODO Auto-generated method stub
 
     }

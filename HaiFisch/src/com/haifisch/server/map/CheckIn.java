@@ -1,7 +1,5 @@
 package com.haifisch.server.map;
 
-import java.sql.Timestamp;
-
 import com.haifisch.server.utils.Point;
 
 public class CheckIn {
@@ -20,7 +18,7 @@ public class CheckIn {
 	//private int user;
 	
 	
-	public CheckIn(String poi, String poi_name,String poi_category,int poi_category_id, double longitude, double latitude, String link){
+	public CheckIn(String poi, String poi_name, String poi_category, int poi_category_id, double longitude, double latitude, String link){
 		this.poi = poi;
 		this.poi_name = poi_name;
 		this.poi_category = poi_category;

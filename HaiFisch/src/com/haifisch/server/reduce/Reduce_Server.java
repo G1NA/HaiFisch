@@ -14,7 +14,7 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
 
     private final Configuration configuration;
     public volatile static Reduce_Server server;
-    private static volatile HashMap<String, ArrayList<CheckInMap<String, PointOfInterest>>> requests = new HashMap<>();
+    private static volatile HashMap<String, ArrayList<HashMap<String, PointOfInterest>>> requests = new HashMap<>();
 
     public static void main(String args[]) {
 
@@ -45,11 +45,11 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
         return configuration;
     }
 
-    synchronized static ArrayList<CheckInMap<String, PointOfInterest>> getData(String id) {
+    synchronized static ArrayList<HashMap<String, PointOfInterest>> getData(String id) {
         return requests.get(id);
     }
 
-    synchronized static void putData(String id, CheckInMap<String, PointOfInterest> map) {
+    synchronized static void putData(String id, HashMap<String, PointOfInterest> map) {
 
         if (!requests.containsKey(id))
             requests.put(id, new ArrayList<>());

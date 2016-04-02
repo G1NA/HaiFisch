@@ -1,9 +1,9 @@
 package com.haifisch.server.NetworkTools;
 
-import java.io.Serializable;
-
-import com.haifisch.server.utils.CheckInMap;
 import com.haifisch.server.utils.PointOfInterest;
+
+import java.io.Serializable;
+import java.util.HashMap;
 
 //TODO UPDATE THE FIELDS WITH RELEVANT ATTRIBUTES AS NEEDED
 public class CheckInRes implements Serializable{
@@ -11,14 +11,14 @@ public class CheckInRes implements Serializable{
 	private static final long serialVersionUID = 26787521582L;
 
     private String requestId;//This will be generated from the master server to identify a client request
-    private CheckInMap<String, PointOfInterest>  map;
+    private HashMap<String, PointOfInterest> map;
 
-    public CheckInRes(String requestId, CheckInMap map) {
+    public CheckInRes(String requestId, HashMap map) {
     	this.requestId = requestId;
         this.map = map;
     }
     
-    public CheckInMap<String, PointOfInterest>  getMap(){
+    public HashMap<String, PointOfInterest> getMap(){
     	
     	return map;
     }

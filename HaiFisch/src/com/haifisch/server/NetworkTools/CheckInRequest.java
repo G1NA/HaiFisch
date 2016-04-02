@@ -17,9 +17,6 @@ public class CheckInRequest implements Serializable {
     private Point rightCorner;
     private Timestamp fromTime;
     private Timestamp toTime;
-
-
-
     private int topK;
     private String requestId; //This will be generated from the master server to identify a client request
 
