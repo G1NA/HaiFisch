@@ -3,10 +3,13 @@ package com.haifisch.server.datamanagement;
 import com.haifisch.server.utils.Serialize;
 import com.haifisch.server.utils.RandomString;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 public class LocalStorage {
@@ -80,6 +83,18 @@ public class LocalStorage {
             return null;
         }
 
+    }
+    
+    public boolean writeFile(String filename, String message){
+    	try {
+            Files.write(
+                    Paths.get(storageRoot +filename), //path and file name
+                    message.getBytes( "UTF-8" ), StandardOpenOption.APPEND);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    
     }
 
 
