@@ -28,6 +28,7 @@ class RequestHandler implements Runnable {
             CheckInRes res = (CheckInRes) request.payload;
 
             Reduce_Server.putData(res.getRequest_id(), res.getMap());
+            Reduce_Server.setTopK(res.getRequest_id(), res.getTopK());
 
 
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.START_REDUCE) {
@@ -37,15 +38,14 @@ class RequestHandler implements Runnable {
             Reducer reduce = new Reducer();
             Thread r = new Thread(reduce, new RandomString(6).nextString());
             r.setPriority(Thread.MAX_PRIORITY);
-            Reduce_Server.getData(request.MESSAGE).forEach(reduce::addMap);
+            Reduce_Server.getData(request.MESSAGE).stream().forEach(reduce::addMap);
+            reduce.setTopK(Reduce_Server.getTopK(request.MESSAGE));
             Reduce_Server.removeData(request.MESSAGE);
-
             // ----> add res in the reducer thread 
             r.start();
             try {
                 r.join();
-
-                CheckInRes results = new CheckInRes((String) request.payload, null);
+                CheckInRes results = new CheckInRes(request.MESSAGE, reduce.getResults(), reduce.getTopK());
                 SenderSocket send = new SenderSocket(Reduce_Server.server.getConfiguration().masterServerName,
                         Reduce_Server.server.getConfiguration().masterServerPort,
                         new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, results,

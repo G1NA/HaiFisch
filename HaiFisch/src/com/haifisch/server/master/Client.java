@@ -1,5 +1,7 @@
 package com.haifisch.server.master;
 
+import com.haifisch.server.NetworkTools.CheckInRequest;
+
 import java.util.HashMap;
 
 public class Client {
@@ -9,10 +11,10 @@ public class Client {
     private final String clientReqId;
     private final int mappersAssigned;
     private int mappersDone;
-    private final HashMap<String, Assignment> assignments;
+    private final HashMap<String, CheckInRequest> assignments;
 
     public Client(String clientAddress, int port, String clientReqId, int mappersAssigned,
-                  HashMap<String, Assignment> assignments) {
+                  HashMap<String, CheckInRequest> assignments) {
         this.clientAddress = clientAddress;
         this.clientPort = port;
         this.clientReqId = clientReqId;
@@ -33,21 +35,25 @@ public class Client {
         return clientReqId;
     }
 
-    public void addAssignment(String key, Assignment value) {
+    public void addAssignment(String key, CheckInRequest value) {
         assignments.put(key, value);
     }
 
+    //servername = ip+":"+port
     public void markDone(String serverName) {
         mappersDone++;
         assignments.remove(serverName);
     }
 
-    public Assignment getAssignment(String serverName) {
+    public CheckInRequest getAssignment(String serverName) {
         return assignments.get(serverName);
     }
 
-    public Assignment removeAssignment(String serverName) {
+    public CheckInRequest removeAssignment(String serverName) {
         return assignments.remove(serverName);
     }
 
+    public boolean isDone() {
+        return mappersAssigned == mappersDone;
+    }
 }

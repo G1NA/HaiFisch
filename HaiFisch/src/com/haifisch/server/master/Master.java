@@ -82,14 +82,18 @@ public class Master extends MainProgram implements onConnectionListener {
                                 System.out.println("Type the longitude of the top left corner");
                                 //Double cord2 = Double.parseDouble(scan.nextLine().trim());
                                 Double cord2 = Double.parseDouble("-74.25");
-                                com.haifisch.server.utils.Point left = new Point(cord2, cord);
+
+                                Point left = new Point(cord2, cord);
+
                                 System.out.println("Type the latitude of the bottom right corner");
                                 // cord = Double.parseDouble(scan.nextLine().trim());
                                 cord = Double.parseDouble("41");
+
                                 System.out.println("Type the longitude of the bottom right corner");
                                 // cord2 = Double.parseDouble(scan.nextLine().trim());
                                 cord2 = Double.parseDouble("-73.7");
-                                com.haifisch.server.utils.Point right = new com.haifisch.server.utils.Point(cord2, cord);
+                                Point right = new com.haifisch.server.utils.Point(cord2, cord);
+
                                 System.out.println("From when? Time format as dd/MM/yyyy HH:mm");
                                 SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm");
                                 Date date = null;
@@ -125,24 +129,33 @@ public class Master extends MainProgram implements onConnectionListener {
                                 } catch (InterruptedException e) {
 
                                 }
+                                String client_id = new RandomString(10).nextString();
+                                //Will be changed later on
 
+                                servingClients.put(client_id, new Client("void", 0, client_id,
+                                        mappers.size(), new HashMap<>()));
+                                Client serving = servingClients.get(client_id);
                                 int length = mappers.size();
                                 double partSize = (right.longtitude - left.longtitude) / length;
                                 for (int i = 0; i < length; i++) {
                                     Point trueLeft = new Point(left.longtitude + partSize * i, left.latitude);
                                     Point trueRight = new Point(left.longtitude + partSize * (i + 1), right.latitude);
                                     req = new CheckInRequest("None", trueLeft, trueRight, stampFrom,
-                                            stampTo, new RandomString(5).nextString());
+                                            stampTo, client_id);
                                     req.setTopK(100);
                                     SenderSocket socket = new SenderSocket(mappers.get(i).serverName,
                                             mappers.get(i).port,
                                             new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
                                                     req, masterThread.getName(), getPort(), 200, "show me the money"));
                                     socket.run();
-                                    if (!socket.isSent())
-                                        System.out.println("Failed to send request to: " + mappers.get(i).serverName);
-
+                                    if (!socket.isSent()) {
+                                        System.err.println("Failed to send request to: " + mappers.get(i).serverName);
+                                        break;
+                                    } else {
+                                        serving.addAssignment(mappers.get(i).serverName + ":" + mappers.get(i).port, req);
+                                    }
                                 }
+
 
                             }
                         }

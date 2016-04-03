@@ -33,7 +33,7 @@ class RequestHandler implements Runnable {
                 } else {
                     //Add the results to the packet
                     CheckInRes results = new CheckInRes(((CheckInRequest) request.payload).getRequestId(),
-                            map.getResults());
+                            map.getResults(),((CheckInRequest) request.payload).getTopK());
 
                     SenderSocket send = new SenderSocket(MapperConfiguration.getMapperConfiguration().reducerName,
                             MapperConfiguration.getMapperConfiguration().reducerPort,
@@ -46,7 +46,8 @@ class RequestHandler implements Runnable {
                     send = new SenderSocket(MapperConfiguration.getMapperConfiguration().masterServerName,
                             MapperConfiguration.getMapperConfiguration().masterServerPort,
                             new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, null,
-                                    Map_Server.server.getName(), Map_Server.server.getPort(), 200, "Done with request"));
+                                    Map_Server.server.getName(), Map_Server.server.getPort(), 200,
+                                    ((CheckInRequest) request.payload).getRequestId()));
                     send.run();
                     if (send.isSent())
                         System.out.println("Done");

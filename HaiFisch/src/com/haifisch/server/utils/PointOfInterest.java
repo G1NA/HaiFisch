@@ -109,7 +109,7 @@ public class PointOfInterest implements Comparable<PointOfInterest>, Serializabl
     }
 
     public int compareTo(PointOfInterest p) {
-        return Integer.signum(this.getNumberOfCheckIns() - p.getNumberOfCheckIns());
+        return Integer.signum(p.getNumberOfCheckIns() - this.getNumberOfCheckIns());
     }
 
 }

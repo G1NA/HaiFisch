@@ -8,9 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 class Mapper implements Runnable {
@@ -107,7 +105,7 @@ class Mapper implements Runnable {
 			e.printStackTrace();
 		}
 		*/
-        
+
         counters = map(request.getRequestId(), entries);
 
     }
@@ -124,7 +122,7 @@ class Mapper implements Runnable {
 
         return (HashMap<String, PointOfInterest>) intermediate.entrySet()
                 .stream()
-                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue()))
                 .limit(this.request.getTopK())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
