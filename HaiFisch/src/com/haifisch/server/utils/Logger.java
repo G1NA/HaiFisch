@@ -1,6 +1,7 @@
 package com.haifisch.server.utils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import com.haifisch.server.datamanagement.LocalStorage;
 
@@ -8,6 +9,8 @@ public class Logger {
 
 	private static Logger loggerInstance;
 	private String logFile = "logFile.txt";
+	private ArrayList<String> messages;
+	private LocalStorage store;
 	
 	public Logger getLogger(){
 		
@@ -22,13 +25,21 @@ public class Logger {
 	}
 	
 	private Logger(){
+		messages = new ArrayList<String>();
+		store = LocalStorage.getInstance("");
 	}
 	
-	public void log(String message){
+	public void log(String message, LogMessageType type){
 		
-			LocalStorage store = LocalStorage.getInstance("");
-			store.writeFile(logFile, LocalDateTime.now()+" "+message+"\n");
+			messages.add(LocalDateTime.now()+" "+type+": "+message+"\n");
 		
+	}
+	
+	public boolean flushLogger(){
+		LocalStorage store = LocalStorage.getInstance("");
+		boolean writeState = store.writeFile(logFile, messages);
+		messages.clear();
+		return writeState;
 	}
 	
 	

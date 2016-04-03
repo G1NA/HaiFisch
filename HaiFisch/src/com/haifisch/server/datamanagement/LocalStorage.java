@@ -6,6 +6,7 @@ import com.haifisch.server.utils.RandomString;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -85,11 +86,11 @@ public class LocalStorage {
 
     }
     
-    public boolean writeFile(String filename, String message){
+    public boolean writeFile(String filename, Iterable toBeWriten){
     	try {
             Files.write(
                     Paths.get(storageRoot +filename), //path and file name
-                    message.getBytes( "UTF-8" ), StandardOpenOption.APPEND);
+                    toBeWriten, StandardCharsets.UTF_8 , StandardOpenOption.APPEND);
             return true;
         } catch (IOException e) {
             return false;
