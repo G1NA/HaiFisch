@@ -15,7 +15,6 @@ public class PointOfInterest implements Comparable<PointOfInterest>, Serializabl
     private Point coords;
     private List<String> photos;
     private int numOfCheckIns;
-    private int numOfPhotos; //---> pou xreiazetai?
 
     public PointOfInterest(String id, String name, String category, int category_id, Point coords) {
         this.id = id;
@@ -25,7 +24,6 @@ public class PointOfInterest implements Comparable<PointOfInterest>, Serializabl
         this.coords = coords;
         this.photos = new ArrayList<>();
         this.numOfCheckIns = 0;
-        this.numOfPhotos = 0;
     }
 
     public PointOfInterest(String id, String name, String category, int category_id, double longitude, double latitude) {
@@ -36,7 +34,6 @@ public class PointOfInterest implements Comparable<PointOfInterest>, Serializabl
         this.coords = new Point(longitude, latitude);
         this.photos = new ArrayList<>();
         this.numOfCheckIns = 0;
-        this.numOfPhotos = 0;
     }
 
 
@@ -69,15 +66,12 @@ public class PointOfInterest implements Comparable<PointOfInterest>, Serializabl
     }
 
     public int getNumberOfPhotos() {
-        return this.numOfPhotos;
+        return this.photos.size();
     }
 
     public void addPhoto(String link) {
-
         if (!link.equalsIgnoreCase("Not exists"))
             photos.add(link);
-
-        ++this.numOfPhotos;
     }
 
     public void incrementCheckIns() {
