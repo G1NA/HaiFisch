@@ -8,7 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 class Mapper implements Runnable {
@@ -54,7 +56,7 @@ class Mapper implements Runnable {
             while (result.next()) {
                 /* results of the form:
                  * 1:id 2:user 3:POI 4:POI_name 5:POI_category 6:POI_category_id 7:longitude 8:latitude 9:time 10:photos
-            	 * */
+            	 **/
                 CheckIn e = new CheckIn(result.getString(3), result.getString(4), result.getString(5),
                         result.getInt(6), result.getDouble(7), result.getDouble(8), result.getString(10));
                 double lat = result.getDouble(7);
@@ -67,7 +69,45 @@ class Mapper implements Runnable {
             shitHappened = true;
             return;
         }
-
+        
+        /*
+        ArrayList<CheckIn> ent = new ArrayList<CheckIn>();
+	    ArrayList<ArrayList<CheckIn>> entries = new ArrayList<>();
+        try {
+			while(result.next()){
+				CheckIn e = new CheckIn(result.getString(3), result.getString(4), result.getString(5),
+			        result.getInt(6), result.getDouble(7), result.getDouble(8), result.getString(10));
+				ent.add(e);
+			}
+			
+			List<CheckIn> entList = ent.stream()
+			   .sorted((e1,e2)-> e1.getCOORDINATES().getLatitude().compareTo(e2.getCOORDINATES().getLatitude()))
+			   .collect(Collectors.toList());
+			
+			int arraysize = entList.size()/cores;
+		    int start = 0;
+		    int end = arraysize;
+		    for (int c = 0; c < cores; c++){
+		    	entries.add(new ArrayList<>());
+		        entries.get(c).addAll(entList.subList(start, (end > entList.size())? entList.size() : end));
+		        start += arraysize;
+		        end += arraysize;
+		        while(entList.get(start-1).getPOI().equals(entList.get(start).getPOI())){
+		        	entries.get(c).add(entList.get(start));
+		        	start++;
+		        	end++;
+		        	if(start > entList.size()) break;
+		        }
+		        if(start > entList.size()) break;
+		    }
+			
+			   
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/
+        
         counters = map(request.getRequestId(), entries);
 
     }
