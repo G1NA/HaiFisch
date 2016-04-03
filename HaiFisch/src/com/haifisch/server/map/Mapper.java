@@ -13,12 +13,15 @@ import java.util.stream.Collectors;
 
 class Mapper implements Runnable {
 
-    private CheckInRequest request;
-    private HashMap<String, PointOfInterest> counters;
-    private String error;
-    boolean shitHappened = false;
+    private CheckInRequest request; // the request the mapper serves
+    private HashMap<String, PointOfInterest> counters; // the result of the mapping
+    private String error; // a message in case an error occurs
+    boolean shitHappened = false; // true if a message occurs
 
-    Mapper(CheckInRequest request) {
+    /**
+     * constructor
+     * */
+    public Mapper(CheckInRequest request) {
         this.request = request;
     }
 
@@ -111,6 +114,13 @@ class Mapper implements Runnable {
     }
 
 
+    /**
+     * maps checkins arraylists to a single HashMap of the topK points of interest
+     * based on how many checkins have happened in each.
+     * @param key the request served
+     * @param value an arraylist of arraylists, one to be served by each core
+     * @return topK points of interest
+     * */
     public HashMap<String, PointOfInterest> map(Object key, ArrayList<ArrayList<CheckIn>> value) {
 
         HashMap<String, PointOfInterest> intermediate = new HashMap<>();
@@ -130,6 +140,12 @@ class Mapper implements Runnable {
     }
 
 
+    /**
+     * Counts how many checkins had every distinct point of interest and what photos were taken there for every
+     * point of interest in the entries list.
+     * @param entries a list of checkins for various points of interests
+     * @return a HashMap of all the point of interest
+     * */
     synchronized private HashMap<String, PointOfInterest> countArea(ArrayList<CheckIn> entries) {
 
         HashMap<String, PointOfInterest> counters = new HashMap<>();
@@ -149,10 +165,18 @@ class Mapper implements Runnable {
         return counters;
     }
 
+    /**
+     * returns the results the map method returned
+     * @return a HashMap with all the points of interest found by the
+     * map function
+     * */
     public HashMap<String, PointOfInterest> getResults() {
         return counters;
     }
 
+    /**
+     * @return the error that occurred
+     * */
     public String getError() {
         return error;
     }
