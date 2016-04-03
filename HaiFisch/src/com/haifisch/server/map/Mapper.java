@@ -111,23 +111,22 @@ class Mapper implements Runnable {
     }
 
 
-    public HashMap<String, PointOfInterest> map(Object key, Object value) {
+    public HashMap<String, PointOfInterest> map(Object key, ArrayList<ArrayList<CheckIn>> value) {
 
         HashMap<String, PointOfInterest> intermediate = new HashMap<>();
 
-        ((ArrayList<ArrayList<CheckIn>>) value)
-                .parallelStream()
-                .map(this::countArea)
-                .forEach(intermediate::putAll);
+        value.parallelStream()
+              .map(this::countArea)
+              .forEach(intermediate::putAll);
 
         return (HashMap<String, PointOfInterest>) intermediate.entrySet()
                 .stream()
                 .sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue()))
                 .limit(this.request.getTopK())
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue));
-
+                        	Map.Entry::getKey,
+                        	Map.Entry::getValue)
+                		);
     }
 
 
@@ -145,9 +144,7 @@ class Mapper implements Runnable {
                         val.addCheckIn(e.getLINK());
                         counters.put(e.getPOI(), val);
                     }
-
                 });
-
 
         return counters;
     }

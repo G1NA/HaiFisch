@@ -24,11 +24,11 @@ public class DatabaseManager {
 	
 	/**
 	 * Modular constructor
-	 * @param host
-	 * @param port
-	 * @param dbName
-	 * @param username
-	 * @param password
+	 * @param host the host
+	 * @param port	the port
+	 * @param dbName	the database name
+	 * @param username	the username
+	 * @param password	the password
 	 */
 	public DatabaseManager(String host, String port, String dbName, String username, String password){
 		setdbURL(host, port, dbName, username, password);
@@ -120,11 +120,11 @@ public class DatabaseManager {
 	
 	/**
 	 * Sets the db url based on separate values of it
-	 * @param host
-	 * @param port
-	 * @param dbName
-	 * @param username
-	 * @param password
+	 * @param host	the host
+	 * @param port	the port
+	 * @param dbName	the database name
+	 * @param username	the username
+	 * @param password	the password
 	 */
 	protected void setdbURL(String host, String port, String dbName, String username, String password){
 		dbURLInitializer(host, DEFAULT_HOST, null);
@@ -136,7 +136,7 @@ public class DatabaseManager {
 	
 	/**
 	 * Sets the full db url
-	 * @param dbURL
+	 * @param dbURL the whole database url
 	 */
 	protected void setdbURLFull(String dbURL){
 		if (dbURL.startsWith("jdbc:mysql://"))
