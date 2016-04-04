@@ -7,8 +7,10 @@ import java.util.HashMap;
 
 public class Results {
 
-    ArrayList<HashMap<String, PointOfInterest>> results = new ArrayList<>();
-    int topK;
+    private ArrayList<HashMap<String, PointOfInterest>> results = new ArrayList<>();
+    private int topK;
+    private int mappers = -1;
+    private int mappersDone = 0;
 
     public ArrayList<HashMap<String, PointOfInterest>> getResults() {
         return results;
@@ -17,17 +19,28 @@ public class Results {
     public void setResults(ArrayList<HashMap<String, PointOfInterest>> results) {
         this.results = results;
     }
+
     public void add(HashMap<String, PointOfInterest> results) {
         this.results.add(results);
     }
 
-    public int getTopK() {
+    int getTopK() {
         return topK;
     }
 
-    public void setTopK(int topK) {
+    void setTopK(int topK) {
         this.topK = topK;
     }
 
+    void setMappers(int mappers) {
+        this.mappers = mappers;
+    }
 
+    void mapperCompleted() {
+        mappersDone++;
+    }
+
+    boolean isDone() {
+        return mappersDone == mappers;
+    }
 }

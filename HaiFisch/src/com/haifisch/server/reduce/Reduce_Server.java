@@ -1,9 +1,12 @@
 package com.haifisch.server.reduce;
 
 import com.haifisch.server.MainProgram;
+import com.haifisch.server.NetworkTools.CheckInRes;
 import com.haifisch.server.NetworkTools.NetworkPayload;
 import com.haifisch.server.NetworkTools.onConnectionListener;
-import com.haifisch.server.utils.*;
+import com.haifisch.server.utils.Configuration;
+import com.haifisch.server.utils.PointOfInterest;
+import com.haifisch.server.utils.Questionaire;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +28,8 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
         //Create a new configuration object for all the mappers.
         Configuration config = new Configuration(q.masterServerName, q.masterServerPort);
         server = new Reduce_Server(config);
-        server.toolsInit();
+        server.initiateButler();
+        server.initiateConsole();
     }
 
     private Reduce_Server(Configuration configuration) {
@@ -41,12 +45,12 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
         new Thread(new RequestHandler(payload)).start();
     }
 
-    synchronized public Configuration getConfiguration() {
+    synchronized Configuration getConfiguration() {
         return configuration;
     }
 
     synchronized static ArrayList<HashMap<String, PointOfInterest>> getData(String id) {
-        return requests.get(id).getResults();
+            return requests.get(id).getResults();
     }
 
     synchronized static void putData(String id, HashMap<String, PointOfInterest> map) {
@@ -54,8 +58,21 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
             requests.put(id, new Results());
         requests.get(id).add(map);
     }
-    synchronized static void setTopK(String id, int topK) {
-        requests.get(id).setTopK(topK);
+
+    synchronized static void setMisc(String id, CheckInRes res)
+    {
+        Results results = requests.get(id);
+        results.setTopK(res.getTopK());
+        results.setMappers(res.getMapperCount());
+    }
+
+    synchronized static void mapperDone(String id)
+    {
+        requests.get(id).mapperCompleted();
+    }
+    synchronized static boolean isDone(String id)
+    {
+        return  requests.get(id).isDone();
     }
     synchronized static int getTopK(String id) {
         return requests.get(id).getTopK();

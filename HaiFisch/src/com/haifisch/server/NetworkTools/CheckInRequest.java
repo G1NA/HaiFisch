@@ -15,7 +15,8 @@ public class CheckInRequest implements Serializable {
     private Timestamp fromTime;
     private Timestamp toTime;
     private int topK;
-    private String requestId; 
+    private String requestId;
+    private int mapperCount;
 
     public CheckInRequest() {
 
@@ -29,7 +30,8 @@ public class CheckInRequest implements Serializable {
      * @param from From when in time
      * @param to To when in time
      */
-    public CheckInRequest(String id, Point left, Point right, Timestamp from, Timestamp to){
+    public CheckInRequest(String id,int mapperCount,  Point left, Point right, Timestamp from, Timestamp to){
+        this.mapperCount = mapperCount;
     	leftCorner = left;
     	rightCorner = right;
     	fromTime = from;
@@ -103,5 +105,9 @@ public class CheckInRequest implements Serializable {
 
     public void setTopK(int topK) {
         this.topK = topK;
+    }
+
+    public int getMapperCount() {
+        return mapperCount;
     }
 }

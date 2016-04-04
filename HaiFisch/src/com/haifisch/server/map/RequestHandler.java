@@ -4,8 +4,14 @@ import com.haifisch.server.NetworkTools.*;
 import com.haifisch.server.utils.RandomString;
 
 class RequestHandler implements Runnable {
+
     private final NetworkPayload request;
 
+    /**
+     * Constructor
+     *
+     * @param payload the payload to handle
+     */
     RequestHandler(NetworkPayload payload) {
         this.request = payload;
     }
@@ -22,18 +28,19 @@ class RequestHandler implements Runnable {
             }
             //Get a check in request and process it then return the results
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_REQUEST) {
+            String request_id = ((CheckInRequest) request.payload).getRequestId();
             Mapper map = new Mapper((CheckInRequest) request.payload);
             Thread r = new Thread(map, new RandomString(6).nextString());
             r.setPriority(Thread.MAX_PRIORITY);
             r.start();
             try {
                 r.join();
-                if (map.shitHappened) {
+                if (map.errorFound) {
                     errorResponse(map.getError());
                 } else {
                     //Add the results to the packet
-                    CheckInRes results = new CheckInRes(((CheckInRequest) request.payload).getRequestId(),
-                            map.getResults(),((CheckInRequest) request.payload).getTopK());
+                    CheckInRes results = new CheckInRes(request_id, ((CheckInRequest) request.payload).getMapperCount(),
+                            map.getResults(), ((CheckInRequest) request.payload).getTopK());
 
                     SenderSocket send = new SenderSocket(MapperConfiguration.getMapperConfiguration().reducerName,
                             MapperConfiguration.getMapperConfiguration().reducerPort,
@@ -46,15 +53,14 @@ class RequestHandler implements Runnable {
                     send = new SenderSocket(MapperConfiguration.getMapperConfiguration().masterServerName,
                             MapperConfiguration.getMapperConfiguration().masterServerPort,
                             new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, null,
-                                    Map_Server.server.getName(), Map_Server.server.getPort(), 200,
-                                    ((CheckInRequest) request.payload).getRequestId()));
+                                    Map_Server.server.getName(), Map_Server.server.getPort(), 200, request_id));
                     send.run();
                     if (send.isSent())
                         System.out.println("Done");
 
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.err.println("Map process interrupted for request: " + request_id);
             }
         }
     }

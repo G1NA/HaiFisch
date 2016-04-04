@@ -10,11 +10,14 @@ public class MainProgram implements onConnectionListener {
 
     private String name;
     private int port;
-    public volatile Thread listening_thread;
-    public volatile Thread butler;
-    public volatile Thread console;
+    private volatile Thread listening_thread;
+    private volatile ListeningSocket listener;
+    private volatile Thread butler;
+    protected volatile Thread console;
 
-    protected void toolsInit() {
+    protected void initiateButler() {
+        if (butler != null && (butler.isAlive() || !butler.isInterrupted()))
+            return;
         //Add a thread to watch over the listening socket
         butler = new Thread("butler") {
             public void run() {
@@ -25,12 +28,17 @@ public class MainProgram implements onConnectionListener {
                         } catch (InterruptedException e) {
                             return;
                         }
+                    listener.cleanup();
                     createListeningSocket();
                 }
             }
         };
         butler.start();
+    }
 
+    protected void initiateConsole() {
+        if (console != null && (console.isAlive() || !console.isInterrupted()))
+            return;
         console = new Thread("console") {
             public void run() {
                 Scanner scan = Questionaire.scanner;
@@ -41,6 +49,7 @@ public class MainProgram implements onConnectionListener {
                     if (command.equals("exit")) {
                         scan.close();
                         close();
+                        break;
                     }
 
                 }
@@ -59,12 +68,8 @@ public class MainProgram implements onConnectionListener {
 
     protected void createListeningSocket() {
 
-        //if the listening thread crashed
-        if (listening_thread != null) {
-
-        }
         //Create the threads needed.
-        ListeningSocket listener = new ListeningSocket(this);
+        listener = new ListeningSocket(this);
 
         listening_thread = new Thread(listener);
         listening_thread.start();
@@ -87,8 +92,10 @@ public class MainProgram implements onConnectionListener {
     public void close() {
         if (butler != null)
             butler.interrupt();
-        if (listening_thread != null)
+        if (listening_thread != null) {
             listening_thread.interrupt();
+            listener.cleanup();
+        }
         if (console != null)
             console.interrupt();
         System.exit(1);

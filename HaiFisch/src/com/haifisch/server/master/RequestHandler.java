@@ -40,6 +40,8 @@ class RequestHandler implements Runnable {
                 if ((e.serverName).equals(request.SENDER_NAME) && e.port == request.SENDER_PORT)
                     e.status = 1;
             });
+            if (reducer.serverName.equals(request.SENDER_NAME) && reducer.port == request.SENDER_PORT)
+                reducer.status = 1;
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_REQUEST) {
             //If there are no mappers or reducer the request should return an error
             if (mappers.size() == 0 || reducer == null)
@@ -57,9 +59,14 @@ class RequestHandler implements Runnable {
 
             //Received mapper operation end
             if (request.payload == null) {
+
                 Client cl = Master.servingClients.get(request.MESSAGE);
                 cl.markDone(request.SENDER_NAME + ":" + request.SENDER_PORT);
+
                 if (cl.isDone()) {
+                    System.out.println("Mappers completed request: "
+                            + request.MESSAGE + " waiting for reducer results");
+                    /*
                     SenderSocket socket = new SenderSocket(Master.reducer.serverName, Master.reducer.port,
                             new NetworkPayload(NetworkPayloadType.START_REDUCE, false, null,
                                     Master.masterThread.getName(), Master.masterThread.getPort(), 200, request.MESSAGE));
@@ -69,6 +76,7 @@ class RequestHandler implements Runnable {
                     else
                         System.err.println("Error when sending reduce for request: " + request.MESSAGE + " to reducer: "
                                 + Master.reducer.serverName + ":" + Master.reducer.port);
+                                */
                 }
 
             } else {
@@ -90,8 +98,9 @@ class RequestHandler implements Runnable {
                 }
                 servingClients.remove(client_id);
             }
+            //TODO will be addedon the 2nd part
         } else if (request.payload instanceof CheckInAdd) {
-            //add the new checkin and return a positive response
+
         }
     }
 

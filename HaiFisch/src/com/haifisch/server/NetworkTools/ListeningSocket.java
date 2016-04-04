@@ -6,25 +6,30 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 public class ListeningSocket implements Runnable {
-	
+
     private ServerSocket socket;
     private onConnectionListener callback;
+    private HashMap<String,Thread> children;
+
 
     /**
      * Primary constructor with random port
+     *
      * @param callback The callback which will be used for request handling
      */
     public ListeningSocket(onConnectionListener callback) {
         socketInit(-1);
         this.callback = callback;
-
+        children = new HashMap<>();
     }
 
     /**
      * Secondary constructor with set port
-     * @param port The port required
+     *
+     * @param port     The port required
      * @param callback The callback which will be used for request handling
      * @throws IOException Exception for port failure
      */
@@ -33,19 +38,22 @@ public class ListeningSocket implements Runnable {
             if (socketInit(-1))
                 throw new IOException();
         this.callback = callback;
+        children = new HashMap<>();
 
     }
 
-    /** GETTERS and SETTERS */
-    public int getPort(){
-        if(socket!=null)
+    /**
+     * GETTERS
+     */
+    public int getPort() {
+        if (socket != null)
             return socket.getLocalPort();
         else
             return -1;
     }
 
-    public String getName(){
-        if(socket!=null)
+    public String getName() {
+        if (socket != null)
             try {
                 return Inet4Address.getLocalHost().getHostAddress();
             } catch (UnknownHostException e) {
@@ -58,6 +66,7 @@ public class ListeningSocket implements Runnable {
 
     /**
      * Initiate the socket
+     *
      * @param port The port on which to be initiated
      * @return True for success
      */
@@ -80,13 +89,32 @@ public class ListeningSocket implements Runnable {
      * Wait for connections and assign them to serving sockets
      */
     public void run() {
+        String name;
         while (true)
             try {
-                new Thread(new ServingSocket(socket.accept(), callback), new RandomString(5).nextString()).start();
+                name =  new RandomString(5).nextString();
+                Thread tr = new Thread(new ServingSocket(socket.accept(), callback),name);
+                tr.start();
+                children.put(name,tr);
             } catch (IOException e) {
-                e.printStackTrace();
-                //Shit happened something will be called here to restart the damn thing
+                if(Thread.currentThread().isInterrupted())
+                    cleanup();
+                else
+                    System.err.println("A serving socket crashed");
                 break;
             }
+    }
+
+    public void cleanup() {
+        try {
+            this.socket.close();
+            children.values()
+                    .stream()
+                    .filter(child -> child.isAlive() || !child.isInterrupted())
+                    .forEach(Thread::interrupt);
+            children.clear();
+        } catch (IOException ignored) {
+
+        }
     }
 }

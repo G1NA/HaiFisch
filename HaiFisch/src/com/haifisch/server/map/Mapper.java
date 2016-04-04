@@ -16,12 +16,14 @@ class Mapper implements Runnable {
     private CheckInRequest request; // the request the mapper serves
     private HashMap<String, PointOfInterest> counters; // the result of the mapping
     private String error; // a message in case an error occurs
-    boolean shitHappened = false; // true if a message occurs
+    boolean errorFound = false; // true if a message occurs
 
     /**
-     * constructor
-     * */
-    public Mapper(CheckInRequest request) {
+     * Constructor
+     *
+     * @param request the request to be mapped
+     */
+    Mapper(CheckInRequest request) {
         this.request = request;
     }
 
@@ -66,12 +68,15 @@ class Mapper implements Runnable {
             }
             db.closeConnection();
         } catch (SQLException e) {
+            e.printStackTrace();
             error = e.getMessage();
-            shitHappened = true;
+            errorFound = true;
             return;
         }
         
         /*
+        !TEST IMPLEMENTATION IGNORE!
+
         ArrayList<CheckIn> ent = new ArrayList<CheckIn>();
 	    ArrayList<ArrayList<CheckIn>> entries = new ArrayList<>();
         try {
@@ -115,37 +120,39 @@ class Mapper implements Runnable {
 
 
     /**
-     * maps checkins arraylists to a single HashMap of the topK points of interest
-     * based on how many checkins have happened in each.
-     * @param key the request served
+     * Maps checkins, arraylists to a single HashMap of the topK points of interest
+     * based on how many checkins exist at each point.
+     *
+     * @param key   the request served
      * @param value an arraylist of arraylists, one to be served by each core
      * @return topK points of interest
-     * */
+     */
     public HashMap<String, PointOfInterest> map(Object key, ArrayList<ArrayList<CheckIn>> value) {
 
         HashMap<String, PointOfInterest> intermediate = new HashMap<>();
 
         value.parallelStream()
-              .map(this::countArea)
-              .forEach(intermediate::putAll);
+                .map(this::countArea)
+                .forEach(intermediate::putAll);
 
         return (HashMap<String, PointOfInterest>) intermediate.entrySet()
                 .stream()
                 .sorted((e1, e2) -> e1.getValue().compareTo(e2.getValue()))
                 .limit(this.request.getTopK())
                 .collect(Collectors.toMap(
-                        	Map.Entry::getKey,
-                        	Map.Entry::getValue)
-                		);
+                        Map.Entry::getKey,
+                        Map.Entry::getValue)
+                );
     }
 
 
     /**
-     * Counts how many checkins had every distinct point of interest and what photos were taken there for every
+     * Counts how many checkins each distinct point of interest has, and adds the photos taken there for every
      * point of interest in the entries list.
-     * @param entries a list of checkins for various points of interests
-     * @return a HashMap of all the point of interest
-     * */
+     *
+     * @param entries a list of checkins for various points of interest
+     * @return a HashMap of all the points of interest
+     */
     synchronized private HashMap<String, PointOfInterest> countArea(ArrayList<CheckIn> entries) {
 
         HashMap<String, PointOfInterest> counters = new HashMap<>();
@@ -166,18 +173,19 @@ class Mapper implements Runnable {
     }
 
     /**
-     * returns the results the map method returned
+     * Get the results of the map process
+     *
      * @return a HashMap with all the points of interest found by the
      * map function
-     * */
+     */
     public HashMap<String, PointOfInterest> getResults() {
         return counters;
     }
 
     /**
      * @return the error that occurred
-     * */
-    public String getError() {
+     */
+    String getError() {
         return error;
     }
 

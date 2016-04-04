@@ -3,7 +3,7 @@ package com.haifisch.server.utils;
 import java.io.*;
 
 /**
- * 
+ *
  */
 
 public class Serializer {
