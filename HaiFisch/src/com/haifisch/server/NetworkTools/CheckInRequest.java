@@ -10,22 +10,26 @@ public class CheckInRequest implements Serializable {
 
 	private static final long serialVersionUID = 2547822657122L;
 	
-	private String areaName;
-    //---> 8ewrw oti to 0 einai to longitude kai to 1 einai to latitude
-    //---> parola auta isws einai kali kapou mia klassi Coordinates...
     private Point leftCorner;
     private Point rightCorner;
     private Timestamp fromTime;
     private Timestamp toTime;
     private int topK;
-    private String requestId; //This will be generated from the master server to identify a client request
+    private String requestId; 
 
     public CheckInRequest() {
 
     }
     
-    public CheckInRequest(String area, Point left, Point right, Timestamp from, Timestamp to, String id){
-    	areaName = area;
+    /**
+     * New CheckInRequest object
+     * @param id The id assigned to the check in
+     * @param left The bottom left point
+     * @param right The top right point 
+     * @param from From when in time
+     * @param to To when in time
+     */
+    public CheckInRequest(String id, Point left, Point right, Timestamp from, Timestamp to){
     	leftCorner = left;
     	rightCorner = right;
     	fromTime = from;
@@ -33,35 +37,46 @@ public class CheckInRequest implements Serializable {
     	requestId = id;
     }
 
+    /**
+     * Simple constructor
+     * @param id The id assigned to the check in
+     */
     public CheckInRequest(String id) {
         this.requestId = id;
     }
 
-
-    public String getArea_name() {
-        return areaName;
-    }
-
-    public void setAreaName(String area_name) {
-        this.areaName = area_name;
-    }
-
+    /**
+     * Return the bottom left point
+     * @return Point type, having the coordinates of the bottom left point
+     */
     public Point getLeftCorner() {
         return leftCorner;
     }
 
+    /**
+     * Set the bottom left point
+     * @param left_corner The Point variable to be set on left_corner
+     */
     public void setLeftCorner(Point left_corner) {
         this.leftCorner = left_corner;
     }
 
+    /**
+     * Return the unique id of the request
+     * @return The id string
+     */
     public String getRequestId() {
         return requestId;
     }
 
+    /**
+     * Get the top right corner
+     * @return The Point variable
+     */
     public Point getRightCorner() {
         return rightCorner;
     }
-
+    
     public void setRightCorner(Point right_corner) {
         this.rightCorner = right_corner;
     }

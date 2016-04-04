@@ -16,13 +16,21 @@ public class CheckInRes implements Serializable {
     private List<PointOfInterest> reducer_res;
     private int topK;
 
-
+    /**
+     * Check in result constructor
+     * @param requestId The unique string id of the request
+     * @param map The map containing the results in key,value pairs
+     * @param topK The topK integer
+     */
     public CheckInRes(String requestId, HashMap<String, PointOfInterest> map, int topK) {
         this.requestId = requestId;
         this.map = map;
         this.topK = topK;
     }
 
+    /** Getters and Setters */
+    
+    
     public HashMap<String, PointOfInterest> getMap() {
 
         return map;

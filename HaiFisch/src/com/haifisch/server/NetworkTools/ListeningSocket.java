@@ -8,17 +8,26 @@ import java.net.ServerSocket;
 import java.net.UnknownHostException;
 
 public class ListeningSocket implements Runnable {
+	
     private ServerSocket socket;
     private onConnectionListener callback;
 
-    //Initiate the "listening" socket on any port available
+    /**
+     * Primary constructor with random port
+     * @param callback The callback which will be used for request handling
+     */
     public ListeningSocket(onConnectionListener callback) {
         socketInit(-1);
         this.callback = callback;
 
     }
 
-    //Iniate the "listening" socket on a specific port
+    /**
+     * Secondary constructor with set port
+     * @param port The port required
+     * @param callback The callback which will be used for request handling
+     * @throws IOException Exception for port failure
+     */
     public ListeningSocket(int port, onConnectionListener callback) throws IOException {
         if (!socketInit(port))
             if (socketInit(-1))
@@ -27,6 +36,7 @@ public class ListeningSocket implements Runnable {
 
     }
 
+    /** GETTERS and SETTERS */
     public int getPort(){
         if(socket!=null)
             return socket.getLocalPort();
@@ -46,6 +56,11 @@ public class ListeningSocket implements Runnable {
             return null;
     }
 
+    /**
+     * Initiate the socket
+     * @param port The port on which to be initiated
+     * @return True for success
+     */
     private boolean socketInit(int port) {
         int socket_port;
         if (port == -1)
@@ -61,7 +76,9 @@ public class ListeningSocket implements Runnable {
         }
     }
 
-    //Start listening and for each connection create a new thread to handle it
+    /**
+     * Wait for connections and assign them to serving sockets
+     */
     public void run() {
         while (true)
             try {

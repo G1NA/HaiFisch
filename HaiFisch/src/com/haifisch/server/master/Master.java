@@ -140,8 +140,8 @@ public class Master extends MainProgram implements onConnectionListener {
                                 for (int i = 0; i < length; i++) {
                                     Point trueLeft = new Point(left.longtitude + partSize * i, left.latitude);
                                     Point trueRight = new Point(left.longtitude + partSize * (i + 1), right.latitude);
-                                    req = new CheckInRequest("None", trueLeft, trueRight, stampFrom,
-                                            stampTo, client_id);
+                                    req = new CheckInRequest(client_id, trueLeft, trueRight, stampFrom,
+                                            stampTo);
                                     req.setTopK(100);
                                     SenderSocket socket = new SenderSocket(mappers.get(i).serverName,
                                             mappers.get(i).port,
