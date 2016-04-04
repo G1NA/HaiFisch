@@ -11,7 +11,7 @@ public class Questionaire {
 
     public final String masterServerName;
     public final int masterServerPort;
-  
+
     /**
      * Set the master server 's name.
      *
