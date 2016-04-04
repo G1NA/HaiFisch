@@ -120,6 +120,7 @@ public class Master extends MainProgram implements onConnectionListener {
 
     /**
      * Wait 1s to receive answer from the nodes. If no answer is received they are removed
+     * The time may be changed later on, it is currently adequate
      *
      * @throws InterruptedException
      */
@@ -131,6 +132,10 @@ public class Master extends MainProgram implements onConnectionListener {
             reducer = null;
     }
 
+    /**
+     * The debug sequence for the 1st part testing
+     * The commented out parts can be used for dynamic query input
+     */
     private void debug() {
         if (mappers.size() == 0 || reducer == null) {
             System.err.println("No mappers or reducer present in the network!");
