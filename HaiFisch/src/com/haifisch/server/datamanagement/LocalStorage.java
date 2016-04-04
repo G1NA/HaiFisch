@@ -1,16 +1,14 @@
 package com.haifisch.server.datamanagement;
 
-import com.haifisch.server.utils.Serialize;
+import com.haifisch.server.utils.Serializer;
 import com.haifisch.server.utils.RandomString;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 public class LocalStorage {
@@ -56,7 +54,7 @@ public class LocalStorage {
         try {
             Files.write(
                     Paths.get(storageRoot + "/obj/" + new RandomString(8).nextString()), //path and object name
-                    Serialize.serialize(obj)); //object data
+                    Serializer.serialize(obj)); //object data
             return true;
         } catch (IOException e) {
             return false;
@@ -69,7 +67,7 @@ public class LocalStorage {
         Object[] objects = new Object[files.length];
         for (int i = 0; i < files.length; i++) {
             try {
-                objects[i] = Serialize.deserialize(Files.readAllBytes(files[i].toPath()));
+                objects[i] = Serializer.deserialize(Files.readAllBytes(files[i].toPath()));
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -86,7 +84,7 @@ public class LocalStorage {
 
     }
     
-    public boolean writeFile(String filename, Iterable toBeWriten){
+    public boolean writeFile(String filename, Iterable<? extends CharSequence> toBeWriten){
     	try {
             Files.write(
                     Paths.get(storageRoot +filename), //path and file name
