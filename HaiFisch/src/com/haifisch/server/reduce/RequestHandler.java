@@ -11,6 +11,10 @@ class RequestHandler implements Runnable {
 
     private final NetworkPayload request;
 
+    /**
+     * constructor
+     * @param payload the data sent
+     */
     RequestHandler(NetworkPayload payload) {
         this.request = payload;
     }
