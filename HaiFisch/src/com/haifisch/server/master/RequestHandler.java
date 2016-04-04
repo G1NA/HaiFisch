@@ -10,15 +10,21 @@ import java.util.stream.Collectors;
 import static com.haifisch.server.master.Master.*;
 
 class RequestHandler implements Runnable {
+
     private final NetworkPayload request;
 
+    /**
+     * Constructor
+     *
+     * @param payload The request to handle
+     */
     RequestHandler(NetworkPayload payload) {
         this.request = payload;
     }
 
     @Override
     public void run() {
-        //Get the connections coming from mappers and reducers that add themselves to the mapper pool
+        //Get the connections coming from mappers and reducers and add them to the node pool
         if (request.PAYLOAD_TYPE == NetworkPayloadType.CONNECTION_ACK) {
             ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
             if (request.STATUS == 500) {
@@ -35,6 +41,7 @@ class RequestHandler implements Runnable {
                 if (mappers.size() != 0)
                     informBulk();
             }
+            //If the request is an alive status reply
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.STATUS_REPLY) {
             mappers.forEach(e -> {
                 if ((e.serverName).equals(request.SENDER_NAME) && e.port == request.SENDER_PORT)
@@ -42,6 +49,8 @@ class RequestHandler implements Runnable {
             });
             if (reducer.serverName.equals(request.SENDER_NAME) && reducer.port == request.SENDER_PORT)
                 reducer.status = 1;
+            //If the request is a nce check in
+            //TODO not currently used will be implemented for the 2nd part
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_REQUEST) {
             //If there are no mappers or reducer the request should return an error
             if (mappers.size() == 0 || reducer == null)
@@ -55,9 +64,11 @@ class RequestHandler implements Runnable {
                 //Do what the client asked
 
             }
+            // Received a check in result packet from a mapper or a reducer
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
 
             //Received mapper operation end
+            //TODO use only if the master must inform the reducer, currently it simply monitors the request state
             if (request.payload == null) {
 
                 Client cl = Master.servingClients.get(request.MESSAGE);
@@ -78,41 +89,51 @@ class RequestHandler implements Runnable {
                                 + Master.reducer.serverName + ":" + Master.reducer.port);
                                 */
                 }
-
+                //IF the results came from a reducer
             } else {
                 String client_id = ((CheckInRes) request.payload).getRequest_id();
-                //Return the result to the client that requested it
                 Client client = Master.servingClients.get(client_id);
                 /*
+                TODO for the 2nd part where we respond to the client
                 SenderSocket socket = new SenderSocket(client.getClientAddress(), client.getClientPort(),
                         new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, request.payload,
                                 Master.masterThread.getName(), Master.masterThread.getPort(), 200, "Done"));
                 socket.run();
                 if (!socket.isSent())
                     System.out.println(socket.getError());*/
+
+
+                //Print the results received
+                //TODO WILL BE REMOVED ON THE 2ND PART ONLY FOR DEBUG
                 System.out.println("Request for: " + client_id + " finished with success and produced the following: ");
-                for (PointOfInterest res : ((CheckInRes) request.payload).getMap().values().stream().sorted(PointOfInterest::compareTo).collect(Collectors.toList())) {
+                for (PointOfInterest res : ((CheckInRes) request.payload)
+                        .getMap().values()
+                        .stream().sorted(PointOfInterest::compareTo).collect(Collectors.toList())) {
+
                     System.out.println("Place name: " + res.getName() +
                             " checkins: " + res.getNumberOfCheckIns()
                             + " photos: " + res.getNumberOfPhotos());
                 }
                 servingClients.remove(client_id);
             }
-            //TODO will be addedon the 2nd part
+            //TODO will be added on the 2nd part
         } else if (request.payload instanceof CheckInAdd) {
 
         }
     }
 
-    //Inform the mappers about the reducer
+    /**
+     * Inform all the mappers about the reducer that was added in the network
+     */
     private void informBulk() {
-        mappers.stream().forEach(s -> new SenderSocket(s.serverName, s.port,
-                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, new ConnectionAcknowledge(3,
-                        reducer.serverName, reducer.port),
-                        Master.masterThread.getName(), Master.masterThread.getPort(), 200, "Done")).run());
+        mappers.forEach(this::inform);
     }
 
-    //Get the last one added
+    /**
+     * inform a single mapper about the new reducer
+     *
+     * @param added The mapper to be informed
+     */
     private void inform(ConnectionAcknowledge added) {
         new SenderSocket(added.serverName, added.port,
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, new ConnectionAcknowledge(3,
@@ -120,11 +141,14 @@ class RequestHandler implements Runnable {
                         Master.masterThread.getName(), Master.masterThread.getPort(), 200, "Done")).run();
     }
 
+    /**
+     * Send an error message to the master server
+     */
     private void errorResponse() {
         SenderSocket send = new SenderSocket(request.SENDER_NAME, request.SENDER_PORT,
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
                         Master.masterThread.getName(), Master.masterThread.getPort(),
-                        400, "No mappers or reducer present in the network"));
+                        500, "No mappers or reducer present in the network"));
         send.run();
         if (!send.isSent())
             System.out.println(send.getError());
