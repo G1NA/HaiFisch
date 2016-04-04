@@ -16,7 +16,7 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 //Master server class, will be used for testing during the 1st phase
-public class Master extends MainProgram implements onConnectionListener {
+public class Master extends MainProgram{
 
     private static volatile int threadCounter;
     static volatile ArrayList<ConnectionAcknowledge> mappers = new ArrayList<>();

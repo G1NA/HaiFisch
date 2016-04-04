@@ -3,7 +3,6 @@ package com.haifisch.server.reduce;
 import com.haifisch.server.MainProgram;
 import com.haifisch.server.NetworkTools.CheckInRes;
 import com.haifisch.server.NetworkTools.NetworkPayload;
-import com.haifisch.server.NetworkTools.onConnectionListener;
 import com.haifisch.server.utils.Configuration;
 import com.haifisch.server.utils.PointOfInterest;
 import com.haifisch.server.utils.Questionaire;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class Reduce_Server extends MainProgram implements onConnectionListener {
+public class Reduce_Server extends MainProgram {
 
 
     private final Configuration configuration;

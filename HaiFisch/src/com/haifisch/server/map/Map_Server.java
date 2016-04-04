@@ -2,13 +2,12 @@ package com.haifisch.server.map;
 
 import com.haifisch.server.MainProgram;
 import com.haifisch.server.NetworkTools.NetworkPayload;
-import com.haifisch.server.NetworkTools.onConnectionListener;
 import com.haifisch.server.utils.Questionaire;
 
 /**
  * Basic class responsible for the actions executed by the server node.
  */
-public class Map_Server extends MainProgram implements onConnectionListener {
+public class Map_Server extends MainProgram {
 
     public volatile static Map_Server server;
     private final MapperConfiguration configuration;
