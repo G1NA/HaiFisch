@@ -5,11 +5,14 @@ import com.haifisch.server.utils.Point;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * Request of a checkin
+ */
 
 public class CheckInRequest implements Serializable {
 
-	private static final long serialVersionUID = 2547822657122L;
-	
+    private static final long serialVersionUID = 2547822657122L;
+
     private Point leftCorner;
     private Point rightCorner;
     private Timestamp fromTime;
@@ -19,28 +22,29 @@ public class CheckInRequest implements Serializable {
     private int mapperCount;
 
     public CheckInRequest() {
-
     }
-    
+
     /**
      * New CheckInRequest object
-     * @param id The id assigned to the check in
-     * @param left The bottom left point
-     * @param right The top right point 
-     * @param from From when in time
-     * @param to To when in time
+     *
+     * @param id    The id assigned to the check in
+     * @param left  The bottom left point
+     * @param right The top right point
+     * @param from  From when in time
+     * @param to    To when in time
      */
-    public CheckInRequest(String id,int mapperCount,  Point left, Point right, Timestamp from, Timestamp to){
+    public CheckInRequest(String id, int mapperCount, Point left, Point right, Timestamp from, Timestamp to) {
         this.mapperCount = mapperCount;
-    	leftCorner = left;
-    	rightCorner = right;
-    	fromTime = from;
-    	toTime = to;
-    	requestId = id;
+        leftCorner = left;
+        rightCorner = right;
+        fromTime = from;
+        toTime = to;
+        requestId = id;
     }
 
     /**
      * Simple constructor
+     *
      * @param id The id assigned to the check in
      */
     public CheckInRequest(String id) {
@@ -49,6 +53,7 @@ public class CheckInRequest implements Serializable {
 
     /**
      * Return the bottom left point
+     *
      * @return Point type, having the coordinates of the bottom left point
      */
     public Point getLeftCorner() {
@@ -57,6 +62,7 @@ public class CheckInRequest implements Serializable {
 
     /**
      * Set the bottom left point
+     *
      * @param left_corner The Point variable to be set on left_corner
      */
     public void setLeftCorner(Point left_corner) {
@@ -65,6 +71,7 @@ public class CheckInRequest implements Serializable {
 
     /**
      * Return the unique id of the request
+     *
      * @return The id string
      */
     public String getRequestId() {
@@ -73,12 +80,13 @@ public class CheckInRequest implements Serializable {
 
     /**
      * Get the top right corner
+     *
      * @return The Point variable
      */
     public Point getRightCorner() {
         return rightCorner;
     }
-    
+
     public void setRightCorner(Point right_corner) {
         this.rightCorner = right_corner;
     }

@@ -28,7 +28,7 @@ public class MainProgram implements onConnectionListener {
                         } catch (InterruptedException e) {
                             return;
                         }
-                    listener.cleanup();
+                    listener.cleanUp();
                     createListeningSocket();
                 }
             }
@@ -94,7 +94,7 @@ public class MainProgram implements onConnectionListener {
             butler.interrupt();
         if (listening_thread != null) {
             listening_thread.interrupt();
-            listener.cleanup();
+            listener.cleanUp();
         }
         if (console != null)
             console.interrupt();

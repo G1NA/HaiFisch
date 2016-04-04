@@ -91,7 +91,7 @@ class RequestHandler implements Runnable {
                 }
                 //IF the results came from a reducer
             } else {
-                String client_id = ((CheckInRes) request.payload).getRequest_id();
+                String client_id = ((CheckInRes) request.payload).getRequestId();
                 Client client = Master.servingClients.get(client_id);
                 /*
                 TODO for the 2nd part where we respond to the client

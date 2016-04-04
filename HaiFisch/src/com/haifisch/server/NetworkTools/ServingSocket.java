@@ -4,24 +4,35 @@ import java.io.ObjectInputStream;
 import java.net.Inet4Address;
 import java.net.Socket;
 
+/**
+ * A runnable serving socket.
+ * <p>
+ * It receives data (network payload) from a client socket through an input stream, initiates a sender socket to reply
+ * if it is about a status reply, and sends the data to a callback.
+ */
 public class ServingSocket implements Runnable {
 
     private Socket clientSocket;
     private onConnectionListener callback;
 
+    /**
+     * Constructor
+     *
+     * @param clientSocket The client connection
+     * @param callback     The callback which will be used to handle the request
+     */
     public ServingSocket(Socket clientSocket, onConnectionListener callback) {
         this.clientSocket = clientSocket;
         this.callback = callback;
     }
 
+    @Override
     public void run() {
-
         try {
-
             //Read incoming data
-            ObjectInputStream incoming_data = new ObjectInputStream(clientSocket.getInputStream());
+            ObjectInputStream incomingData = new ObjectInputStream(clientSocket.getInputStream());
 
-            NetworkPayload payload = (NetworkPayload) incoming_data.readObject();
+            NetworkPayload payload = (NetworkPayload) incomingData.readObject();
 
             //close the connection
             clientSocket.close();
@@ -39,8 +50,6 @@ public class ServingSocket implements Runnable {
 
         } catch (Exception e) {
             e.printStackTrace();
-            //Shit happened something will be called here to restart the damn thing
         }
-
     }
 }

@@ -6,12 +6,16 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Results of checkins processing.
+ */
+
 //TODO UPDATE THE FIELDS WITH RELEVANT ATTRIBUTES AS NEEDED
 public class CheckInRes implements Serializable {
 
     private static final long serialVersionUID = 26787521582L;
 
-    private String requestId;//This will be generated from the master server to identify a client request
+    private String requestId; //This will be generated from the master server to identify a client request
     private HashMap<String, PointOfInterest> map;
     private List<PointOfInterest> reducer_res;
     private int topK;
@@ -35,13 +39,11 @@ public class CheckInRes implements Serializable {
      * Getters and Setters
      */
 
-
     public HashMap<String, PointOfInterest> getMap() {
-
         return map;
     }
 
-    public String getRequest_id() {
+    public String getRequestId() {
         return requestId;
     }
 

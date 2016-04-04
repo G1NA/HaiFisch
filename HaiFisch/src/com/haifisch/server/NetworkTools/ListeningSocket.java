@@ -8,11 +8,15 @@ import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
+/**
+ * A runnable listening server socket that holds multiple children as threads of serving sockets.
+ */
+
 public class ListeningSocket implements Runnable {
 
     private ServerSocket socket;
     private onConnectionListener callback;
-    private HashMap<String,Thread> children;
+    private HashMap<String, Thread> children;
 
 
     /**
@@ -92,20 +96,23 @@ public class ListeningSocket implements Runnable {
         String name;
         while (true)
             try {
-                name =  new RandomString(5).nextString();
-                Thread tr = new Thread(new ServingSocket(socket.accept(), callback),name);
+                name = new RandomString(5).nextString();
+                Thread tr = new Thread(new ServingSocket(socket.accept(), callback), name);
                 tr.start();
-                children.put(name,tr);
+                children.put(name, tr);
             } catch (IOException e) {
-                if(Thread.currentThread().isInterrupted())
-                    cleanup();
+                if (Thread.currentThread().isInterrupted())
+                    cleanUp();
                 else
                     System.err.println("A serving socket crashed");
                 break;
             }
     }
 
-    public void cleanup() {
+    /**
+     * Cleans up the socket by closing its connection and the connection of its children.
+     */
+    public void cleanUp() {
         try {
             this.socket.close();
             children.values()

@@ -24,7 +24,7 @@ class RequestHandler implements Runnable {
         //Get the reducer data from the Master Server
         if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
             CheckInRes res = (CheckInRes) request.payload;
-            String request_id = res.getRequest_id();
+            String request_id = res.getRequestId();
             Reduce_Server.putData(request_id, res.getMap());
             Reduce_Server.setMisc(request_id, res);
             Reduce_Server.mapperDone(request_id);
