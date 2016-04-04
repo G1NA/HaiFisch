@@ -29,13 +29,15 @@ class RequestHandler implements Runnable {
             Reduce_Server.setMisc(request_id, res);
             Reduce_Server.mapperDone(request_id);
             if (Reduce_Server.isDone(request_id)) {
+
                 Reducer reduce = new Reducer();
                 Thread r = new Thread(reduce, new RandomString(6).nextString());
                 r.setPriority(Thread.MAX_PRIORITY);
+
                 Reduce_Server.getData(request_id).stream().forEach(reduce::addMap);
                 reduce.setTopK(Reduce_Server.getTopK(request_id));
                 Reduce_Server.removeData(request_id);
-                // ----> add res in the reducer thread
+
                 r.start();
                 try {
                     r.join();

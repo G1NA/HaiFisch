@@ -17,21 +17,21 @@ import java.util.stream.Collectors;
 
 class Reducer implements Runnable {
 
-	/** 
-	 * Holds the results of the mappers.
-	 * Each key/poi has a list of values representing the results of the mappers
-	 * for that poi.
-	 * <p>
-	 * This map is to be reduced by summing up all the results in the lists in
-	 * a single object, creating a final list.
-	 */
+    /**
+     * Holds the results of the mappers.
+     * Each key/poi has a list of values representing the results of the mappers
+     * for that poi.
+     * <p>
+     * This map is to be reduced by summing up all the results in the lists in
+     * a single object, creating a final list.
+     */
     private HashMap<String, ArrayList<PointOfInterest>> map = new HashMap<>();
-    
+
     /**
      * The list of the final results of the reducer.
      */
     private List<PointOfInterest> results;
-    
+
     /**
      * The number of top points of interest to return.
      */
@@ -42,10 +42,11 @@ class Reducer implements Runnable {
     public void run() {
         reduce();
     }
-    
+
     /**
      * Adds one by one the results of each mapper into a single hashmap before reducing.
-     * @param addition	the newly map result to be added.
+     *
+     * @param addition the newly map result to be added.
      */
     void addMap(HashMap<String, PointOfInterest> addition) {
         for (Map.Entry<String, PointOfInterest> e : addition.entrySet()) {
@@ -57,7 +58,7 @@ class Reducer implements Runnable {
             }
         }
     }
-    
+
     /**
      * The reducing process.
      * <p>
@@ -94,9 +95,9 @@ class Reducer implements Runnable {
                 .stream()
                 .forEach(PointOfInterest::cleanupDuplicatePhotos);
     }
-    
+
     /**
-     * @return	the results of the reducing process in a map form.
+     * @return the results of the reducing process in a map form.
      */
     public HashMap<String, PointOfInterest> getResults() {
         HashMap<String, PointOfInterest> map = new HashMap<>();
@@ -104,17 +105,19 @@ class Reducer implements Runnable {
             map.put(point.getID(), point);
         return map;
     }
-    
+
     /**
      * topK setter
+     *
      * @param topK
      */
     void setTopK(int topK) {
         this.topK = topK;
     }
-    
+
     /**
      * topK getter
+     *
      * @return topK
      */
     int getTopK() {

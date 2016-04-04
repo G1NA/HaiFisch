@@ -19,6 +19,12 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
     public volatile static Reduce_Server server;
     private static volatile HashMap<String, Results> requests = new HashMap<>();
 
+    /**
+     * The reduce server node
+     * Retrieve the master details from the admin initiate butler and console.
+     *
+     * @param args
+     */
     public static void main(String args[]) {
 
 
@@ -32,6 +38,12 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
         server.initiateConsole();
     }
 
+    /**
+     * Set the configuration for the server, create a listener and
+     * inform the master node for its existence
+     *
+     * @param configuration The node configuration
+     */
     private Reduce_Server(Configuration configuration) {
         this.configuration = configuration;
         createListeningSocket(); //Create the listening socket.
@@ -39,45 +51,94 @@ public class Reduce_Server extends MainProgram implements onConnectionListener {
     }
 
 
+    /**
+     * On connection listener
+     *
+     * @param payload the data transmitted
+     */
     @Override
     synchronized public void onConnect(NetworkPayload payload) {
         System.out.println("Serving new request from: " + payload.SENDER_NAME);
         new Thread(new RequestHandler(payload)).start();
     }
 
+    /**
+     * Get the server configuration
+     *
+     * @return The configuration
+     */
     synchronized Configuration getConfiguration() {
         return configuration;
     }
 
+    /**
+     * Get the stored data for a request
+     *
+     * @param id The request id
+     * @return The data stored
+     */
     synchronized static ArrayList<HashMap<String, PointOfInterest>> getData(String id) {
-            return requests.get(id).getResults();
+        return requests.get(id).getResults();
     }
 
+    /**
+     * Store new data for a request
+     *
+     * @param id  The request id
+     * @param map The data to be stored
+     */
     synchronized static void putData(String id, HashMap<String, PointOfInterest> map) {
         if (!requests.containsKey(id))
             requests.put(id, new Results());
         requests.get(id).add(map);
     }
 
-    synchronized static void setMisc(String id, CheckInRes res)
-    {
+    /**
+     * Set miscellaneous information about the request
+     *
+     * @param id  The request id
+     * @param res he request packet containing the information
+     */
+    synchronized static void setMisc(String id, CheckInRes res) {
         Results results = requests.get(id);
         results.setTopK(res.getTopK());
         results.setMappers(res.getMapperCount());
     }
 
-    synchronized static void mapperDone(String id)
-    {
+    /**
+     * Increment the completed mappers for a request
+     *
+     * @param id The request id that the mapper was handling
+     */
+    synchronized static void mapperDone(String id) {
         requests.get(id).mapperCompleted();
     }
-    synchronized static boolean isDone(String id)
-    {
-        return  requests.get(id).isDone();
+
+    /**
+     * Check if a request is done
+     *
+     * @param id The request id to check
+     * @return true if done
+     */
+    synchronized static boolean isDone(String id) {
+        return requests.get(id).isDone();
     }
+
+    /**
+     * Get the topK variable for a request
+     *
+     * @param id The request id
+     * @return return the variable
+     */
     synchronized static int getTopK(String id) {
         return requests.get(id).getTopK();
     }
 
+    /**
+     * Remove the data since the request has been served
+     *
+     * @param id The request id
+     */
     synchronized static void removeData(String id) {
         requests.remove(id);
     }
