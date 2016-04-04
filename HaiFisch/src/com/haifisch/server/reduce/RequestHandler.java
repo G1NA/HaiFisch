@@ -21,7 +21,6 @@ class RequestHandler implements Runnable {
 
         //Will only be used if we want to know which mappers will communicate with us
         if (request.PAYLOAD_TYPE == NetworkPayloadType.CONNECTION_ACK) {
-            // ---> edw dn 3erw t paizei akrivws
 
             //Receive the mapper results and run the reduce function
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
@@ -32,9 +31,6 @@ class RequestHandler implements Runnable {
 
 
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.START_REDUCE) {
-            //----> pros stigmin 8ewrw oti sto payload pedio tou NetworkPayload vrisketai to id tou request p prepei
-            // na e3ipiretisw.... 8a mporousame i na to enswmatwsoume sto CheckInRes i se kati allo
-            // alla logika ki etsi douleuei
             Reducer reduce = new Reducer();
             Thread r = new Thread(reduce, new RandomString(6).nextString());
             r.setPriority(Thread.MAX_PRIORITY);
@@ -60,9 +56,11 @@ class RequestHandler implements Runnable {
         }
     }
 
+    /**
+     * Sends an error message to the Master if an error occurs
+     * */
     private void errorResponse() {
         Configuration config = Reduce_Server.server.getConfiguration();
-        //Demo data until the configuration dialog is operational
         SenderSocket send = new SenderSocket(config.masterServerName, config.masterServerPort,
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null, "sup", 5, 500,
                         "Something went terribly wrong"));
