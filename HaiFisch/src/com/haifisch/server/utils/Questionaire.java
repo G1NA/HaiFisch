@@ -9,7 +9,6 @@ public class Questionaire {
 
     public static Scanner scanner;
 
-    //---> ta evala public alla mporoume na valoume kai getters
     public final String masterServerName;
     public final int masterServerPort;
   

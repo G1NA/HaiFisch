@@ -2,12 +2,17 @@ package com.haifisch.server.utils;
 
 import java.io.*;
 
-public class Serialize {
+/**
+ * 
+ */
+
+public class Serializer {
 
     public static byte[] serialize(Object obj) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutput out = new ObjectOutputStream(bos)) {
             out.writeObject(obj);
+            out.flush();
             return bos.toByteArray();
         }
     }

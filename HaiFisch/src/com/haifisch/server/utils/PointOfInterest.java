@@ -5,7 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a Point of Interest.
+ */
+
 public class PointOfInterest implements Comparable<PointOfInterest>, Serializable {
+	
     private static final long serialVersionUID = 26754458721582L;
 
     private String id;
@@ -15,7 +20,15 @@ public class PointOfInterest implements Comparable<PointOfInterest>, Serializabl
     private Point coords;
     private List<String> photos;
     private int numOfCheckIns;
-
+    
+    /** 
+     * Basic constructor
+     * @param id
+     * @param name
+     * @param category
+     * @param category_id
+     * @param coords
+     */
     public PointOfInterest(String id, String name, String category, int category_id, Point coords) {
         this.id = id;
         this.name = name;
@@ -25,18 +38,22 @@ public class PointOfInterest implements Comparable<PointOfInterest>, Serializabl
         this.photos = new ArrayList<>();
         this.numOfCheckIns = 0;
     }
-
+    
+    /**
+     * Another constructor
+     * @param id
+     * @param name
+     * @param category
+     * @param category_id
+     * @param longitude
+     * @param latitude
+     */
     public PointOfInterest(String id, String name, String category, int category_id, double longitude, double latitude) {
-        this.id = id;
-        this.name = name;
-        this.category = category;
-        this.category_id = category_id;
-        this.coords = new Point(longitude, latitude);
-        this.photos = new ArrayList<>();
-        this.numOfCheckIns = 0;
+        this(id, name , category, category_id, new Point(longitude, latitude));
     }
 
-
+    /** GETTERS & SETTERS */
+    
     public String getID() {
         return this.id;
     }
@@ -68,40 +85,73 @@ public class PointOfInterest implements Comparable<PointOfInterest>, Serializabl
     public int getNumberOfPhotos() {
         return this.photos.size();
     }
-
+    
+    /**
+     * Adds a new photo by its link.
+     * @param link	the photo link
+     */
     public void addPhoto(String link) {
         if (!link.equalsIgnoreCase("Not exists"))
             photos.add(link);
     }
-
+    
+    /**
+     * Increments the checkins by 1.
+     */
     public void incrementCheckIns() {
         ++this.numOfCheckIns;
     }
-
+    
+    /**
+     * Increments the checkins by a value 
+     * @param value
+     */
     public void incrementCheckInsBy(int value) {
         this.numOfCheckIns += value;
     }
-
+    
+    /**
+     * Adds a list of new photos
+     * @param photos	the list of photos
+     */
     protected void addPhotos(List<String> photos) {
         photos.stream().forEach(this::addPhoto);
     }
-
-    public void addCheckIn(String link) {
+    
+    /**
+     * Adds a new checkin and adds the photo
+     * @param photoLink	the photo link
+     */
+    public void addCheckIn(String photoLink) {
         this.incrementCheckIns();
-        this.addPhoto(link);
+        this.addPhoto(photoLink);
     }
-
+    
+    /**
+     * 'Increments' the current instance by a new point of interest.
+     * <p>
+     * This is done by summing up the number of checkins and the list of photos
+     * @param poi	 the Point of Interest to add
+     * @return	the updated instance
+     */
     public PointOfInterest incrementObject(PointOfInterest poi) {
         // we've checked the equality of the poi's -> its about the same place
         this.incrementCheckInsBy(poi.getNumberOfCheckIns());
         this.addPhotos(poi.getPhotos());
         return this;
     }
-
+    
+    /**
+     * Cleans up the duplicate photos of the list.
+     */
     public void cleanupDuplicatePhotos() {
         this.photos = this.photos.stream().distinct().collect(Collectors.toList());
     }
-
+    
+    /**
+     * Compares the current instance to a PointOfInterest
+     */
+    @Override
     public int compareTo(PointOfInterest p) {
         return Integer.signum(p.getNumberOfCheckIns() - this.getNumberOfCheckIns());
     }
