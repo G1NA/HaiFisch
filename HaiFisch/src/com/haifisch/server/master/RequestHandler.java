@@ -26,12 +26,27 @@ class RequestHandler implements Runnable {
     public void run() {
         //Get the connections coming from mappers and reducers and add them to the node pool
         if (request.PAYLOAD_TYPE == NetworkPayloadType.CONNECTION_ACK) {
-            ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
             if (request.STATUS == 500) {
-                System.err.println("Request sent to: " + connected.serverName + ":" + connected.port + " failed with error: "
-                        + request.MESSAGE);
+                if (request.payload instanceof CheckInRequest) {
+                    System.err.println("Request " + ((CheckInRequest) request.payload).getRequestId()
+                            + "sent to: " + request.SENDER_NAME + ":" + request.SENDER_PORT + " failed with error: "
+                            + request.MESSAGE);
+                    Client cl = Master.servingClients.get(((CheckInRequest) request.payload).getRequestId());
+                    cl.addFail(request.SENDER_NAME + ":" + request.SENDER_PORT);
+
+                    //The maximum tries for the server have been reached assign to another one
+                    if (cl.thresholdReached(request.SENDER_NAME + ":" + request.SENDER_PORT)) {
+
+                    }
+
+                } else if (request.payload instanceof CheckInRes) {
+                    System.err.println("Request " + ((CheckInRes) request.payload).getRequestId()
+                            + "sent to: " + request.SENDER_NAME + ":" + request.SENDER_PORT + " failed with error: "
+                            + request.MESSAGE);
+                }
                 return;
             }
+            ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
             if (connected.TYPE == 1) {
                 mappers.add(connected);
                 if (reducer != null)

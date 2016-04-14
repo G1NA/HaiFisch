@@ -68,7 +68,7 @@ class RequestHandler implements Runnable {
     //Respond with an error
     private void errorResponse(String optional) {
         SenderSocket send = new SenderSocket(request.SENDER_NAME, request.SENDER_PORT,
-                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, request.payload,
                         Map_Server.server.getName(), Map_Server.server.getPort(), 500, optional));
         send.run();
         if (!send.isSent())

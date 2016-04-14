@@ -12,6 +12,7 @@ class Client {
     private final int mappersAssigned;
     private int mappersDone;
     private final HashMap<String, CheckInRequest> assignments;
+    private HashMap<String, Integer> fails = new HashMap<>();
 
     /**
      * The client object represents a client currently being served
@@ -88,5 +89,13 @@ class Client {
      */
     boolean isDone() {
         return mappersAssigned == mappersDone;
+    }
+
+    public void addFail(String name){
+        fails.put(name,fails.get(name)+1);
+    }
+
+    public boolean thresholdReached(String name){
+        return fails.get(name) == 3;
     }
 }
