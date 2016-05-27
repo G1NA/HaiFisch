@@ -18,12 +18,8 @@ public class Communicator extends AsyncTask {
     public volatile onConnectionListener listener;
 
     public Communicator(onConnectionListener listener) {
-        try {
-            serverSocket = new ServerSocket(0);
-            created = true;
-            this.listener = listener;
-        } catch (IOException ignored) {
-        }
+        this.listener = listener;
+
     }
 
     synchronized public void setConnectionListener(onConnectionListener listener) {
@@ -44,6 +40,13 @@ public class Communicator extends AsyncTask {
 
     @Override
     protected Void doInBackground(Object... params) {
+        try {
+            serverSocket = new ServerSocket(0);
+            created = true;
+
+        } catch (IOException ignored) {
+            ignored.printStackTrace();
+        }
         while (true) {
             try {
                 Socket socket = serverSocket.accept();

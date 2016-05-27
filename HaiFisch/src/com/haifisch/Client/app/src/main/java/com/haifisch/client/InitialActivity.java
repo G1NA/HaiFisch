@@ -16,6 +16,7 @@ public class InitialActivity extends AppCompatActivity implements onConnectionLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
         communicator = new Communicator(this);
+        communicator.execute(new Object());
         if (!communicator.created)
             Toast.makeText(this, "Failed to initialize socket", Toast.LENGTH_SHORT).show();
     }

@@ -54,5 +54,6 @@
         android:id="@+id/button"
         android:layout_marginTop="33dp"
         android:layout_below="@+id/port_no"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="click" />
 </RelativeLayout>
