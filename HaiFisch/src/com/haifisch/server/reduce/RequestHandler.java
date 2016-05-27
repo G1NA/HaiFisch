@@ -1,9 +1,9 @@
 package com.haifisch.server.reduce;
 
-import com.haifisch.server.NetworkTools.CheckInRes;
-import com.haifisch.server.NetworkTools.NetworkPayload;
-import com.haifisch.server.NetworkTools.NetworkPayloadType;
-import com.haifisch.server.NetworkTools.SenderSocket;
+import com.haifisch.server.network_tools.CheckInRes;
+import com.haifisch.server.network_tools.NetworkPayload;
+import com.haifisch.server.network_tools.NetworkPayloadType;
+import com.haifisch.server.network_tools.SenderSocket;
 import com.haifisch.server.utils.Configuration;
 import com.haifisch.server.utils.RandomString;
 

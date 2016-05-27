@@ -1,6 +1,6 @@
 package com.haifisch.server.map;
 
-import com.haifisch.server.NetworkTools.*;
+import com.haifisch.server.network_tools.*;
 import com.haifisch.server.utils.RandomString;
 
 class RequestHandler implements Runnable {

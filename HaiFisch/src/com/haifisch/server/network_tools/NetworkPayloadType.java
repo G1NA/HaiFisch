@@ -1,4 +1,4 @@
-package com.haifisch.server.NetworkTools;
+package com.haifisch.server.network_tools;
 
 /**
  * Network payload type enumeration.

@@ -1,7 +1,7 @@
 package com.haifisch.server.map;
 
 import com.haifisch.server.MainProgram;
-import com.haifisch.server.NetworkTools.NetworkPayload;
+import com.haifisch.server.network_tools.NetworkPayload;
 import com.haifisch.server.utils.Questionaire;
 
 /**

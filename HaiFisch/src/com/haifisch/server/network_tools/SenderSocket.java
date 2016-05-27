@@ -1,4 +1,4 @@
-package com.haifisch.server.NetworkTools;
+package com.haifisch.server.network_tools;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

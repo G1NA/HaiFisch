@@ -1,8 +1,8 @@
 package com.haifisch.server.reduce;
 
 import com.haifisch.server.MainProgram;
-import com.haifisch.server.NetworkTools.CheckInRes;
-import com.haifisch.server.NetworkTools.NetworkPayload;
+import com.haifisch.server.network_tools.CheckInRes;
+import com.haifisch.server.network_tools.NetworkPayload;
 import com.haifisch.server.utils.Configuration;
 import com.haifisch.server.utils.PointOfInterest;
 import com.haifisch.server.utils.Questionaire;

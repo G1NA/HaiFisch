@@ -1,7 +1,7 @@
 package com.haifisch.server.master;
 
 import com.haifisch.server.MainProgram;
-import com.haifisch.server.NetworkTools.*;
+import com.haifisch.server.network_tools.*;
 import com.haifisch.server.utils.*;
 import com.haifisch.server.utils.Point;
 

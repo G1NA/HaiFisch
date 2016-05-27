@@ -1,6 +1,6 @@
 package com.haifisch.server;
 
-import com.haifisch.server.NetworkTools.*;
+import com.haifisch.server.network_tools.*;
 import com.haifisch.server.utils.Questionaire;
 
 import java.util.Scanner;
