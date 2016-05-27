@@ -20,6 +20,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     ProgressDialog dialog;
     ImageView active;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +31,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        ImageView  view = (ImageView) findViewById(R.id.map_view);
+        ImageView view = (ImageView) findViewById(R.id.map_view);
         view.setOnClickListener(this);
         setActive(view);
 
@@ -57,16 +58,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         dialog.dismiss();
         mMap = googleMap;
-
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
+        LatLng sydney = new LatLng(37.43, 28);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.map_view:
                 setPassive(active);
                 setActive((ImageView) v);
@@ -81,36 +81,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 setPassive(active);
                 setActive((ImageView) v);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.map,TopkChoice.newInstance()).commit();
+                        .replace(R.id.map, TopkChoice.newInstance()).commit();
                 break;
             case R.id.settings_view:
                 setPassive(active);
                 setActive((ImageView) v);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.map,SettingsFragment.newInstance()).commit();
+                        .replace(R.id.map, SettingsFragment.newInstance()).commit();
                 break;
             default:
                 break;
         }
     }
-    public void setActive(ImageView v){
+
+    public void setActive(ImageView v) {
         active = v;
         v.setColorFilter(getResources().getColor(R.color.colorPrimary));
         ViewGroup.LayoutParams params = v.getLayoutParams();
-        params.height = (int)getResources().getDimension(R.dimen.bottom_but_active);
+        params.height = (int) getResources().getDimension(R.dimen.bottom_but_active);
         v.setLayoutParams(params);
     }
 
     public void setPassive(ImageView v) {
         v.setColorFilter(getResources().getColor(R.color.button_material_dark));
         ViewGroup.LayoutParams params = v.getLayoutParams();
-        params.height = (int)getResources().getDimension(R.dimen.bottom_but_passive);
+        params.height = (int) getResources().getDimension(R.dimen.bottom_but_passive);
         v.setLayoutParams(params);
     }
 
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    public LatLng[] getPos() {
+        return new LatLng[]{mMap.getProjection().getVisibleRegion().nearLeft,
+                mMap.getProjection().getVisibleRegion().farRight};
+    }
+
+    public void search(View view){
+      //nothing
 
     }
 }

@@ -10,7 +10,16 @@
     android:layout_height="match_parent"
     android:layout_alignParentBottom="false"
     android:layout_alignParentEnd="false"
-    android:layout_above="@+id/bottom_bar" />
+    android:layout_above="@+id/bottom_bar" >
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/view"
+        android:layout_gravity="right|bottom"
+        android:src="@drawable/ic_search_white_24dp"
+        android:onClick="search" />
+</FrameLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="73dp"
