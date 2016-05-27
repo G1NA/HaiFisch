@@ -1,17 +1,11 @@
 package com.haifisch.client;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.haifisch.server.network_tools.ConnectionAcknowledge;
-import com.haifisch.server.network_tools.NetworkPayload;
-import com.haifisch.server.network_tools.NetworkPayloadType;
-import com.haifisch.server.network_tools.SenderSocket;
-import com.haifisch.server.network_tools.onConnectionListener;
 
 public class InitialActivity extends AppCompatActivity implements onConnectionListener {
 
