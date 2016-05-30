@@ -25,9 +25,9 @@ public class InitialActivity extends AppCompatActivity implements onConnectionLi
         String ip = ((EditText) findViewById(R.id.ip_address)).getText().toString();
         int port = Integer.parseInt(((EditText) findViewById(R.id.port_no)).getText().toString());
         NetworkPayload payload = new NetworkPayload(NetworkPayloadType.CONNECTION_ACK,
-                false, new ConnectionAcknowledge(1, communicator.getName(),
-                communicator.getPort()), communicator.getName(), communicator.getPort(), 200, "OK");
-        new SenderSocket(ip, port, payload).run();
+                false, new ConnectionAcknowledge(1, Communicator.address,
+                Communicator.port), Communicator.address, Communicator.port, 200, "OK");
+        new Thread(new SenderSocket(ip, port, payload)).start();
     }
 
     @Override

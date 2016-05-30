@@ -16,6 +16,8 @@ public class Communicator extends AsyncTask {
     private ServerSocket serverSocket;
     public boolean created = false;
     public volatile onConnectionListener listener;
+    public static String address;
+    public static int port;
 
     public Communicator(onConnectionListener listener) {
         this.listener = listener;
@@ -43,6 +45,8 @@ public class Communicator extends AsyncTask {
         try {
             serverSocket = new ServerSocket(0);
             created = true;
+            address = getName();
+            port = getPort();
 
         } catch (IOException ignored) {
             ignored.printStackTrace();
