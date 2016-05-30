@@ -1,13 +1,13 @@
-package com.haifisch.server.master;
+package com.haifisch.server.master_node;
 
-import com.haifisch.server.network_tools.*;
+import commons.*;
 import com.haifisch.server.utils.PointOfInterest;
 import com.haifisch.server.utils.RandomString;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-import static com.haifisch.server.master.Master.*;
+import static com.haifisch.server.master_node.Master.*;
 
 class RequestHandler implements Runnable {
 
@@ -83,7 +83,7 @@ class RequestHandler implements Runnable {
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
 
             //Received mapper operation end
-            //TODO use only if the master must inform the reducer, currently it simply monitors the request state
+            //TODO use only if the master_node must inform the reducer, currently it simply monitors the request state
             if (request.payload == null) {
 
                 Client cl = Master.servingClients.get(request.MESSAGE);
@@ -100,7 +100,7 @@ class RequestHandler implements Runnable {
                     if (socket.isSent())
                         Master.servingClients.remove(request.MESSAGE);
                     else
-                        System.err.println("Error when sending reduce for request: " + request.MESSAGE + " to reducer: "
+                        System.err.println("Error when sending reducer_node for request: " + request.MESSAGE + " to reducer: "
                                 + Master.reducer.serverName + ":" + Master.reducer.port);
                                 */
                 }
@@ -157,7 +157,7 @@ class RequestHandler implements Runnable {
     }
 
     /**
-     * Send an error message to the master server
+     * Send an error message to the master_node server
      */
     private void errorResponse() {
         SenderSocket send = new SenderSocket(request.SENDER_NAME, request.SENDER_PORT,

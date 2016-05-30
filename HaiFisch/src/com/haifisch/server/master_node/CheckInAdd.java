@@ -1,4 +1,4 @@
-package com.haifisch.server.master;
+package com.haifisch.server.master_node;
 
 import java.io.Serializable;
 import java.util.Date;

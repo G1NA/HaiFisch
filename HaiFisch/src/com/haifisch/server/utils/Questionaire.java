@@ -13,24 +13,24 @@ public class Questionaire {
     public final int masterServerPort;
 
     /**
-     * Set the master server 's name.
+     * Set the master_node server 's name.
      *
      * @return name
      */
     private String setMasterServerName() {
 
-        System.out.println("Insert master server name:");
+        System.out.println("Insert master_node server name:");
         return scanner.nextLine();
     }
 
     /**
-     * Set the master server 's port.
+     * Set the master_node server 's port.
      *
      * @return port
      */
     private int setMasterServerPort() {
 
-        System.out.println("Insert master server port: ");
+        System.out.println("Insert master_node server port: ");
         return Integer.parseInt(scanner.nextLine().trim());
     }
 

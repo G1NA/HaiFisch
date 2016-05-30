@@ -1,8 +1,8 @@
-package com.haifisch.server.master;
+package com.haifisch.server.master_node;
+
+import commons.CheckInRequest;
 
 import java.util.HashMap;
-
-import com.haifisch.server.network_tools.CheckInRequest;
 
 class Client {
 

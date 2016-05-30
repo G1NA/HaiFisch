@@ -1,5 +1,10 @@
 package com.haifisch.server.network_tools;
 
+import commons.NetworkPayload;
+import commons.NetworkPayloadType;
+import commons.SenderSocket;
+import commons.onConnectionListener;
+
 import java.io.ObjectInputStream;
 import java.net.Inet4Address;
 import java.net.Socket;

@@ -1,4 +1,4 @@
-package com.haifisch.server.map;
+package com.haifisch.server.mapper_node;
 
 import com.haifisch.server.utils.Configuration;
 import com.haifisch.server.utils.Point;
@@ -18,8 +18,8 @@ public class MapperConfiguration extends Configuration {
     /**
      * Singleton retriever (DEPRECATED)
      *
-     * @param masterServerName The name of the master node
-     * @param masterServerPort The port of the master node
+     * @param masterServerName The name of the master_node node
+     * @param masterServerPort The port of the master_node node
      * @param reducerName      The name of the reducer node
      * @param reducerPort      The port of the reducer node
      * @param left             The bottom left point of the mapper
@@ -41,8 +41,8 @@ public class MapperConfiguration extends Configuration {
     /**
      * Singleton retriever
      *
-     * @param masterServerName The name of the master node
-     * @param masterServerPort The port of the master node
+     * @param masterServerName The name of the master_node node
+     * @param masterServerPort The port of the master_node node
      * @param reducerName      The name of the reducer node
      * @param reducerPort      The port of the reducer node
      * @return the instance
@@ -59,8 +59,8 @@ public class MapperConfiguration extends Configuration {
     /**
      * Singleton retriever
      *
-     * @param masterServerName The name of the master node
-     * @param masterServerPort The port of the master node
+     * @param masterServerName The name of the master_node node
+     * @param masterServerPort The port of the master_node node
      * @return the instance
      */
     static MapperConfiguration getMapperConfiguration(String masterServerName, int masterServerPort) {

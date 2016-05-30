@@ -13,8 +13,8 @@ public class Configuration {
     /**
      * Configuration constructor
      *
-     * @param masterServerName The master node name
-     * @param masterServerPort The master node port
+     * @param masterServerName The master_node node name
+     * @param masterServerPort The master_node node port
      */
     public Configuration(String masterServerName, int masterServerPort) {
         this.masterServerName = masterServerName;

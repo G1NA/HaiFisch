@@ -3,7 +3,7 @@ package com.haifisch.server.utils;
 import java.io.Serializable;
 
 /**
- * Class that represents a point on a map.
+ * Class that represents a point on a mapper_node.
  */
 public class Point implements Serializable {
 
@@ -25,7 +25,7 @@ public class Point implements Serializable {
     }
 
     /**
-     * Sets the longtitude of a map coordinate.
+     * Sets the longtitude of a mapper_node coordinate.
      *
      * @param longtitude
      */
@@ -35,7 +35,7 @@ public class Point implements Serializable {
     }
 
     /**
-     * Sets the latitude of a map coordinate.
+     * Sets the latitude of a mapper_node coordinate.
      *
      * @param latitude
      */
@@ -45,7 +45,7 @@ public class Point implements Serializable {
     }
 
     /**
-     * Gets the longtitude of a map coordinate.
+     * Gets the longtitude of a mapper_node coordinate.
      *
      * @return longtitude
      */
@@ -55,7 +55,7 @@ public class Point implements Serializable {
     }
 
     /**
-     * Gets the latitude of a map coordinate.
+     * Gets the latitude of a mapper_node coordinate.
      *
      * @return latitude
      */

@@ -1,7 +1,7 @@
-package com.haifisch.server.master;
+package com.haifisch.server.master_node;
 
+import commons.*;
 import com.haifisch.server.MainProgram;
-import com.haifisch.server.network_tools.*;
 import com.haifisch.server.utils.*;
 import com.haifisch.server.utils.Point;
 
@@ -25,7 +25,7 @@ public class Master extends MainProgram{
     static volatile Master masterThread;
 
     /**
-     * The master server main
+     * The master_node server main
      */
     public static void main(String[] args) {
 

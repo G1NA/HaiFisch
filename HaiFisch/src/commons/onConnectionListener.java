@@ -1,4 +1,4 @@
-package com.haifisch.server.network_tools;
+package commons;
 
 /**
  * Connection interface.

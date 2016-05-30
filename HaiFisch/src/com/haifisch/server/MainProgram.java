@@ -1,5 +1,6 @@
 package com.haifisch.server;
 
+import commons.*;
 import com.haifisch.server.network_tools.*;
 import com.haifisch.server.utils.Questionaire;
 
@@ -84,7 +85,7 @@ public class MainProgram implements onConnectionListener {
                         getPort()), getName(), getPort(), 200, "connected"));
         socket_ack.run();
         if (!socket_ack.isSent()) {
-            System.err.println("Failed to send Connection Acknowledge to master server!\nClosing mapper!");
+            System.err.println("Failed to send Connection Acknowledge to master_node server!\nClosing mapper!");
             close();
         }
     }

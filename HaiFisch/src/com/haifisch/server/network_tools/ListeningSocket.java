@@ -1,6 +1,7 @@
 package com.haifisch.server.network_tools;
 
 import com.haifisch.server.utils.RandomString;
+import commons.onConnectionListener;
 
 import java.io.IOException;
 import java.net.Inet4Address;

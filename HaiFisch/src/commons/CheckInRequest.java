@@ -1,4 +1,6 @@
-package com.haifisch.client;
+package commons;
+
+import com.haifisch.server.utils.Point;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

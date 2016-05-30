@@ -1,8 +1,8 @@
-package com.haifisch.server.reduce;
+package com.haifisch.server.reducer_node;
 
 import com.haifisch.server.MainProgram;
-import com.haifisch.server.network_tools.CheckInRes;
-import com.haifisch.server.network_tools.NetworkPayload;
+import commons.CheckInRes;
+import commons.NetworkPayload;
 import com.haifisch.server.utils.Configuration;
 import com.haifisch.server.utils.PointOfInterest;
 import com.haifisch.server.utils.Questionaire;
@@ -19,8 +19,8 @@ public class Reduce_Server extends MainProgram {
     private static volatile HashMap<String, Results> requests = new HashMap<>();
 
     /**
-     * The reduce server node
-     * Retrieve the master details from the admin initiate butler and console.
+     * The reducer_node server node
+     * Retrieve the master_node details from the admin initiate butler and console.
      *
      * @param args
      */
@@ -39,7 +39,7 @@ public class Reduce_Server extends MainProgram {
 
     /**
      * Set the configuration for the server, create a listener and
-     * inform the master node for its existence
+     * inform the master_node node for its existence
      *
      * @param configuration The node configuration
      */

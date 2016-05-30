@@ -1,4 +1,4 @@
-package com.haifisch.client;
+package commons;
 
 import java.io.Serializable;
 

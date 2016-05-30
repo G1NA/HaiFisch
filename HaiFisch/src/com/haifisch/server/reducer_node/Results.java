@@ -1,4 +1,4 @@
-package com.haifisch.server.reduce;
+package com.haifisch.server.reducer_node;
 
 import com.haifisch.server.utils.PointOfInterest;
 
