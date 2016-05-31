@@ -2,7 +2,7 @@ package com.haifisch.server.mapper_node;
 
 import com.haifisch.server.datamanagement.DatabaseManager;
 import commons.CheckInRequest;
-import com.haifisch.server.utils.PointOfInterest;
+import commons.PointOfInterest;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

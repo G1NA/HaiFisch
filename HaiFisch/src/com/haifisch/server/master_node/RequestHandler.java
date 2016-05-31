@@ -1,7 +1,7 @@
 package com.haifisch.server.master_node;
 
 import commons.*;
-import com.haifisch.server.utils.PointOfInterest;
+import commons.PointOfInterest;
 import com.haifisch.server.utils.RandomString;
 
 import java.util.HashMap;

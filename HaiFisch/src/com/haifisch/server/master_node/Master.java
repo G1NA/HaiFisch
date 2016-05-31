@@ -3,7 +3,7 @@ package com.haifisch.server.master_node;
 import commons.*;
 import com.haifisch.server.MainProgram;
 import com.haifisch.server.utils.*;
-import com.haifisch.server.utils.Point;
+import commons.Point;
 
 import java.awt.*;
 import java.sql.Timestamp;
@@ -157,7 +157,7 @@ public class Master extends MainProgram{
             System.out.println("Type the longitude of the bottom right corner");
             // cord2 = Double.parseDouble(scan.nextLine().trim());
             cord2 = Double.parseDouble("-73.7");
-            Point right = new com.haifisch.server.utils.Point(cord2, cord);
+            Point right = new Point(cord2, cord);
 
             System.out.println("From when? Time format as dd/MM/yyyy HH:mm");
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm");

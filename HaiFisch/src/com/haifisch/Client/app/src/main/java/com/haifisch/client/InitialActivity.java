@@ -7,6 +7,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import commons.ConnectionAcknowledge;
+import commons.NetworkPayload;
+import commons.NetworkPayloadType;
+import commons.onConnectionListener;
+
 public class InitialActivity extends AppCompatActivity implements onConnectionListener {
 
     public static Communicator communicator;

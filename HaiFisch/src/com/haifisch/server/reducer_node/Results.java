@@ -1,6 +1,6 @@
 package com.haifisch.server.reducer_node;
 
-import com.haifisch.server.utils.PointOfInterest;
+import commons.PointOfInterest;
 
 import java.util.ArrayList;
 import java.util.HashMap;

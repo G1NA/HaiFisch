@@ -4,7 +4,7 @@ import com.haifisch.server.MainProgram;
 import commons.CheckInRes;
 import commons.NetworkPayload;
 import com.haifisch.server.utils.Configuration;
-import com.haifisch.server.utils.PointOfInterest;
+import commons.PointOfInterest;
 import com.haifisch.server.utils.Questionaire;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.haifisch.server.utils;
+package commons;
 
 import java.io.Serializable;
 import java.util.ArrayList;

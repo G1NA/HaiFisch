@@ -2,13 +2,15 @@ package com.haifisch.client;
 
 import android.os.AsyncTask;
 
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import commons.NetworkPayload;
+import commons.onConnectionListener;
 
 
 public class Communicator extends AsyncTask {

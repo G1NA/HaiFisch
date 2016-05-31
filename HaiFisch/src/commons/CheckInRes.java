@@ -1,7 +1,5 @@
 package commons;
 
-import com.haifisch.server.utils.PointOfInterest;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;

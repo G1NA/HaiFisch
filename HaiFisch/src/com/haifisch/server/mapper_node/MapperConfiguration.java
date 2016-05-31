@@ -1,7 +1,7 @@
 package com.haifisch.server.mapper_node;
 
 import com.haifisch.server.utils.Configuration;
-import com.haifisch.server.utils.Point;
+import commons.Point;
 
 public class MapperConfiguration extends Configuration {
 

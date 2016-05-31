@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import commons.NetworkPayload;
+
 /**
  * A runnable sender socket. Sends network payload data through an output stream.
  */
