@@ -47,7 +47,11 @@ class RequestHandler implements Runnable {
                 return;
             }
             ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
-            if (connected.TYPE == 1) {
+            //If the sender is a client
+            if(connected.TYPE == 0){
+                //Do nothing now
+            }
+            else if (connected.TYPE == 1) {
                 mappers.add(connected);
                 if (reducer != null)
                     inform(connected);
@@ -103,7 +107,7 @@ class RequestHandler implements Runnable {
                         System.err.println("Error when sending reducer_node for request: " + request.MESSAGE + " to reducer: "
                                 + Master.reducer.serverName + ":" + Master.reducer.port);
                                 */
-                }
+            }
                 //IF the results came from a reducer
             } else {
                 String client_id = ((CheckInRes) request.payload).getRequestId();
