@@ -141,14 +141,14 @@ class RequestHandler implements Runnable {
             } else {
                 String client_id = ((CheckInRes) request.payload).getRequestId();
                 Client client = Master.servingClients.get(client_id);
-                /*
-                TODO for the 2nd part where we respond to the client
+
+                //TODO for the 2nd part where we respond to the client
                 SenderSocket socket = new SenderSocket(client.getClientAddress(), client.getClientPort(),
                         new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, request.payload,
                                 Master.masterThread.getName(), Master.masterThread.getPort(), 200, "Done"));
                 socket.run();
                 if (!socket.isSent())
-                    System.out.println(socket.getError());*/
+                    System.out.println(socket.getError());
 
 
                 //Print the results received
