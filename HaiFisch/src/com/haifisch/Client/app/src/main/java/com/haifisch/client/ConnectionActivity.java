@@ -19,7 +19,7 @@ public class ConnectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
 
-        if (!((Master)getApplication()).communicator.created)
+        if (!((Master) getApplication()).communicator.created)
             Toast.makeText(this, "Failed to initialize socket", Toast.LENGTH_SHORT).show();
     }
 
@@ -40,10 +40,13 @@ public class ConnectionActivity extends AppCompatActivity {
             return;
         }
         if (sock.isSent()) {
+            Master.masterIP = ip;
+            Master.masterPort = port;
             startActivity(new Intent(this, MainActivity.class));
         } else {
             Toast.makeText(this, "Failed to connect to master", Toast.LENGTH_SHORT).show();
         }
+
 
     }
 

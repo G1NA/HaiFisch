@@ -1,13 +1,18 @@
 package com.haifisch.client;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,14 +21,28 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import commons.CheckInRequest;
+import commons.CheckInRes;
+import commons.NetworkPayload;
+import commons.NetworkPayloadType;
+import commons.Point;
 import commons.PointOfInterest;
+import commons.onConnectionListener;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener,
-        OnFragmentInteractionListener, ResultFragment.OnListFragmentInteractionListener {
+        OnFragmentInteractionListener, ResultFragment.OnListFragmentInteractionListener, onConnectionListener {
 
     private GoogleMap mMap;
     ProgressDialog dialog;
     ImageView active;
+    Date selectedFrom;
+    Date selectedTo;
+    int selecting = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +65,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         dialog.setMessage("Loading map..");
         dialog.setCancelable(false);
         dialog.show();
-
+        Communicator.listener = this;
     }
 
     /**
@@ -125,7 +144,60 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void search(View view) {
-        //nothing
+
+        final Calendar c = Calendar.getInstance();
+        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                c.set(Calendar.YEAR, year);
+                c.set(Calendar.MONTH, monthOfYear);
+                c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                if (selecting == 0)
+                    selectedFrom = c.getTime();
+                else {
+                    selectedTo = c.getTime();
+                }
+
+                new TimePickerDialog(view.getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        c.set(Calendar.MINUTE, minute);
+                        if (selecting == 0) {
+                            selectedFrom = c.getTime();
+                            selecting++;
+                            search(view);
+                        } else if (selecting == 1) {
+                            selectedTo = c.getTime();
+                            sendRequest();
+                        }
+                    }
+                }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
+
+            }
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+
+
+    }
+
+    public void sendRequest() {
+        LatLng[] pos = getPos();
+        SenderSocket sock = new SenderSocket(Master.masterIP, Master.masterPort,
+                new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
+                        new CheckInRequest("", 0, new Point(pos[0].latitude, pos[0].longitude),
+                                new Point(pos[1].latitude, pos[1].longitude),
+                                new Timestamp(selectedFrom.getTime()), new Timestamp(selectedTo.getTime())),
+                        Communicator.address, Communicator.port, 200, "OK"));
+        Thread t = new Thread(sock);
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            Toast.makeText(this, "Failed to send request", Toast.LENGTH_SHORT).show();
+        }
+
+        if (!sock.isSent())
+            Toast.makeText(this, "Failed to send request", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -140,6 +212,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             extra.putSerializable("item", item);
             n.putExtra("item", extra);
 
+        }
+    }
+
+
+    //Populate the map and the result adapter with the received data
+    @Override
+    public void onConnect(NetworkPayload networkPayload) {
+        if (networkPayload.payload instanceof CheckInRes) {
+            CheckInRes res = (CheckInRes) networkPayload.payload;
+            Master.visiblePois = new ArrayList<>();
+            for (PointOfInterest poi : res.getMap().values()) {
+                Master.visiblePois.add(poi);
+                mMap.addMarker(new MarkerOptions()
+                        .visible(true)
+                        .position(new LatLng(poi.getCoordinates().getLatitude(),
+                                poi.getCoordinates().getLongtitude()))
+                );
+            }
         }
     }
 }

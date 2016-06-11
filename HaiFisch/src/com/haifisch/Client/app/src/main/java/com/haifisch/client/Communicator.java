@@ -17,17 +17,17 @@ public class Communicator extends AsyncTask {
 
     private ServerSocket serverSocket;
     public boolean created = false;
-    public volatile onConnectionListener listener;
+    public static volatile onConnectionListener listener;
     public static String address;
     public static int port;
 
     public Communicator(onConnectionListener listener) {
-        this.listener = listener;
+        Communicator.listener = listener;
 
     }
 
     synchronized public void setConnectionListener(onConnectionListener listener) {
-        this.listener = listener;
+        Communicator.listener = listener;
     }
 
     public String getName() {

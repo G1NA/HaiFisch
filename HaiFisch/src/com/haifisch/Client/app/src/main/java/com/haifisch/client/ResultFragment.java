@@ -60,7 +60,7 @@ public class ResultFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new PointOfInterestAdapter(null, mListener));
+            recyclerView.setAdapter(new PointOfInterestAdapter(Master.visiblePois, mListener));
         }
         return view;
     }
