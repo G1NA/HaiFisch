@@ -172,10 +172,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             sendRequest();
                         }
                     }
-                }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
+                }, 21,0, true).show();
 
             }
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+        }, 2008, 4, 1).show();
 
 
     }
@@ -198,7 +198,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (!sock.isSent())
             Toast.makeText(this, "Failed to send request", Toast.LENGTH_SHORT).show();
-
+        selecting = 0;
+        selectedFrom = null;
+        selectedTo = null;
     }
 
     @Override

@@ -40,7 +40,7 @@ public class PointOfInterestAdapter extends RecyclerView.Adapter<PointOfInterest
 
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getName());
-        holder.mContentView.setText(mValues.get(position).getNumberOfPhotos());
+        holder.mContentView.setText(String.valueOf(mValues.get(position).getNumberOfPhotos()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
