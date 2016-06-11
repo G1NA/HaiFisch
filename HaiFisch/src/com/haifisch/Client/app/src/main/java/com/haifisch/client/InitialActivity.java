@@ -10,19 +10,16 @@ import android.widget.Toast;
 import commons.ConnectionAcknowledge;
 import commons.NetworkPayload;
 import commons.NetworkPayloadType;
-import commons.onConnectionListener;
 
-public class InitialActivity extends AppCompatActivity implements onConnectionListener {
+public class InitialActivity extends AppCompatActivity {
 
-    public static Communicator communicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
-        communicator = new Communicator(this);
-        communicator.execute(new Object());
-        if (!communicator.created)
+
+        if (!((Master)getApplication()).communicator.created)
             Toast.makeText(this, "Failed to initialize socket", Toast.LENGTH_SHORT).show();
     }
 
@@ -32,16 +29,22 @@ public class InitialActivity extends AppCompatActivity implements onConnectionLi
         NetworkPayload payload = new NetworkPayload(NetworkPayloadType.CONNECTION_ACK,
                 false, new ConnectionAcknowledge(0, Communicator.address,
                 Communicator.port), Communicator.address, Communicator.port, 200, "OK");
-        new Thread(new SenderSocket(ip, port, payload)).start();
+        SenderSocket sock = new SenderSocket(ip, port, payload);
+        Thread t = new Thread(sock);
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to connect to master", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (sock.isSent()) {
+            startActivity(new Intent(this, MapsActivity.class));
+        } else {
+            Toast.makeText(this, "Failed to connect to master", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
-    @Override
-    public void onConnect(NetworkPayload networkPayload) {
-        if (networkPayload.PAYLOAD_TYPE == NetworkPayloadType.CONNECTION_ACK && networkPayload.STATUS == 200) {
-            startActivity(new Intent(this, MapsActivity.class));
-            finish();
-        } else {
-            Toast.makeText(this, "Failed to connect!", Toast.LENGTH_SHORT).show();
-        }
-    }
 }
