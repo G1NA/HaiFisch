@@ -11,7 +11,7 @@ import commons.ConnectionAcknowledge;
 import commons.NetworkPayload;
 import commons.NetworkPayloadType;
 
-public class InitialActivity extends AppCompatActivity {
+public class ConnectionActivity extends AppCompatActivity {
 
 
     @Override
@@ -40,7 +40,7 @@ public class InitialActivity extends AppCompatActivity {
             return;
         }
         if (sock.isSent()) {
-            startActivity(new Intent(this, MapsActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
         } else {
             Toast.makeText(this, "Failed to connect to master", Toast.LENGTH_SHORT).show();
         }

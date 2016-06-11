@@ -1,9 +1,9 @@
 package com.haifisch.server.master_node;
 
-import commons.*;
-import commons.PointOfInterest;
 import com.haifisch.server.utils.RandomString;
+import commons.*;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -48,10 +48,9 @@ class RequestHandler implements Runnable {
             }
             ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
             //If the sender is a client
-            if(connected.TYPE == 0){
+            if (connected.TYPE == 0) {
                 //Do nothing now
-            }
-            else if (connected.TYPE == 1) {
+            } else if (connected.TYPE == 1) {
                 mappers.add(connected);
                 if (reducer != null)
                     inform(connected);
@@ -76,12 +75,42 @@ class RequestHandler implements Runnable {
                 errorResponse();
             else {
 
+                //This does NOT identify the client, but the request of the client
                 String client_id = new RandomString(10).nextString();
+                while (servingClients.get(client_id) != null)
+                    client_id = new RandomString(10).nextString();
                 //Will be changed later on
                 servingClients.put(client_id, new Client(request.SENDER_NAME, request.SENDER_PORT, client_id,
                         mappers.size(), new HashMap<>()));
+                Client cl = servingClients.get(client_id);
                 //Do what the client asked
-
+                CheckInRequest req = (CheckInRequest) request.payload;
+                Point left = req.getLeftCorner();
+                Point right = req.getRightCorner();
+                Timestamp stampFrom = req.getFromTime();
+                Timestamp stampTo = req.getToTime();
+                int length = mappers.size();
+                double partSize = (right.longtitude - left.longtitude) / length;
+                Point trueLeft;
+                Point trueRight;
+                SenderSocket socket;
+                for (int i = 0; i < length; i++) {
+                    trueLeft = new Point(left.longtitude + partSize * i, left.latitude);
+                    trueRight = new Point(left.longtitude + partSize * (i + 1), right.latitude);
+                    req = new CheckInRequest(client_id, length, trueLeft, trueRight, stampFrom,
+                            stampTo);
+                    req.setTopK(100);
+                    socket = new SenderSocket(mappers.get(i).serverName,
+                            mappers.get(i).port,
+                            new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
+                                    req, masterThread.getName(), Master.masterThread.getPort(), 200, "Incoming request"));
+                    socket.run();
+                    if (!socket.isSent()) {
+                        System.err.println("Failed to send request to: " + mappers.get(i).serverName);
+                        break;
+                    } else
+                        cl.addAssignment(mappers.get(i).serverName + ":" + mappers.get(i).port, req);
+                }
             }
             // Received a check in result packet from a mapper or a reducer
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
@@ -107,7 +136,7 @@ class RequestHandler implements Runnable {
                         System.err.println("Error when sending reducer_node for request: " + request.MESSAGE + " to reducer: "
                                 + Master.reducer.serverName + ":" + Master.reducer.port);
                                 */
-            }
+                }
                 //IF the results came from a reducer
             } else {
                 String client_id = ((CheckInRes) request.payload).getRequestId();

@@ -8,4 +8,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="bottom_but_passive">60dp</dimen>
     <dimen name="bottom_but_active">65dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

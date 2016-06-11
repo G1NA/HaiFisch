@@ -1,6 +1,7 @@
 package com.haifisch.client;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -15,7 +16,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener, OnFragmentInteractionListener {
+import commons.PointOfInterest;
+
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener,
+        OnFragmentInteractionListener, ResultFragment.OnListFragmentInteractionListener {
 
     private GoogleMap mMap;
     ProgressDialog dialog;
@@ -81,7 +85,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 setPassive(active);
                 setActive((ImageView) v);
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.map, TopkChoice.newInstance()).commit();
+                        .replace(R.id.map, ResultFragment.newInstance()).commit();
                 break;
             case R.id.settings_view:
                 setPassive(active);
@@ -120,8 +124,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.getProjection().getVisibleRegion().farRight};
     }
 
-    public void search(View view){
-      //nothing
+    public void search(View view) {
+        //nothing
 
+    }
+
+    @Override
+    public void onListFragmentInteraction(PointOfInterest item) {
+        //If the id is empty it's a dummy item
+        if (item.getID().length() == 0) {
+            return;
+        } else {
+            Intent n = new Intent(this, CheckInViewActivity.class);
+            Bundle extra = new Bundle();
+            extra.putSerializable("item", item);
+            n.putExtra("item", extra);
+
+        }
     }
 }
