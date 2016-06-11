@@ -30,10 +30,11 @@ class Mapper implements Runnable {
     @Override
     public void run() {
 
-        DatabaseManager db = new DatabaseManager("jdbc:mysql://83.212.117.76:3306/ds_systems_2016?user=omada26&password=omada26db");
+        DatabaseManager db = new DatabaseManager("jdbc:mysql://83.212.117.76:3306/ds_systems_2016_omada26" +
+                "?user=omada26&password=omada26db");
 
         db.connectToDatabase();
-        
+
         //basic query
         String query = "SELECT * FROM checkins "
                 + "WHERE longitude BETWEEN " + request.getLeftCorner().getLongtitude()
@@ -46,7 +47,7 @@ class Mapper implements Runnable {
 
         ResultSet result = db.executeQuery(query);
 
-        
+
         int cores = Runtime.getRuntime().availableProcessors();
 
         double interval =
@@ -58,17 +59,17 @@ class Mapper implements Runnable {
             entries.add(new ArrayList<>());
 
         try {
-        	int list = 0;
+            int list = 0;
             while (result.next()) {
                 /* results of the form:
                  * 1:id 2:user 3:POI 4:POI_name 5:POI_category 6:POI_category_id 7:longitude 8:latitude 9:time 10:photos
             	 **/
                 CheckIn e = new CheckIn(result.getString(3), result.getString(4), result.getString(5),
                         result.getInt(6), result.getDouble(7), result.getDouble(8), result.getString(10));
-                if(e.getLATITUDE() >= (list+1)*interval)
-                	list++;
+                if (e.getLATITUDE() >= (list + 1) * interval)
+                    list++;
 
-            	entries.get(list).add(e);
+                entries.get(list).add(e);
             }
             db.closeConnection();
         } catch (SQLException e) {
