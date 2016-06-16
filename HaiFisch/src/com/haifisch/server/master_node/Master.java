@@ -164,7 +164,7 @@ public class Master extends MainProgram{
             Date date;
             try {
                 // date = format.parse(scan.nextLine().trim());
-                date = format.parse("01/04/2008 20:58");
+                date = format.parse("01/04/2012 20:58");
 
             } catch (ParseException e) {
                 System.out.println("Wrong date format!");
@@ -176,7 +176,7 @@ public class Master extends MainProgram{
             format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             try {
                 //date = format.parse(scan.nextLine().trim());
-                date = format.parse("01/05/2008 21:00");
+                date = format.parse("01/05/2012 21:00");
 
             } catch (ParseException e) {
                 System.out.println("Wrong date format!");

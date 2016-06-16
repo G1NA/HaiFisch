@@ -175,7 +175,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }, 21,0, true).show();
 
             }
-        }, 2008, 4, 1).show();
+        }, 2012, 4, 1).show();
 
 
     }
@@ -184,8 +184,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng[] pos = getPos();
         SenderSocket sock = new SenderSocket(Master.masterIP, Master.masterPort,
                 new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
-                        new CheckInRequest("", 0, new Point(pos[0].latitude, pos[0].longitude),
-                                new Point(pos[1].latitude, pos[1].longitude),
+                        new CheckInRequest("", 0, new Point( pos[0].longitude,pos[0].latitude),
+                                new Point(pos[1].longitude, pos[1].latitude),
                                 new Timestamp(selectedFrom.getTime()), new Timestamp(selectedTo.getTime())),
                         Communicator.address, Communicator.port, 200, "OK"));
         Thread t = new Thread(sock);
