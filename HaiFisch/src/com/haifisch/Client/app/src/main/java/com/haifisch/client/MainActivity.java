@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.sql.Timestamp;
@@ -85,6 +86,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(37.43, 28);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        for (PointOfInterest poi : Master.visiblePois)
+            mMap.addMarker(new MarkerOptions()
+                    .visible(true)
+                    .position(new LatLng(poi.getCoordinates().getLongtitude(),
+                            poi.getCoordinates().getLatitude())));
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                //Here send the user to the appropriate view
+
+                return false;
+            }
+        });
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import commons.PointOfInterest;
 
@@ -19,6 +20,9 @@ public class CheckInViewActivity extends AppCompatActivity implements OnImageInt
         assert view != null;
         view.setLayoutManager(new LinearLayoutManager(this));
         view.setAdapter(new ImageAdapter(obj.getPhotos(), this));
+        ((TextView) findViewById(R.id.place_name)).setText(obj.getName());
+        ((TextView) findViewById(R.id.checkin_num)).setText(obj.getNumberOfCheckIns());
+        ((TextView) findViewById(R.id.category)).setText(obj.getCategory());
     }
 
     @Override

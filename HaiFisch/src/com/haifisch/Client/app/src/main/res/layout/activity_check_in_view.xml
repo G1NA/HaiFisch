@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/placeholder_text"
-        android:id="@+id/textView4"
+        android:id="@+id/place_name"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/textView3" />
 
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/placeholder_text"
-        android:id="@+id/textView5"
+        android:id="@+id/checkin_num"
         android:layout_toEndOf="@+id/textView6"
         android:layout_alignParentStart="false"
         android:layout_toLeftOf="@+id/textView6"
@@ -63,8 +63,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/placeholder_text"
-        android:id="@+id/textView8"
-        android:layout_below="@+id/textView5"
+        android:id="@+id/category"
+        android:layout_below="@+id/checkin_num"
         android:layout_toEndOf="@+id/textView7" />
 
     <FrameLayout
