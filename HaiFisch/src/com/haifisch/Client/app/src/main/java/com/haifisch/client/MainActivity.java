@@ -172,7 +172,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             sendRequest();
                         }
                     }
-                }, 21,0, true).show();
+                }, 21, 0, true).show();
 
             }
         }, 2012, 4, 1).show();
@@ -184,7 +184,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng[] pos = getPos();
         SenderSocket sock = new SenderSocket(Master.masterIP, Master.masterPort,
                 new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
-                        new CheckInRequest("", 0, new Point( pos[0].longitude,pos[0].latitude),
+                        new CheckInRequest("", 0, new Point(pos[0].longitude, pos[0].latitude),
                                 new Point(pos[1].longitude, pos[1].latitude),
                                 new Timestamp(selectedFrom.getTime()), new Timestamp(selectedTo.getTime())),
                         Communicator.address, Communicator.port, 200, "OK"));
@@ -213,7 +213,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             Bundle extra = new Bundle();
             extra.putSerializable("item", item);
             n.putExtra("item", extra);
-
+            startActivity(n);
         }
     }
 
@@ -221,17 +221,27 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     //Populate the map and the result adapter with the received data
     @Override
     public void onConnect(NetworkPayload networkPayload) {
-        if (networkPayload.payload instanceof CheckInRes) {
-            CheckInRes res = (CheckInRes) networkPayload.payload;
-            Master.visiblePois = new ArrayList<>();
-            for (PointOfInterest poi : res.getMap().values()) {
-                Master.visiblePois.add(poi);
-                mMap.addMarker(new MarkerOptions()
-                        .visible(true)
-                        .position(new LatLng(poi.getCoordinates().getLatitude(),
-                                poi.getCoordinates().getLongtitude()))
-                );
+        try {
+            if (networkPayload.payload instanceof CheckInRes) {
+                final CheckInRes res = (CheckInRes) networkPayload.payload;
+                Master.visiblePois = new ArrayList<>();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (PointOfInterest poi : res.getMap().values()) {
+                            Master.visiblePois.add(poi);
+                            mMap.addMarker(new MarkerOptions()
+                                    .visible(true)
+                                    .position(new LatLng(poi.getCoordinates().getLongtitude(),
+                                            poi.getCoordinates().getLatitude()))
+                            );
+                        }
+                    }
+                });
+
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

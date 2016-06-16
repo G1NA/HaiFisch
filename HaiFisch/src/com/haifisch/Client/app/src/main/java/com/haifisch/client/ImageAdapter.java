@@ -23,6 +23,11 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         mListener = listener;
     }
 
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        return null;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -34,7 +39,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         holder.mItem = mValues.get(position);
-        Picasso.with(holder.mView.getContext()).load(mValues.get(position))
+        Picasso.with(holder.mView.getContext())
+                .load(mValues.get(position))
                 .into((ImageView) holder.mView.findViewById(R.id.imageView));
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
