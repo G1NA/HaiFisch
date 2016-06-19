@@ -96,7 +96,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     //Here send the user to the appropriate view
-
+                    Point p;
+                    for (PointOfInterest poi : Master.visiblePois) {
+                        p = poi.getCoordinates();
+                        if (p.getLatitude() == marker.getPosition().latitude
+                                && p.getLongtitude() == marker.getPosition().longitude) {
+                            onListFragmentInteraction(poi);
+                        }
+                    }
                     return false;
                 }
             });

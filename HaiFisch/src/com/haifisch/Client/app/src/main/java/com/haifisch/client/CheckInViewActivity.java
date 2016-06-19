@@ -6,7 +6,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.HashMap;
+
+import commons.CheckInRes;
+import commons.NetworkPayload;
+import commons.NetworkPayloadType;
 import commons.PointOfInterest;
 
 public class CheckInViewActivity extends AppCompatActivity implements OnImageInteractionListener {
@@ -35,9 +41,30 @@ public class CheckInViewActivity extends AppCompatActivity implements OnImageInt
 
     }
 
-    public void checkIn(View v){
+    //Add a new checkin here
+    public void checkIn(View v) {
+        HashMap<String, PointOfInterest> tmp = new HashMap<>();
+        PointOfInterest pointOfInterest = new PointOfInterest(poi.getID(), poi.getName(), poi.getCategory(), poi.getCategoryId(), poi.getCoordinates());
+        //TODO take photo and upload it somewhere
 
 
+        //add link here
+        pointOfInterest.addCheckIn("not exists");
+        tmp.put("new", poi);
+        SenderSocket sock = new SenderSocket(Master.masterIP, Master.masterPort,
+                new NetworkPayload(NetworkPayloadType.CHECK_IN, true,
+                        new CheckInRes("", 0, tmp, 0),
+                        Communicator.address, Communicator.port, 200, "OK"));
+        Thread t = new Thread(sock);
+        t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            Toast.makeText(this, "Failed to send request", Toast.LENGTH_SHORT).show();
+        }
+
+        if (!sock.isSent())
+            Toast.makeText(this, "Failed to send request", Toast.LENGTH_SHORT).show();
 
     }
 
