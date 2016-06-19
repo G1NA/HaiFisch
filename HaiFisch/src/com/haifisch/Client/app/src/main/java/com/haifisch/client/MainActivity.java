@@ -83,22 +83,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         dialog.dismiss();
         mMap = googleMap;
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(37.43, 28);
+        LatLng sydney = new LatLng(40.7, -74);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        for (PointOfInterest poi : Master.visiblePois)
-            mMap.addMarker(new MarkerOptions()
-                    .visible(true)
-                    .position(new LatLng(poi.getCoordinates().getLongtitude(),
-                            poi.getCoordinates().getLatitude())));
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                //Here send the user to the appropriate view
+        if (Master.visiblePois != null && Master.visiblePois.size() != 0) {
+            for (PointOfInterest poi : Master.visiblePois)
+                mMap.addMarker(new MarkerOptions()
+                        .visible(true)
+                        .position(new LatLng(poi.getCoordinates().getLongtitude(),
+                                poi.getCoordinates().getLatitude())));
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    //Here send the user to the appropriate view
 
-                return false;
-            }
-        });
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
@@ -113,18 +115,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.map);
                 mapFragment.getMapAsync(this);
+                findViewById(R.id.view).setVisibility(View.VISIBLE);
                 break;
             case R.id.top_set:
                 setPassive(active);
                 setActive((ImageView) v);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.map, ResultFragment.newInstance()).commit();
+                findViewById(R.id.view).setVisibility(View.GONE);
                 break;
             case R.id.settings_view:
                 setPassive(active);
                 setActive((ImageView) v);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.map, SettingsFragment.newInstance()).commit();
+                findViewById(R.id.view).setVisibility(View.GONE);
                 break;
             default:
                 break;
