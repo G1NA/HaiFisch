@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import commons.ConnectionAcknowledge;
+import commons.ConnectionAcknowledgeType;
 import commons.NetworkPayload;
 import commons.NetworkPayloadType;
 
@@ -27,7 +28,7 @@ public class ConnectionActivity extends AppCompatActivity {
         String ip = ((EditText) findViewById(R.id.ip_address)).getText().toString();
         int port = Integer.parseInt(((EditText) findViewById(R.id.port_no)).getText().toString());
         NetworkPayload payload = new NetworkPayload(NetworkPayloadType.CONNECTION_ACK,
-                false, new ConnectionAcknowledge(0, Communicator.address,
+                false, new ConnectionAcknowledge(ConnectionAcknowledgeType.CLIENT, Communicator.address,
                 Communicator.port), Communicator.address, Communicator.port, 200, "OK");
         SenderSocket sock = new SenderSocket(ip, port, payload);
         Thread t = new Thread(sock);

@@ -1,6 +1,10 @@
 package com.haifisch.client;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +22,7 @@ import commons.PointOfInterest;
 public class CheckInViewActivity extends AppCompatActivity implements OnImageInteractionListener {
 
     private PointOfInterest poi;
+    private PointOfInterest pointOfInterest;
 
 
     @Override
@@ -43,13 +48,41 @@ public class CheckInViewActivity extends AppCompatActivity implements OnImageInt
 
     //Add a new checkin here
     public void checkIn(View v) {
+
+        pointOfInterest = new PointOfInterest(poi.getID(), poi.getName(),
+                poi.getCategory(), poi.getCategoryId(), poi.getCoordinates());
+
+        new AlertDialog.Builder(this)
+                .setTitle("New CheckIn")
+                .setMessage("Do you want to add a photo?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                            startActivityForResult(takePictureIntent, 1);
+                        }
+                    }})
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CheckInViewActivity.this.pointOfInterest.addCheckIn("not exists");
+                        sendCheckin();
+                    }
+                }).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 1 && resultCode== RESULT_OK){
+            Object dat = data.getExtras().get("data");
+
+        }
+    }
+
+
+    private void sendCheckin(){
         HashMap<String, PointOfInterest> tmp = new HashMap<>();
-        PointOfInterest pointOfInterest = new PointOfInterest(poi.getID(), poi.getName(), poi.getCategory(), poi.getCategoryId(), poi.getCoordinates());
-        //TODO take photo and upload it somewhere
-
-
-        //add link here
-        pointOfInterest.addCheckIn("not exists");
         tmp.put("new", poi);
         SenderSocket sock = new SenderSocket(Master.masterIP, Master.masterPort,
                 new NetworkPayload(NetworkPayloadType.CHECK_IN, true,
@@ -67,5 +100,4 @@ public class CheckInViewActivity extends AppCompatActivity implements OnImageInt
             Toast.makeText(this, "Failed to send request", Toast.LENGTH_SHORT).show();
 
     }
-
 }
