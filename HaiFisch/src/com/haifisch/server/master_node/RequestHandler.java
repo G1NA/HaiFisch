@@ -42,15 +42,10 @@ class RequestHandler implements Runnable {
                     if (cl.thresholdReached(requestFailed)) {
                     	
                     	if(cl.failedTwice(requestFailed)){
-                    		SenderSocket send = new SenderSocket(cl.getClientAddress(), cl.getClientPort(),
-                                    new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
-                                            Master.masterThread.getName(), Master.masterThread.getPort(),
-                                            500, "A problem occured while serving your request!"));
-                            send.run();
-                            if (!send.isSent())
-                                System.out.println(send.getError());
+                    		sendRequestFail(cl);
                         }else{
-                    		assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, requestFailed, cl);
+                    		if(!assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, requestFailed, cl))
+                    			sendRequestFail(cl);
                     	}
                     	
                     }else{
@@ -61,7 +56,8 @@ class RequestHandler implements Runnable {
                         socket.run();
                         if (!socket.isSent()) {
                             System.err.println("Failed to send request to: " + request.SENDER_NAME);
-                            assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, requestFailed, cl);  
+                            if(!assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, requestFailed, cl))
+                            	sendRequestFail(cl);  
                         }
                     }
 
@@ -200,7 +196,7 @@ class RequestHandler implements Runnable {
         }
     }
 
-    private void assignToAnotherOne(String mapper_name, int mapper_port, CheckInRequest request, Client cl) {
+    private boolean assignToAnotherOne(String mapper_name, int mapper_port, CheckInRequest request, Client cl) {
         Random r = new Random();
         int mapper = r.nextInt(mappers.size()); //gets a random number to start from
         for (int i = 0; i < mappers.size(); i++) {
@@ -217,10 +213,12 @@ class RequestHandler implements Runnable {
                     continue;
                 } else {
                     cl.reassign(request, mappers.get(mapper).serverName + ":" + mappers.get(mapper).port);
+                    return true;
                 }
             }
 
         }
+		return false; //if this line reached no reassign was  made
 
 
     }
@@ -252,6 +250,16 @@ class RequestHandler implements Runnable {
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
                         Master.masterThread.getName(), Master.masterThread.getPort(),
                         500, "No mappers or reducer present in the network"));
+        send.run();
+        if (!send.isSent())
+            System.out.println(send.getError());
+    }
+    
+    private void sendRequestFail(Client cl){
+    	SenderSocket send = new SenderSocket(cl.getClientAddress(), cl.getClientPort(),
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
+                        Master.masterThread.getName(), Master.masterThread.getPort(),
+                        500, "A problem occured while serving your request!"));
         send.run();
         if (!send.isSent())
             System.out.println(send.getError());
