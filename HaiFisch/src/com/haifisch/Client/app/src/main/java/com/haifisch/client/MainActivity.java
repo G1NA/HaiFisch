@@ -170,6 +170,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void search(View view) {
+        /*
+        PointOfInterest item = new PointOfInterest("mppla", "mpla", ",p[la", 3, new Point(32.0, 23.0));
+        Intent n = new Intent(this, CheckInViewActivity.class);
+        Bundle extra = new Bundle();
+        extra.putSerializable("item", item);
+        n.putExtra("item", extra);
+        startActivity(n);
+        */
 
         final Calendar c = Calendar.getInstance();
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -224,6 +232,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (!sock.isSent())
             Toast.makeText(this, "Failed to send request", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Sent request, awaiting results...", Toast.LENGTH_SHORT).show();
         selecting = 0;
         selectedFrom = null;
         selectedTo = null;
@@ -249,6 +258,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnect(NetworkPayload networkPayload) {
         try {
             if (networkPayload.payload instanceof CheckInRes) {
+
                 final CheckInRes res = (CheckInRes) networkPayload.payload;
                 Master.visiblePois = new ArrayList<>();
                 runOnUiThread(new Runnable() {

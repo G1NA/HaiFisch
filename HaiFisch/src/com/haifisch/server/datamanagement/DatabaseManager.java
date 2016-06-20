@@ -84,7 +84,12 @@ public class DatabaseManager {
         try {
             if (!connection.isClosed()) { // may change to some seconds
                 statement = connection.createStatement();
-                results = statement.executeQuery(query);
+                if(query.contains("INSERT")) {
+                    statement.executeUpdate(query);
+                }
+                else{
+                    results = statement.executeQuery(query);
+                }
             }
         } catch (SQLException sqle) {
             closeConnection();

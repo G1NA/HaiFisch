@@ -1,9 +1,14 @@
 package com.haifisch.server.master_node;
 
+import com.haifisch.server.datamanagement.DatabaseManager;
 import com.haifisch.server.utils.RandomString;
 import commons.*;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -174,8 +179,28 @@ class RequestHandler implements Runnable {
 
                 //TODO will be added on the 2nd part
             }
-        } else if (request.payload instanceof CheckInAdd) {
+        } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN) {
+            DatabaseManager db = new DatabaseManager("jdbc:mysql://83.212.117.76:3306/ds_systems_2016_omada26?user=omada26&password=omada26db");
 
+            db.connectToDatabase();
+            PointOfInterest p = (PointOfInterest) request.payload;
+            //basic query
+            String query = null;
+
+            query = "INSERT INTO checkins (user,POI,POI_name,POI_category,POI_category_id,latitude,longitude,time,photos)" +
+                    " VALUES (" + new Random().nextInt() + "," + p.getID() + "," + p.getName() + "," + p.getCategory()
+                    + "," + p.getCategoryId() + "," + p.getCoordinates().getLongtitude()
+                    + "," + p.getCoordinates().getLatitude() + ","
+                    + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime())
+                    + "," + (p.getPhotos().size() == 0 ? "Not Exists" : p.getPhotos().get(0));
+
+
+            ResultSet result = db.executeQuery(query);
+            try {
+                result.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
