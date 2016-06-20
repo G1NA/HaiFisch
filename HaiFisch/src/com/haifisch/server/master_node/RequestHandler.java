@@ -34,18 +34,37 @@ class RequestHandler implements Runnable {
         if (request.PAYLOAD_TYPE == NetworkPayloadType.CONNECTION_ACK) {
             if (request.STATUS == 500) {
                 if (request.payload instanceof CheckInRequest) {
-                    System.err.println("Request " + ((CheckInRequest) request.payload).getRequestId()
+                	
+                	//increaseMapperFails(request.SENDER_NAME, request.SENDER_PORT);
+                	
+                	CheckInRequest requestFailed = (CheckInRequest) request.payload;
+                	
+                    System.err.println("Request " + requestFailed.getRequestId()
                             + "sent to: " + request.SENDER_NAME + ":" + request.SENDER_PORT + " failed with error: "
                             + request.MESSAGE);
-                    Client cl = Master.servingClients.get(((CheckInRequest) request.payload).getRequestId());
-                    cl.addFail((CheckInRequest) request.payload);
+                    Client cl = Master.servingClients.get(requestFailed.getRequestId());
+                    cl.addFail(requestFailed);
 
                     //The maximum tries for the server have been reached assign to another one
-                    if (cl.thresholdReached((CheckInRequest) request.payload)) {
-                        if (cl.failedTwice((CheckInRequest) request.payload)) {
-                            //TODO send error to the client
-                        } else {
-                            assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, (CheckInRequest) request.payload, cl);
+                    if (cl.thresholdReached(requestFailed)) {
+                    	
+                    	if(cl.failedTwice(requestFailed)){
+                    		sendRequestFail(cl);
+                        }else{
+                    		if(!assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, requestFailed, cl))
+                    			sendRequestFail(cl);
+                    	}
+                    	
+                    }else{
+                    	SenderSocket socket = new SenderSocket(request.SENDER_NAME,
+                                request.SENDER_PORT,
+                                new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
+                                	requestFailed, masterThread.getName(), masterThread.getPort(), 200, "Incoming request"));
+                        socket.run();
+                        if (!socket.isSent()) {
+                            System.err.println("Failed to send request to: " + request.SENDER_NAME);
+                            if(!assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, requestFailed, cl))
+                            	sendRequestFail(cl);  
                         }
                     }
 
@@ -62,6 +81,7 @@ class RequestHandler implements Runnable {
                 //Do nothing now
             } else if (connected.TYPE == ConnectionAcknowledgeType.MAPPER) {
                 mappers.add(connected);
+                mapperFailsCounter.put(connected.serverName+":"+connected.port, 0);
                 if (reducer != null)
                     inform(connected);
             } else {
@@ -204,7 +224,7 @@ class RequestHandler implements Runnable {
         }
     }
 
-    private void assignToAnotherOne(String mapper_name, int mapper_port, CheckInRequest request, Client cl) {
+    private boolean assignToAnotherOne(String mapper_name, int mapper_port, CheckInRequest request, Client cl) {
         Random r = new Random();
         int mapper = r.nextInt(mappers.size()); //gets a random number to start from
         for (int i = 0; i < mappers.size(); i++) {
@@ -221,10 +241,12 @@ class RequestHandler implements Runnable {
                     continue;
                 } else {
                     cl.reassign(request, mappers.get(mapper).serverName + ":" + mappers.get(mapper).port);
+                    return true;
                 }
             }
 
         }
+		return false; //if this line reached no reassign was  made
 
 
     }
@@ -248,6 +270,15 @@ class RequestHandler implements Runnable {
                         Master.masterThread.getName(), Master.masterThread.getPort(), 200, "Done")).run();
     }
 
+    /*
+    private void increaseMapperFails(String name, int port){
+    	int newValue = mapperFailsCounter.get(name+":"+port) + 1;
+    	mapperFailsCounter.put(name+":"+port, newValue);
+    	if(newValue == Master.MAX_MAPPER_FAILS){
+    		Master.killMapper(name, port);
+    	}
+    }*/
+
     /**
      * Send an error message to the master_node server
      */
@@ -256,6 +287,19 @@ class RequestHandler implements Runnable {
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
                         Master.masterThread.getName(), Master.masterThread.getPort(),
                         500, "No mappers or reducer present in the network"));
+        send.run();
+        if (!send.isSent())
+            System.out.println(send.getError());
+    }
+    
+    /**
+     * Send a  request error message to the client
+     */
+    private void sendRequestFail(Client cl){
+    	SenderSocket send = new SenderSocket(cl.getClientAddress(), cl.getClientPort(),
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
+                        Master.masterThread.getName(), Master.masterThread.getPort(),
+                        500, "A problem occured while serving your request!"));
         send.run();
         if (!send.isSent())
             System.out.println(send.getError());
