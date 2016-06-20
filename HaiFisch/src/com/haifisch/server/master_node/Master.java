@@ -23,6 +23,7 @@ public class Master extends MainProgram{
     static volatile ConnectionAcknowledge reducer;
     static volatile HashMap<String, Client> servingClients = new HashMap<>();
     static volatile Master masterThread;
+    private volatile Thread errorHandler;
 
     /**
      * The master_node server main
@@ -48,10 +49,30 @@ public class Master extends MainProgram{
     private void mainSequence() {
         createListeningSocket();
         initiateButler();
+        initiateHandlingErrorThread();
         initiateConsole();
     }
 
-    /**
+    private void initiateHandlingErrorThread() {
+    	if (errorHandler != null && (errorHandler.isAlive() || !errorHandler.isInterrupted()))
+            return;
+        //Add a thread to watch over the listening socket
+        errorHandler = new Thread("handler") {
+            public void run() {
+                while (true) {
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                    	checkAlive();
+                        return;
+                    }
+                }
+            }
+        };
+        errorHandler.start();
+	}
+
+	/**
      * Initiate the console listener
      * Currently different from the one on the MainProgram parent
      */
@@ -89,6 +110,7 @@ public class Master extends MainProgram{
         new Thread(new RequestHandler(payload), "serving thread no" + threadCounter++).start();
     }
 
+    
     /**
      * Check if the mappers identified as well as the reducer are still online
      * This check happens before every new checkin request
@@ -126,12 +148,23 @@ public class Master extends MainProgram{
      */
     synchronized private void waitForAck() throws InterruptedException {
         wait(1000);
+        
+        for(ConnectionAcknowledge mapper : mappers){
+        	if(mapper.status == 1){
+        		//TODO
+        		/*
+        		 * FOR EVERY CLIENT THAT HAS A CHECKINREQUEST ASSIGNED TO THIS MAPPER
+        		 * REASSIGN THE REQUEST TO OTHER MAPPER. MAYBE A NEW METHOD IN CLIENT NEEDED
+        		 * 
+        		 * */
+        	}
+        }
         mappers = (ArrayList<ConnectionAcknowledge>) mappers.stream()
                 .filter(e -> e.status == 1).collect(Collectors.toList());
         if (reducer.status != 1)
             reducer = null;
     }
-
+    
     /**
      * The debug sequence for the 1st part testing
      * The commented out parts can be used for dynamic query input
