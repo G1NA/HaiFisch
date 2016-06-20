@@ -37,11 +37,11 @@ class RequestHandler implements Runnable {
 
                     //The maximum tries for the server have been reached assign to another one
                     if (cl.thresholdReached((CheckInRequest) request.payload)) {
-                    	if(cl.failedTwice((CheckInRequest) request.payload)){
-                    		//TODO send error to the client
-                    	}else{
-                    		assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, (CheckInRequest)request.payload, cl);
-                    	}
+                        if (cl.failedTwice((CheckInRequest) request.payload)) {
+                            //TODO send error to the client
+                        } else {
+                            assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, (CheckInRequest) request.payload, cl);
+                        }
                     }
 
                 } else if (request.payload instanceof CheckInRes) {
@@ -102,7 +102,7 @@ class RequestHandler implements Runnable {
                 for (int i = 0; i < length; i++) {
                     trueLeft = new Point(left.longtitude + partSize * i, left.latitude);
                     trueRight = new Point(left.longtitude + partSize * (i + 1), right.latitude);
-                    req = new CheckInRequest(client_id+i, length, trueLeft, trueRight, stampFrom,
+                    req = new CheckInRequest(client_id, length, trueLeft, trueRight, stampFrom,
                             stampTo);
                     req.setTopK(100);
                     socket = new SenderSocket(mappers.get(i).serverName,
@@ -114,20 +114,20 @@ class RequestHandler implements Runnable {
                         System.err.println("Failed to send request to: " + mappers.get(i).serverName);
                         break;
                     } else
-                        cl.addAssignment(req,mappers.get(i).serverName + ":" + mappers.get(i).port);
+                        cl.addAssignment(req, mappers.get(i).serverName + ":" + mappers.get(i).port);
                 }
             }
             // Received a check in result packet from a mapper or a reducer
-        }else if(request.PAYLOAD_TYPE == NetworkPayloadType.MAPPER_FINISHED){
-        	
+        } else if (request.PAYLOAD_TYPE == NetworkPayloadType.MAPPER_FINISHED) {
+
             Client cl = servingClients.get(request.MESSAGE);
-            cl.markDone((CheckInRequest)request.payload);
+            cl.markDone((CheckInRequest) request.payload);
 
             if (cl.isDone()) {
                 System.out.println("Mappers completed request: "
                         + request.MESSAGE + " waiting for reducer results");
-        
-    	} else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
+            }
+        } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
 
             //Received mapper operation end
             //TODO use only if the master_node must inform the reducer, currently it simply monitors the request state
@@ -144,7 +144,7 @@ class RequestHandler implements Runnable {
                         System.err.println("Error when sending reducer_node for request: " + request.MESSAGE + " to reducer: "
                                 + Master.reducer.serverName + ":" + Master.reducer.port);
                                 */
-                }
+
                 //IF the results came from a reducer
             } else {
                 String client_id = ((CheckInRes) request.payload).getRequestId();
@@ -171,39 +171,40 @@ class RequestHandler implements Runnable {
                             + " photos: " + res.getNumberOfPhotos());
                 }
                 servingClients.remove(client_id);
+
+                //TODO will be added on the 2nd part
             }
-            //TODO will be added on the 2nd part
         } else if (request.payload instanceof CheckInAdd) {
 
         }
     }
 
     private void assignToAnotherOne(String mapper_name, int mapper_port, CheckInRequest request, Client cl) {
-		Random r = new Random();
-		int mapper = r.nextInt(mappers.size()); //gets a random number to start from
-		for(int i=0; i < mappers.size(); i++){
-			if(mappers.get(mapper).serverName.equals(mapper_name)){
-				mapper = (mapper+1) % mappers.size(); //TODO mipws dn einai swsto?? mipws 8elei % (size-1)
-			}else{
-				SenderSocket socket = new SenderSocket(mappers.get(mapper).serverName,
-		                 mappers.get(mapper).port,
-		                 new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
-		                         request, masterThread.getName(), Master.masterThread.getPort(), 200, "Incoming request"));
-		        socket.run();
-		        if (!socket.isSent()){
-		        	mapper = (mapper+1) % mappers.size();
-		        	continue;
-		        }else{
-		        	cl.reassign(request, mappers.get(mapper).serverName+":"+mappers.get(mapper).port);
-		        }
-			}
-			
-		}
-		
-		 
-	}
+        Random r = new Random();
+        int mapper = r.nextInt(mappers.size()); //gets a random number to start from
+        for (int i = 0; i < mappers.size(); i++) {
+            if (mappers.get(mapper).serverName.equals(mapper_name)) {
+                mapper = (mapper + 1) % mappers.size(); //TODO mipws dn einai swsto?? mipws 8elei % (size-1)
+            } else {
+                SenderSocket socket = new SenderSocket(mappers.get(mapper).serverName,
+                        mappers.get(mapper).port,
+                        new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
+                                request, masterThread.getName(), Master.masterThread.getPort(), 200, "Incoming request"));
+                socket.run();
+                if (!socket.isSent()) {
+                    mapper = (mapper + 1) % mappers.size();
+                    continue;
+                } else {
+                    cl.reassign(request, mappers.get(mapper).serverName + ":" + mappers.get(mapper).port);
+                }
+            }
 
-	/**
+        }
+
+
+    }
+
+    /**
      * Inform all the mappers about the reducer that was added in the network
      */
     private void informBulk() {

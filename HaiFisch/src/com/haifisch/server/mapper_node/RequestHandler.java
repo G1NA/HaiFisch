@@ -1,7 +1,7 @@
 package com.haifisch.server.mapper_node;
 
-import commons.*;
 import com.haifisch.server.utils.RandomString;
+import commons.*;
 
 class RequestHandler implements Runnable {
 
@@ -52,7 +52,7 @@ class RequestHandler implements Runnable {
 
                     send = new SenderSocket(MapperConfiguration.getMapperConfiguration().masterServerName,
                             MapperConfiguration.getMapperConfiguration().masterServerPort,
-                            new NetworkPayload(NetworkPayloadType.MAPPER_FINISHED, false, null,
+                            new NetworkPayload(NetworkPayloadType.MAPPER_FINISHED, false, request.payload,
                                     Map_Server.server.getName(), Map_Server.server.getPort(), 200, request_id));
                     send.run();
                     if (send.isSent())
