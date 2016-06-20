@@ -265,7 +265,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             int actual = Integer.parseInt(num);
             if (actual > 0) {
                 Master.topK = actual;
-                Toast.makeText(MainActivity.this, "TopK set to" + actual + "!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "TopK set to " + actual + "!", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
         }

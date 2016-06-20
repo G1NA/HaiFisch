@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 
 public class SettingsFragment extends Fragment {
@@ -47,15 +46,6 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    public void onSet(View v) {
-        String num = ((EditText) getActivity().findViewById(R.id.num_text)).getText().toString();
-        try {
-            int actual = Integer.parseInt(num);
-            if (actual > 0)
-                Master.topK = actual;
-        } catch (Exception e) {
-        }
-    }
 
     @Override
     public void onDetach() {
