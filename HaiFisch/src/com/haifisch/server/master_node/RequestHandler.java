@@ -206,11 +206,11 @@ class RequestHandler implements Runnable {
             String query = null;
 
             query = "INSERT INTO checkins (user,POI,POI_name,POI_category,POI_category_id,latitude,longitude,time,photos)" +
-                    " VALUES (" + new Random().nextInt() + "," + p.getID() + "," + p.getName() + "," + p.getCategory()
-                    + "," + p.getCategoryId() + "," + p.getCoordinates().getLongtitude()
-                    + "," + p.getCoordinates().getLatitude() + ","
+                    " VALUES (" + new Random().nextInt() + ",\'" + p.getID() + "\',\'" + p.getName() + "\',\'" + p.getCategory()
+                    + "\'," + p.getCategoryId() + "," + p.getCoordinates().getLongtitude()
+                    + "," + p.getCoordinates().getLatitude() + ",\'"
                     + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime())
-                    + "," + (p.getPhotos().size() == 0 ? "Not Exists" : p.getPhotos().get(0));
+                    + "\',\'" + (p.getPhotos().size() == 0 ? "Not Exists" : p.getPhotos().get(0))+"\')";
 
 
             db.executeQuery(query);
