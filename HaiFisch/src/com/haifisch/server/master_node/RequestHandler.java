@@ -4,8 +4,6 @@ import com.haifisch.server.datamanagement.DatabaseManager;
 import com.haifisch.server.utils.RandomString;
 import commons.*;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -215,12 +213,8 @@ class RequestHandler implements Runnable {
                     + "," + (p.getPhotos().size() == 0 ? "Not Exists" : p.getPhotos().get(0));
 
 
-            ResultSet result = db.executeQuery(query);
-            try {
-                result.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            db.executeQuery(query);
+
         }
     }
 
