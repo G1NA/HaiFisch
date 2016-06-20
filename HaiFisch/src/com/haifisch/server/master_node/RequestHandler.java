@@ -29,18 +29,39 @@ class RequestHandler implements Runnable {
         if (request.PAYLOAD_TYPE == NetworkPayloadType.CONNECTION_ACK) {
             if (request.STATUS == 500) {
                 if (request.payload instanceof CheckInRequest) {
-                    System.err.println("Request " + ((CheckInRequest) request.payload).getRequestId()
+                	
+                	CheckInRequest requestFailed = (CheckInRequest) request.payload;
+                	
+                    System.err.println("Request " + requestFailed.getRequestId()
                             + "sent to: " + request.SENDER_NAME + ":" + request.SENDER_PORT + " failed with error: "
                             + request.MESSAGE);
-                    Client cl = Master.servingClients.get(((CheckInRequest) request.payload).getRequestId());
-                    cl.addFail((CheckInRequest) request.payload);
+                    Client cl = Master.servingClients.get(requestFailed.getRequestId());
+                    cl.addFail(requestFailed);
 
                     //The maximum tries for the server have been reached assign to another one
-                    if (cl.thresholdReached((CheckInRequest) request.payload)) {
-                        if (cl.failedTwice((CheckInRequest) request.payload)) {
-                            //TODO send error to the client
-                        } else {
-                            assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, (CheckInRequest) request.payload, cl);
+                    if (cl.thresholdReached(requestFailed)) {
+                    	
+                    	if(cl.failedTwice(requestFailed)){
+                    		SenderSocket send = new SenderSocket(cl.getClientAddress(), cl.getClientPort(),
+                                    new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
+                                            Master.masterThread.getName(), Master.masterThread.getPort(),
+                                            500, "A problem occured while serving your request!"));
+                            send.run();
+                            if (!send.isSent())
+                                System.out.println(send.getError());
+                        }else{
+                    		assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, requestFailed, cl);
+                    	}
+                    	
+                    }else{
+                    	SenderSocket socket = new SenderSocket(request.SENDER_NAME,
+                                request.SENDER_PORT,
+                                new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
+                                	requestFailed, masterThread.getName(), masterThread.getPort(), 200, "Incoming request"));
+                        socket.run();
+                        if (!socket.isSent()) {
+                            System.err.println("Failed to send request to: " + request.SENDER_NAME);
+                            assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, requestFailed, cl);  
                         }
                     }
 
