@@ -16,6 +16,7 @@ public class Master extends Application implements onConnectionListener {
     public static String masterIP;
     public static int masterPort;
     public static String ownIp;
+    public static int topK = 100;
 
     @Override
     public void onCreate() {

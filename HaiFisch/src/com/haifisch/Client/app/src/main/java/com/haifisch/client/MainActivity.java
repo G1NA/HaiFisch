@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -184,15 +185,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void search(View view) {
-        /*
-        PointOfInterest item = new PointOfInterest("mppla", "mpla", ",p[la", 3, new Point(32.0, 23.0));
-        Intent n = new Intent(this, CheckInViewActivity.class);
-        Bundle extra = new Bundle();
-        extra.putSerializable("item", item);
-        n.putExtra("item", extra);
-        startActivity(n);
-        */
-
         final Calendar c = Calendar.getInstance();
         new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -230,12 +222,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void sendRequest() {
         LatLng[] pos = getPos();
+        CheckInRequest req = new CheckInRequest("", 0, new Point(pos[0].longitude, pos[0].latitude),
+                new Point(pos[1].longitude, pos[1].latitude),
+                new Timestamp(selectedFrom.getTime()), new Timestamp(selectedTo.getTime()));
+        req.setTopK(Master.topK);
         SenderSocket sock = new SenderSocket(Master.masterIP, Master.masterPort,
                 new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
-                        new CheckInRequest("", 0, new Point(pos[0].longitude, pos[0].latitude),
-                                new Point(pos[1].longitude, pos[1].latitude),
-                                new Timestamp(selectedFrom.getTime()), new Timestamp(selectedTo.getTime())),
-                        Communicator.address, Communicator.port, 200, "OK"));
+                        req, Communicator.address, Communicator.port, 200, "OK"));
         Thread t = new Thread(sock);
         t.start();
         try {
@@ -266,10 +259,32 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public void onSet(View v) {
+        String num = ((EditText) findViewById(R.id.num_text)).getText().toString();
+        try {
+            int actual = Integer.parseInt(num);
+            if (actual > 0) {
+                Master.topK = actual;
+                Toast.makeText(MainActivity.this, "TopK set to" + actual + "!", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+        }
+    }
 
     //Populate the map and the result adapter with the received data
     @Override
     public void onConnect(NetworkPayload networkPayload) {
+        if (networkPayload.STATUS != 200) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MainActivity.this, "An error occurred!",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
         try {
             if (networkPayload.payload instanceof CheckInRes) {
 
