@@ -30,6 +30,8 @@ class RequestHandler implements Runnable {
             if (request.STATUS == 500) {
                 if (request.payload instanceof CheckInRequest) {
                 	
+                	//increaseMapperFails(request.SENDER_NAME, request.SENDER_PORT);
+                	
                 	CheckInRequest requestFailed = (CheckInRequest) request.payload;
                 	
                     System.err.println("Request " + requestFailed.getRequestId()
@@ -74,6 +76,7 @@ class RequestHandler implements Runnable {
                 //Do nothing now
             } else if (connected.TYPE == ConnectionAcknowledgeType.MAPPER) {
                 mappers.add(connected);
+                mapperFailsCounter.put(connected.serverName+":"+connected.port, 0);
                 if (reducer != null)
                     inform(connected);
             } else {
@@ -242,6 +245,15 @@ class RequestHandler implements Runnable {
                         Master.masterThread.getName(), Master.masterThread.getPort(), 200, "Done")).run();
     }
 
+    /*
+    private void increaseMapperFails(String name, int port){
+    	int newValue = mapperFailsCounter.get(name+":"+port) + 1;
+    	mapperFailsCounter.put(name+":"+port, newValue);
+    	if(newValue == Master.MAX_MAPPER_FAILS){
+    		Master.killMapper(name, port);
+    	}
+    }*/
+
     /**
      * Send an error message to the master_node server
      */
@@ -255,6 +267,9 @@ class RequestHandler implements Runnable {
             System.out.println(send.getError());
     }
     
+    /**
+     * Send a  request error message to the client
+     */
     private void sendRequestFail(Client cl){
     	SenderSocket send = new SenderSocket(cl.getClientAddress(), cl.getClientPort(),
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,

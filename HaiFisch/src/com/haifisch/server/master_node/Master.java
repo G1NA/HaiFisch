@@ -5,6 +5,9 @@ import com.haifisch.server.MainProgram;
 import com.haifisch.server.utils.*;
 import commons.Point;
 
+import static com.haifisch.server.master_node.Master.mappers;
+import static com.haifisch.server.master_node.Master.masterThread;
+
 import java.awt.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -12,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -22,8 +26,10 @@ public class Master extends MainProgram{
     static volatile ArrayList<ConnectionAcknowledge> mappers = new ArrayList<>();
     static volatile ConnectionAcknowledge reducer;
     static volatile HashMap<String, Client> servingClients = new HashMap<>();
+    static volatile HashMap<String, Integer> mapperFailsCounter = new HashMap<>();
     static volatile Master masterThread;
     private volatile Thread errorHandler;
+    public static final int MAX_MAPPER_FAILS = 30;
 
     /**
      * The master_node server main
@@ -49,9 +55,11 @@ public class Master extends MainProgram{
     private void mainSequence() {
         createListeningSocket();
         initiateButler();
-        initiateHandlingErrorThread();
+        //initiateHandlingErrorThread();
         initiateConsole();
     }
+    
+    /*
 
     private void initiateHandlingErrorThread() {
     	if (errorHandler != null && (errorHandler.isAlive() || !errorHandler.isInterrupted()))
@@ -72,6 +80,8 @@ public class Master extends MainProgram{
         errorHandler.start();
 	}
 
+	*/
+    
 	/**
      * Initiate the console listener
      * Currently different from the one on the MainProgram parent
@@ -149,21 +159,76 @@ public class Master extends MainProgram{
     synchronized private void waitForAck() throws InterruptedException {
         wait(1000);
         
-        for(ConnectionAcknowledge mapper : mappers){
+       /* for(ConnectionAcknowledge mapper : mappers){
         	if(mapper.status == 1){
-        		//TODO
-        		/*
-        		 * FOR EVERY CLIENT THAT HAS A CHECKINREQUEST ASSIGNED TO THIS MAPPER
-        		 * REASSIGN THE REQUEST TO OTHER MAPPER. MAYBE A NEW METHOD IN CLIENT NEEDED
-        		 * 
-        		 * */
+        		killMapper(mapper.serverName, mapper.port);
         	}
-        }
+        }*/
         mappers = (ArrayList<ConnectionAcknowledge>) mappers.stream()
                 .filter(e -> e.status == 1).collect(Collectors.toList());
         if (reducer.status != 1)
             reducer = null;
     }
+    
+    /*
+    synchronized public static void killMapper(String name, int port){
+    	
+    	//kanonika 8a eprepe an dn isxiei  mappers.get(0).serverName.equals(name) && mappers.get(0).port == port
+    	//na ginetai error ston master
+    	if(mappers.size() == 1 && mappers.get(0).serverName.equals(name) && mappers.get(0).port == port)
+    		cancelAll();
+    	
+    	for(ConnectionAcknowledge mapper : mappers){
+    		if(mapper.serverName.equals(name) && mapper.port == port){
+    			mappers.remove(mapper);
+    			mapperFailsCounter.remove(name+":"+port);
+    			break;
+    		}
+    	}
+    	
+    	for(Client cl : servingClients.values()){
+    		for(CheckInRequest req : cl.getAssignment(name+":"+port)){
+    			Random r = new Random();
+    			int mapper = r.nextInt(mappers.size()); //gets a random number to start from
+    			for (int i = 0; i < mappers.size(); i++) {
+                    if (mappers.get(mapper).serverName.equals(name)) {
+                        mapper = (mapper + 1) % mappers.size(); 
+                    } else {
+                        SenderSocket socket = new SenderSocket(mappers.get(mapper).serverName,
+                                mappers.get(mapper).port,
+                                new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
+                                        req, masterThread.getName(), Master.masterThread.getPort(), 200, "Incoming request"));
+                        socket.run();
+                        if (!socket.isSent()) {
+                            mapper = (mapper + 1) % mappers.size();
+                            continue;
+                        } else {
+                            cl.reassign(req, mappers.get(mapper).serverName + ":" + mappers.get(mapper).port);
+                            break;
+                        }
+                    }
+
+                }
+    		}
+    	}
+    	
+    }
+    
+    private static void cancelAll(){
+    	for(Client cl : servingClients.values()){
+    		SenderSocket send = new SenderSocket(cl.getClientAddress(), cl.getClientPort(),
+                    new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
+                            Master.masterThread.getName(), Master.masterThread.getPort(),
+                            500, "A problem occured while serving your request!"));
+            send.run();
+            if (!send.isSent())
+                System.out.println(send.getError());
+    	}
+    	
+    	servingClients.clear();
+    }
+    
+    */
     
     /**
      * The debug sequence for the 1st part testing
