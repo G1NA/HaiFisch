@@ -63,7 +63,7 @@ public class SantaHelper {
 
         @Override
         public void success(ImageResponse imageResponse, Response response) {
-            ((ResCallback) act).resCall(response.getUrl());
+            ((ResCallback) act).resCall(imageResponse.data.link);
         }
 
         @Override

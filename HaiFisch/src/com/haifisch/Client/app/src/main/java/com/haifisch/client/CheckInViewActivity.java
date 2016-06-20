@@ -18,10 +18,17 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kbeanie.multipicker.api.CacheLocation;
+import com.kbeanie.multipicker.api.ImagePicker;
+import com.kbeanie.multipicker.api.Picker;
+import com.kbeanie.multipicker.api.callbacks.ImagePickerCallback;
+import com.kbeanie.multipicker.api.entity.ChosenImage;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import akiniyalocts.imgurapiexample.activities.SantaHelper;
 import akiniyalocts.imgurapiexample.utils.ResCallback;
@@ -34,6 +41,7 @@ public class CheckInViewActivity extends AppCompatActivity implements OnImageInt
     private PointOfInterest poi;
     private PointOfInterest pointOfInterest;
     private Uri photoURI;
+    ImagePicker p;
 
 
     @Override
@@ -50,6 +58,20 @@ public class CheckInViewActivity extends AppCompatActivity implements OnImageInt
         ((TextView) findViewById(R.id.checkin_num)).setText(String.valueOf(poi.getNumberOfCheckIns()));
         ((TextView) findViewById(R.id.category)).setText(poi.getCategory());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        p = new ImagePicker(CheckInViewActivity.this);
+        p.setCacheLocation(CacheLocation.EXTERNAL_STORAGE_APP_DIR);
+        p.setImagePickerCallback(new ImagePickerCallback() {
+            @Override
+            public void onImagesChosen(List<ChosenImage> list) {
+                SantaHelper help = new SantaHelper(CheckInViewActivity.this);
+                help.pic(Uri.fromFile(new File(list.get(0).getOriginalPath())));
+            }
+
+            @Override
+            public void onError(String s) {
+                System.out.print(s);
+            }
+        });
     }
 
     @Override
@@ -70,19 +92,17 @@ public class CheckInViewActivity extends AppCompatActivity implements OnImageInt
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (checkSelfPermission(android.Manifest.permission.CAMERA)
                                     != PackageManager.PERMISSION_GRANTED) {
 
                                 requestPermissions(new String[]{android.Manifest.permission.CAMERA}, 1);
                             } else {
-                                dispatchTakePictureIntent();
+                                p.pickImage();
                             }
                         } else {
-                            dispatchTakePictureIntent();
+                            p.pickImage();
                         }
-
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -96,10 +116,13 @@ public class CheckInViewActivity extends AppCompatActivity implements OnImageInt
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Picker.PICK_IMAGE_DEVICE) {
+            p.submit(data);
+        }
         if (requestCode == 1 && resultCode == RESULT_OK) {
+
             SantaHelper help = new SantaHelper(this);
             help.pic(photoURI);
-
         }
     }
 
@@ -184,7 +207,7 @@ public class CheckInViewActivity extends AppCompatActivity implements OnImageInt
     @Override
     public void resCall(String taf) {
         if (taf.length() != 0)
-            pointOfInterest.addCheckIn("taf");
+            pointOfInterest.addCheckIn(taf);
         else {
             pointOfInterest.addCheckIn("Not Exists");
         }
