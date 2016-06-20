@@ -51,6 +51,7 @@ public class Communicator extends AsyncTask {
 
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
+                return null;
             }
 
         }
