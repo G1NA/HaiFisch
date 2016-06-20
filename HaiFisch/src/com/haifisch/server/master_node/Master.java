@@ -218,7 +218,7 @@ public class Master extends MainProgram{
                     System.err.println("Failed to send request to: " + mappers.get(i).serverName);
                     break;
                 } else
-                    serving.addAssignment(mappers.get(i).serverName + ":" + mappers.get(i).port, req);
+                    serving.addAssignment(req, mappers.get(i).serverName + ":" + mappers.get(i).port);
 
             }
 

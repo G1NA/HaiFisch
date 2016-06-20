@@ -1,6 +1,8 @@
 package com.haifisch.server.mapper_node;
 
 import com.haifisch.server.MainProgram;
+
+import commons.ConnectionAcknowledgeType;
 import commons.NetworkPayload;
 import com.haifisch.server.utils.Questionaire;
 
@@ -39,7 +41,7 @@ public class Map_Server extends MainProgram {
     private Map_Server(MapperConfiguration configuration) {
         this.configuration = configuration;
         createListeningSocket(); //Create the listening socket.
-        connectToMaster(configuration.masterServerName, configuration.masterServerPort, 1);
+        connectToMaster(configuration.masterServerName, configuration.masterServerPort, ConnectionAcknowledgeType.MAPPER);
     }
 
     /**

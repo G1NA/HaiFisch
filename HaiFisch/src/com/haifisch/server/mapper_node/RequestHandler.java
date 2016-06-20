@@ -22,7 +22,7 @@ class RequestHandler implements Runnable {
         //Get the reducer data from the Master Server
         if (request.PAYLOAD_TYPE == NetworkPayloadType.CONNECTION_ACK) {
             ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
-            if (connected.TYPE == 3) {
+            if (connected.TYPE == ConnectionAcknowledgeType.REDUCER_EXISTS) {
                 MapperConfiguration.getMapperConfiguration().setReducer(connected.serverName, connected.port);
                 System.out.println("Discovered reducer on: " + connected.serverName + ":" + connected.port);
             }
@@ -52,7 +52,7 @@ class RequestHandler implements Runnable {
 
                     send = new SenderSocket(MapperConfiguration.getMapperConfiguration().masterServerName,
                             MapperConfiguration.getMapperConfiguration().masterServerPort,
-                            new NetworkPayload(NetworkPayloadType.CHECK_IN_RESULTS, false, null,
+                            new NetworkPayload(NetworkPayloadType.MAPPER_FINISHED, false, null,
                                     Map_Server.server.getName(), Map_Server.server.getPort(), 200, request_id));
                     send.run();
                     if (send.isSent())

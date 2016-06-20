@@ -5,6 +5,7 @@ import commons.*;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.haifisch.server.master_node.Master.*;
@@ -32,11 +33,15 @@ class RequestHandler implements Runnable {
                             + "sent to: " + request.SENDER_NAME + ":" + request.SENDER_PORT + " failed with error: "
                             + request.MESSAGE);
                     Client cl = Master.servingClients.get(((CheckInRequest) request.payload).getRequestId());
-                    cl.addFail(request.SENDER_NAME + ":" + request.SENDER_PORT);
+                    cl.addFail((CheckInRequest) request.payload);
 
                     //The maximum tries for the server have been reached assign to another one
-                    if (cl.thresholdReached(request.SENDER_NAME + ":" + request.SENDER_PORT)) {
-
+                    if (cl.thresholdReached((CheckInRequest) request.payload)) {
+                    	if(cl.failedTwice((CheckInRequest) request.payload)){
+                    		//TODO send error to the client
+                    	}else{
+                    		assignToAnotherOne(request.SENDER_NAME, request.SENDER_PORT, (CheckInRequest)request.payload, cl);
+                    	}
                     }
 
                 } else if (request.payload instanceof CheckInRes) {
@@ -48,9 +53,9 @@ class RequestHandler implements Runnable {
             }
             ConnectionAcknowledge connected = (ConnectionAcknowledge) request.payload;
             //If the sender is a client
-            if (connected.TYPE == 0) {
+            if (connected.TYPE == ConnectionAcknowledgeType.CLIENT) {
                 //Do nothing now
-            } else if (connected.TYPE == 1) {
+            } else if (connected.TYPE == ConnectionAcknowledgeType.MAPPER) {
                 mappers.add(connected);
                 if (reducer != null)
                     inform(connected);
@@ -97,7 +102,7 @@ class RequestHandler implements Runnable {
                 for (int i = 0; i < length; i++) {
                     trueLeft = new Point(left.longtitude + partSize * i, left.latitude);
                     trueRight = new Point(left.longtitude + partSize * (i + 1), right.latitude);
-                    req = new CheckInRequest(client_id, length, trueLeft, trueRight, stampFrom,
+                    req = new CheckInRequest(client_id+i, length, trueLeft, trueRight, stampFrom,
                             stampTo);
                     req.setTopK(100);
                     socket = new SenderSocket(mappers.get(i).serverName,
@@ -109,22 +114,25 @@ class RequestHandler implements Runnable {
                         System.err.println("Failed to send request to: " + mappers.get(i).serverName);
                         break;
                     } else
-                        cl.addAssignment(mappers.get(i).serverName + ":" + mappers.get(i).port, req);
+                        cl.addAssignment(req,mappers.get(i).serverName + ":" + mappers.get(i).port);
                 }
             }
             // Received a check in result packet from a mapper or a reducer
-        } else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
+        }else if(request.PAYLOAD_TYPE == NetworkPayloadType.MAPPER_FINISHED){
+        	
+            Client cl = servingClients.get(request.MESSAGE);
+            cl.markDone((CheckInRequest)request.payload);
+
+            if (cl.isDone()) {
+                System.out.println("Mappers completed request: "
+                        + request.MESSAGE + " waiting for reducer results");
+        
+    	} else if (request.PAYLOAD_TYPE == NetworkPayloadType.CHECK_IN_RESULTS) {
 
             //Received mapper operation end
             //TODO use only if the master_node must inform the reducer, currently it simply monitors the request state
             if (request.payload == null) {
 
-                Client cl = Master.servingClients.get(request.MESSAGE);
-                cl.markDone(request.SENDER_NAME + ":" + request.SENDER_PORT);
-
-                if (cl.isDone()) {
-                    System.out.println("Mappers completed request: "
-                            + request.MESSAGE + " waiting for reducer results");
                     /*
                     SenderSocket socket = new SenderSocket(Master.reducer.serverName, Master.reducer.port,
                             new NetworkPayload(NetworkPayloadType.START_REDUCE, false, null,
@@ -170,7 +178,32 @@ class RequestHandler implements Runnable {
         }
     }
 
-    /**
+    private void assignToAnotherOne(String mapper_name, int mapper_port, CheckInRequest request, Client cl) {
+		Random r = new Random();
+		int mapper = r.nextInt(mappers.size()); //gets a random number to start from
+		for(int i=0; i < mappers.size(); i++){
+			if(mappers.get(mapper).serverName.equals(mapper_name)){
+				mapper = (mapper+1) % mappers.size(); //TODO mipws dn einai swsto?? mipws 8elei % (size-1)
+			}else{
+				SenderSocket socket = new SenderSocket(mappers.get(mapper).serverName,
+		                 mappers.get(mapper).port,
+		                 new NetworkPayload(NetworkPayloadType.CHECK_IN_REQUEST, true,
+		                         request, masterThread.getName(), Master.masterThread.getPort(), 200, "Incoming request"));
+		        socket.run();
+		        if (!socket.isSent()){
+		        	mapper = (mapper+1) % mappers.size();
+		        	continue;
+		        }else{
+		        	cl.reassign(request, mappers.get(mapper).serverName+":"+mappers.get(mapper).port);
+		        }
+			}
+			
+		}
+		
+		 
+	}
+
+	/**
      * Inform all the mappers about the reducer that was added in the network
      */
     private void informBulk() {
@@ -184,7 +217,7 @@ class RequestHandler implements Runnable {
      */
     private void inform(ConnectionAcknowledge added) {
         new SenderSocket(added.serverName, added.port,
-                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, new ConnectionAcknowledge(3,
+                new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, new ConnectionAcknowledge(ConnectionAcknowledgeType.REDUCER_EXISTS,
                         reducer.serverName, reducer.port),
                         Master.masterThread.getName(), Master.masterThread.getPort(), 200, "Done")).run();
     }

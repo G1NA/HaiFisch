@@ -79,7 +79,7 @@ public class MainProgram implements onConnectionListener {
         System.out.println("The server is running on: " + name + ":" + port);
     }
 
-    protected void connectToMaster(String name, int port, int type) {
+    protected void connectToMaster(String name, int port, ConnectionAcknowledgeType type) {
         SenderSocket socket_ack = new SenderSocket(name, port,
                 new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, new ConnectionAcknowledge(type, getName(),
                         getPort()), getName(), getPort(), 200, "connected"));

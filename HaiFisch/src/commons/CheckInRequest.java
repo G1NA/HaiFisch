@@ -116,4 +116,8 @@ public class CheckInRequest implements Serializable {
     public int getMapperCount() {
         return mapperCount;
     }
+    
+    public int hashCode(){
+    	return requestId.hashCode();
+    }
 }

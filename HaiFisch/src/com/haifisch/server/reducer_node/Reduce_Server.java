@@ -2,6 +2,7 @@ package com.haifisch.server.reducer_node;
 
 import com.haifisch.server.MainProgram;
 import commons.CheckInRes;
+import commons.ConnectionAcknowledgeType;
 import commons.NetworkPayload;
 import com.haifisch.server.utils.Configuration;
 import commons.PointOfInterest;
@@ -46,7 +47,7 @@ public class Reduce_Server extends MainProgram {
     private Reduce_Server(Configuration configuration) {
         this.configuration = configuration;
         createListeningSocket(); //Create the listening socket.
-        connectToMaster(configuration.masterServerName, configuration.masterServerPort, 2);
+        connectToMaster(configuration.masterServerName, configuration.masterServerPort, ConnectionAcknowledgeType.REDUCER);
     }
 
 
