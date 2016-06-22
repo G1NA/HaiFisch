@@ -198,7 +198,7 @@ public class Master extends MainProgram {
                 Random r = new Random();
                 int mapper = r.nextInt(mappers.size()); //gets a random number to start from
                 for (int i = 0; i < mappers.size(); i++) {
-                    if (mappers.get(mapper).serverName.equals(name)) {
+                    if (mappers.get(mapper).serverName.equals(name) && mappers.get(mapper).port == port) {
                         mapper = (mapper + 1) % mappers.size();
                     } else {
                         SenderSocket socket = new SenderSocket(mappers.get(mapper).serverName,
