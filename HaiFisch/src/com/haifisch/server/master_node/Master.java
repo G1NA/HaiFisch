@@ -1,22 +1,15 @@
 package com.haifisch.server.master_node;
 
-import commons.*;
 import com.haifisch.server.MainProgram;
-import com.haifisch.server.utils.*;
+import com.haifisch.server.utils.RandomString;
+import commons.*;
 import commons.Point;
-
-import static com.haifisch.server.master_node.Master.mappers;
-import static com.haifisch.server.master_node.Master.masterThread;
 
 import java.awt.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //Master server class, will be used for testing during the 1st phase
@@ -125,19 +118,32 @@ public class Master extends MainProgram{
      * @return true if there is at least one mapper and a reducer
      */
     private boolean checkAlive() {
+        Thread t;
         for (ConnectionAcknowledge mapper : mappers) {
             mapper.status = 2;
-            new Thread(
+            t = new Thread(
                     new SenderSocket(mapper.serverName, mapper.port,
                             new NetworkPayload(NetworkPayloadType.STATUS_CHECK, false, null, getName(), getPort(), 200, "Status check"))
-            ).start();
+            );
+            t.start();
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         if(reducer != null){
         	reducer.status = 2;
-	        new Thread(
+	        t = new Thread(
 	                new SenderSocket(reducer.serverName, reducer.port,
 	                        new NetworkPayload(NetworkPayloadType.STATUS_CHECK, false, null, getName(), getPort(), 200, "Status check"))
-	        ).start();
+	        );
+            t.start();
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         try {
             waitForAck();
