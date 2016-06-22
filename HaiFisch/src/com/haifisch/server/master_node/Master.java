@@ -55,12 +55,10 @@ public class Master extends MainProgram{
     private void mainSequence() {
         createListeningSocket();
         initiateButler();
-        //initiateHandlingErrorThread();
+        initiateHandlingErrorThread();
         initiateConsole();
     }
     
-    /*
-
     private void initiateHandlingErrorThread() {
     	if (errorHandler != null && (errorHandler.isAlive() || !errorHandler.isInterrupted()))
             return;
@@ -70,8 +68,8 @@ public class Master extends MainProgram{
                 while (true) {
                     try {
                         sleep(1000);
-                    } catch (InterruptedException e) {
                     	checkAlive();
+                    } catch (InterruptedException e) {
                         return;
                     }
                 }
@@ -80,7 +78,6 @@ public class Master extends MainProgram{
         errorHandler.start();
 	}
 
-	*/
     
 	/**
      * Initiate the console listener
@@ -135,12 +132,13 @@ public class Master extends MainProgram{
                             new NetworkPayload(NetworkPayloadType.STATUS_CHECK, false, null, getName(), getPort(), 200, "Status check"))
             ).start();
         }
-        reducer.status = 2;
-        new Thread(
-                new SenderSocket(reducer.serverName, reducer.port,
-                        new NetworkPayload(NetworkPayloadType.STATUS_CHECK, false, null, getName(), getPort(), 200, "Status check"))
-        ).start();
-
+        if(reducer != null){
+        	reducer.status = 2;
+	        new Thread(
+	                new SenderSocket(reducer.serverName, reducer.port,
+	                        new NetworkPayload(NetworkPayloadType.STATUS_CHECK, false, null, getName(), getPort(), 200, "Status check"))
+	        ).start();
+        }
         try {
             waitForAck();
             return reducer != null && mappers.size() != 0;
@@ -157,20 +155,22 @@ public class Master extends MainProgram{
      * @throws InterruptedException
      */
     synchronized private void waitForAck() throws InterruptedException {
-        wait(1000);
-        
-       /* for(ConnectionAcknowledge mapper : mappers){
-        	if(mapper.status == 1){
-        		killMapper(mapper.serverName, mapper.port);
+        wait(4000);
+        ArrayList<ConnectionAcknowledge> a = new ArrayList<>();
+        for(ConnectionAcknowledge mapper : mappers){
+        	if(mapper.status != 1){
+        		a.add(mapper);
         	}
-        }*/
+        }
+        for(ConnectionAcknowledge mapper : a)
+    		killMapper(mapper.serverName, mapper.port);
         mappers = (ArrayList<ConnectionAcknowledge>) mappers.stream()
                 .filter(e -> e.status == 1).collect(Collectors.toList());
-        if (reducer.status != 1)
+        if (reducer!=null && reducer.status != 1)
             reducer = null;
     }
     
-    /*
+    
     synchronized public static void killMapper(String name, int port){
     	
     	//kanonika 8a eprepe an dn isxiei  mappers.get(0).serverName.equals(name) && mappers.get(0).port == port
@@ -228,7 +228,6 @@ public class Master extends MainProgram{
     	servingClients.clear();
     }
     
-    */
     
     /**
      * The debug sequence for the 1st part testing
@@ -236,7 +235,7 @@ public class Master extends MainProgram{
      */
     private void debug() {
         if (mappers.size() == 0 || reducer == null) {
-            System.err.println("No mappers or reducer present in the network!");
+            System.err.println("No mappers or reducer present in the network!\n");
         } else {
             System.out.println("Write the latitude of the top left corner of the area you want to search");
             //Double cord = Double.parseDouble(scan.nextLine().trim());

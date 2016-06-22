@@ -93,7 +93,7 @@ class RequestHandler implements Runnable {
                 if ((e.serverName).equals(request.SENDER_NAME) && e.port == request.SENDER_PORT)
                     e.status = 1;
             });
-            if (reducer.serverName.equals(request.SENDER_NAME) && reducer.port == request.SENDER_PORT)
+            if (reducer!=null && reducer.serverName.equals(request.SENDER_NAME) && reducer.port == request.SENDER_PORT)
                 reducer.status = 1;
             //If the request is a nce check in
             //TODO not currently used will be implemented for the 2nd part
@@ -271,7 +271,7 @@ class RequestHandler implements Runnable {
     	if(newValue == Master.MAX_MAPPER_FAILS){
     		Master.killMapper(name, port);
     	}
-    }*/
+    }
 
     /**
      * Send an error message to the master_node server
