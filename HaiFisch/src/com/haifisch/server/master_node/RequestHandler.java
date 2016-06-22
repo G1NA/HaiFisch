@@ -78,14 +78,18 @@ class RequestHandler implements Runnable {
             if (connected.TYPE == ConnectionAcknowledgeType.CLIENT) {
                 //Do nothing now
             } else if (connected.TYPE == ConnectionAcknowledgeType.MAPPER) {
+                Master.errorHandler.interrupt();
                 mappers.add(connected);
                 mapperFailsCounter.put(connected.serverName + ":" + connected.port, 0);
                 if (reducer != null)
                     inform(connected);
+                masterThread.initiateHandlingErrorThread();
             } else {
+                Master.errorHandler.interrupt();
                 reducer = connected;
                 if (mappers.size() != 0)
                     informBulk();
+                masterThread.initiateHandlingErrorThread();
             }
             //If the request is an alive status reply
         } else if (request.PAYLOAD_TYPE == NetworkPayloadType.STATUS_REPLY) {
@@ -93,7 +97,7 @@ class RequestHandler implements Runnable {
                 if ((e.serverName).equals(request.SENDER_NAME) && e.port == request.SENDER_PORT)
                     e.status = 1;
             });
-            if (reducer!=null && reducer.serverName.equals(request.SENDER_NAME) && reducer.port == request.SENDER_PORT)
+            if (reducer != null && reducer.serverName.equals(request.SENDER_NAME) && reducer.port == request.SENDER_PORT)
                 reducer.status = 1;
             //If the request is a nce check in
             //TODO not currently used will be implemented for the 2nd part

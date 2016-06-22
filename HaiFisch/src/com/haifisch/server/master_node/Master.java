@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 //Master server class, will be used for testing during the 1st phase
-public class Master extends MainProgram{
+public class Master extends MainProgram {
 
     private static volatile int threadCounter;
     static volatile ArrayList<ConnectionAcknowledge> mappers = new ArrayList<>();
@@ -21,7 +21,7 @@ public class Master extends MainProgram{
     static volatile HashMap<String, Client> servingClients = new HashMap<>();
     static volatile HashMap<String, Integer> mapperFailsCounter = new HashMap<>();
     static volatile Master masterThread;
-    private volatile Thread errorHandler;
+    static volatile Thread errorHandler;
     public static final int MAX_MAPPER_FAILS = 30;
 
     /**
@@ -51,9 +51,9 @@ public class Master extends MainProgram{
         initiateHandlingErrorThread();
         initiateConsole();
     }
-    
-    private void initiateHandlingErrorThread() {
-    	if (errorHandler != null && (errorHandler.isAlive() || !errorHandler.isInterrupted()))
+
+    public void initiateHandlingErrorThread() {
+        if (errorHandler != null && (errorHandler.isAlive() || !errorHandler.isInterrupted()))
             return;
         //Add a thread to watch over the listening socket
         errorHandler = new Thread("handler") {
@@ -61,7 +61,7 @@ public class Master extends MainProgram{
                 while (true) {
                     try {
                         sleep(1000);
-                    	checkAlive();
+                        checkAlive();
                     } catch (InterruptedException e) {
                         return;
                     }
@@ -69,10 +69,10 @@ public class Master extends MainProgram{
             }
         };
         errorHandler.start();
-	}
+    }
 
-    
-	/**
+
+    /**
      * Initiate the console listener
      * Currently different from the one on the MainProgram parent
      */
@@ -106,18 +106,19 @@ public class Master extends MainProgram{
      */
     @Override
     synchronized public void onConnect(NetworkPayload payload) {
-        System.out.println("Serving new request from: " + payload.SENDER_NAME + ":" + payload.SENDER_PORT);
+        if (payload.PAYLOAD_TYPE != NetworkPayloadType.STATUS_REPLY)
+            System.out.println("Serving new request from: " + payload.SENDER_NAME + ":" + payload.SENDER_PORT);
         new Thread(new RequestHandler(payload), "serving thread no" + threadCounter++).start();
     }
 
-    
+
     /**
      * Check if the mappers identified as well as the reducer are still online
      * This check happens before every new checkin request
      *
      * @return true if there is at least one mapper and a reducer
      */
-    private boolean checkAlive() {
+    synchronized private boolean checkAlive() {
         Thread t;
         for (ConnectionAcknowledge mapper : mappers) {
             mapper.status = 2;
@@ -132,12 +133,12 @@ public class Master extends MainProgram{
                 e.printStackTrace();
             }
         }
-        if(reducer != null){
-        	reducer.status = 2;
-	        t = new Thread(
-	                new SenderSocket(reducer.serverName, reducer.port,
-	                        new NetworkPayload(NetworkPayloadType.STATUS_CHECK, false, null, getName(), getPort(), 200, "Status check"))
-	        );
+        if (reducer != null) {
+            reducer.status = 2;
+            t = new Thread(
+                    new SenderSocket(reducer.serverName, reducer.port,
+                            new NetworkPayload(NetworkPayloadType.STATUS_CHECK, false, null, getName(), getPort(), 200, "Status check"))
+            );
             t.start();
             try {
                 t.join();
@@ -149,7 +150,7 @@ public class Master extends MainProgram{
             waitForAck();
             return reducer != null && mappers.size() != 0;
         } catch (InterruptedException e) {
-            System.err.println("Check status operation interrupted!");
+           // System.err.println("Check status operation interrupted!");
             return false;
         }
     }
@@ -163,42 +164,42 @@ public class Master extends MainProgram{
     synchronized private void waitForAck() throws InterruptedException {
         wait(4000);
         ArrayList<ConnectionAcknowledge> a = new ArrayList<>();
-        for(ConnectionAcknowledge mapper : mappers){
-        	if(mapper.status != 1){
-        		a.add(mapper);
-        	}
+        for (ConnectionAcknowledge mapper : mappers) {
+            if (mapper.status != 1) {
+                a.add(mapper);
+            }
         }
-        for(ConnectionAcknowledge mapper : a)
-    		killMapper(mapper.serverName, mapper.port);
+        for (ConnectionAcknowledge mapper : a)
+            killMapper(mapper.serverName, mapper.port);
         mappers = (ArrayList<ConnectionAcknowledge>) mappers.stream()
                 .filter(e -> e.status == 1).collect(Collectors.toList());
-        if (reducer!=null && reducer.status != 1)
+        if (reducer != null && reducer.status != 1)
             reducer = null;
     }
-    
-    
-    synchronized public static void killMapper(String name, int port){
-    	
-    	//kanonika 8a eprepe an dn isxiei  mappers.get(0).serverName.equals(name) && mappers.get(0).port == port
-    	//na ginetai error ston master
-    	if(mappers.size() == 1 && mappers.get(0).serverName.equals(name) && mappers.get(0).port == port)
-    		cancelAll();
-    	
-    	for(ConnectionAcknowledge mapper : mappers){
-    		if(mapper.serverName.equals(name) && mapper.port == port){
-    			mappers.remove(mapper);
-    			mapperFailsCounter.remove(name+":"+port);
-    			break;
-    		}
-    	}
-    	
-    	for(Client cl : servingClients.values()){
-    		for(CheckInRequest req : cl.getAssignment(name+":"+port)){
-    			Random r = new Random();
-    			int mapper = r.nextInt(mappers.size()); //gets a random number to start from
-    			for (int i = 0; i < mappers.size(); i++) {
+
+
+    synchronized public static void killMapper(String name, int port) {
+
+        //kanonika 8a eprepe an dn isxiei  mappers.get(0).serverName.equals(name) && mappers.get(0).port == port
+        //na ginetai error ston master
+        if (mappers.size() == 1 && mappers.get(0).serverName.equals(name) && mappers.get(0).port == port)
+            cancelAll();
+
+        for (ConnectionAcknowledge mapper : mappers) {
+            if (mapper.serverName.equals(name) && mapper.port == port) {
+                mappers.remove(mapper);
+                mapperFailsCounter.remove(name + ":" + port);
+                break;
+            }
+        }
+
+        for (Client cl : servingClients.values()) {
+            for (CheckInRequest req : cl.getAssignment(name + ":" + port)) {
+                Random r = new Random();
+                int mapper = r.nextInt(mappers.size()); //gets a random number to start from
+                for (int i = 0; i < mappers.size(); i++) {
                     if (mappers.get(mapper).serverName.equals(name)) {
-                        mapper = (mapper + 1) % mappers.size(); 
+                        mapper = (mapper + 1) % mappers.size();
                     } else {
                         SenderSocket socket = new SenderSocket(mappers.get(mapper).serverName,
                                 mappers.get(mapper).port,
@@ -215,26 +216,26 @@ public class Master extends MainProgram{
                     }
 
                 }
-    		}
-    	}
-    	
+            }
+        }
+
     }
-    
-    private static void cancelAll(){
-    	for(Client cl : servingClients.values()){
-    		SenderSocket send = new SenderSocket(cl.getClientAddress(), cl.getClientPort(),
+
+    private static void cancelAll() {
+        for (Client cl : servingClients.values()) {
+            SenderSocket send = new SenderSocket(cl.getClientAddress(), cl.getClientPort(),
                     new NetworkPayload(NetworkPayloadType.CONNECTION_ACK, false, null,
                             Master.masterThread.getName(), Master.masterThread.getPort(),
                             500, "A problem occured while serving your request!"));
             send.run();
             if (!send.isSent())
                 System.out.println(send.getError());
-    	}
-    	
-    	servingClients.clear();
+        }
+
+        servingClients.clear();
     }
-    
-    
+
+
     /**
      * The debug sequence for the 1st part testing
      * The commented out parts can be used for dynamic query input
